@@ -2,8 +2,7 @@ library(ggplot2)
 library(tidyr)
 library(dplyr)
 
-setwd("C:/Users/court/Google Drive/UBC Postdoc/Garibaldi project/Data_August_2022/Microbiometer")
-dat<-read.csv("Microbiometer Data.csv")
+dat<-read.csv("data/tidy/Microbiometer Data.csv")
 
 dat<-rename(dat, treatment=treatment..W.C.)
 dat<-mutate(dat, treatment= fct_relevel("W", "C"))
