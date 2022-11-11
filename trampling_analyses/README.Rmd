@@ -1,0 +1,63 @@
+## TRAMPLING ANALYSES
+
+What is the effect of human trampling on plant communities across an elevational gradient?
+
+## Contributors: 
+Nathalie Chardon (nathalie.chardon@gmail.com), Carly Hilbert (chilbe02@student.ubc.ca)
+
+Last edited: 11 Nov 2022
+
+#-----------------------------
+## Data collection notes summer 2022 - Who, when, where, why and how the data were collected
+
+Dates: July-August 2022
+
+Location: Garibaldi Provincial Park on Taylor Meadow (TM), Black Tusk (BT), and Panorama Ridge (PR) trails.
+
+Samplers: Nathalie Chardon, Carly Hilbert, Mackenzie Urquhart-Cronish, Brianna Ragsdale, Teagan MacLachlan, Vickie Lee, Christian Lauber, Carolyn Chong
+
+Data entered by: Carly Hilbert
+
+Methods: In the summer of 2022, we established long-term transects near the major trails in the park (Taylor Meadows, Black Tusk, Panorama Ridge) to quantify the effects of trampling by recreational users. To address how trampling affects charismatic plant communities (blueberry, heather and sedge meadows) along elevational gradients, we chose sites at multiple elevations per trail. We established transects directly adjacent to the trail and at least a 5 m perpendicular distance away from the trail (control) to compare the effects of trampling on the same vegetation types. 
+
+Plant communities. We recorded landscape characteristics (slope, aspect, latitude, longitude, presence of trees) for each transect and used 0.5m x 1m quadrats to record height, maximum diameter, and bud/flower/fruit counts of our focal plant species (Vaccinium ovalifolium, Cassiope mertensiana, Phyllodoce empetriformis, Phyllodoce grandiflora, Carex sp.). Please see N. Chardon’s recent work on human trampling for greater detail on this sampling approach: 
+https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/1365-2664.13384
+https://onlinelibrary.wiley.com/doi/full/10.1002/ece3.4276
+
+We also used a standardized approach to photograph each quadrat, and are using these images to calculate how vegetation greenness is impacted by human trampling. 
+
+Microbial communities. We selected representative transects per trail to study microbial activity. As a proxy for measuring litter decomposition by microbes, we buried tea bags at these transects to undergo microbial decomposition for one year.
+Upcoming work. Next summer (2023), we will return to each transect to re-survey using the same methodology described above. We will dig out the buried teabags, and bury new ones to decompose for another year. 
+
+Goals: We aim to quantify the continued effects of human trampling on these plant and microbial communities by returning each year, thus generating a multi year dataset. Such a dataset will allow us to answer how these plant communities are responding to continuous trampling and ambient warming. We will incorporate BC Parks data on visitation numbers in our analyses to answer how strongly yearly visitation rates correlate with community responses, or if these responses show more of a lag response to past visitation rates. 
+
+
+#-----------------------------
+## Data files
+## Raw data
+FILENAME <description of file contents, date collected>
+
+GPS_with-elev: lat, long, elev for each transect (see merge_fielddata.R for data details); July-Aug 2022
+
+## Compiled data
+FILENAME <description of file contents, date modified, whether mid or final version>
+
+quad.R: gps & transect data matched to quad data; created in merge_fielddata.R; created on XXX; final version (PLACEHOLDER, STILL NEED TO CREATE)
+
+#-----------------------------
+## Analysis notes
+FILENAME <description of notes purpose, coding language, versions of software/libraries used>
+
+#-----------------------------
+## Scripts
+SCRIPTNAME <description of script purpose, coding language, versions of software/libraries used>
+
+merge_fielddata.R: merge GPS, elevation, transect, and quad-level data; R; tidyverse, dplyr, lattice
+
+LMMs.R: basic linear mixed models testing the effects of trampling and elevation on plant responses; R; lme4
+
+figs.R: figures visualizing data; R; ggplot2
+
+#-----------------------------
+## Figures
+FOLDERNAME <folder containing some figures made by the scripts above>
