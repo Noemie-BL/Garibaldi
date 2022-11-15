@@ -27,16 +27,16 @@ setwd(raw_dat)
 gps.raw <- read.table('GPS_with-elev.txt', header = T, fill = T) #lat, long, elev, ID for each transect
 
 ## *** add transect data
-trans.raw <- read.csv('')
+# trans.raw <- read.csv('')
 
 ## *** add quad data
-quad.raw <- read.csv('')
+quad.raw <- read.csv('Trampling-QUADS_data_EDITED.csv')
 
 
 # # OUTPUT FILES # #
 
 ## *** save this when script is run
-load('quad.R') #gps & transect data matched to quad data (merge_fielddata.R)
+# load('quad.R') #gps & transect data matched to quad data (merge_fielddata.R)
 
 
 
@@ -71,8 +71,17 @@ plot(latitude ~ longitude, data = gps)
 
 # Check consistency between dataframes
 
-nrow(anti_join(trans.raw, gps, by = 'transect')) #
-nrow(anti_join(gps, trans.raw, by = 'transect')) #
+nrow(anti_join(quad.raw, gps, by = 'transect')) #505
+nrow(anti_join(gps, quad.raw, by = 'transect')) #25 --> should only be 3
+
+
+# PROBLEM 1: Transects labeled differently
+# SOLUTION: Rename transects manually in CSV file
+
+# PROBLEM 2: Most transects missing
+
+foo <- anti_join(gps, quad.raw, by = 'transect')
+unique(foo$transect) #missing transects
 
 
 
