@@ -21,7 +21,7 @@ comp_dat <- '~/Desktop/Code/Garibaldi/trampling_analyses/compiled_data/' #WD for
 
 # # INPUT FILES # #
 setwd(comp_dat)
-load('quad.R') #gps & transect data matched to quad data (merge_fielddata.R)
+load('quad.RData') #gps & transect data matched to quad data (merge_fielddata.R)
 
 
 # # OUTPUT FILES # #
