@@ -5,7 +5,7 @@
 
 # Author: Nathalie Chardon
 # Date created: 11 Nov 2022
-# Date updated: 11 Nov 2022
+# Date updated: 16 Nov 2022
 
 # # LIBRARIES # #
 library(ggplot2)
@@ -21,7 +21,7 @@ figs <- '~/Desktop/Code/Garibaldi/trampling_analyses/figures/BC_PARF/' #WD for N
 
 # # INPUT FILES # #
 setwd(comp_dat)
-load('quad.R') #gps & transect data matched to quad data (merge_fielddata.R)
+load('quad.RData') #gps & transect data matched to quad data (merge_fielddata.R)
 
 
 # # OUTPUT FILES # #
@@ -31,6 +31,7 @@ load('quad.R') #gps & transect data matched to quad data (merge_fielddata.R)
 
 ####################################################################################################
 
+### *** add new modified code with other variables
 # # DATA PLOTS # # 
 
 ####################################################################################################
@@ -38,6 +39,10 @@ load('quad.R') #gps & transect data matched to quad data (merge_fielddata.R)
 # # DATA # #
 
 dat <- quad #generic dataframe name
+
+# Convert categorical predictor variables to factor
+ff <- c('transect', 'species', 'dist')
+dat[ff] <- lapply(dat[ff], as.factor)
 
 
 # # PLOT THEME # #
@@ -56,53 +61,18 @@ mytheme <-   theme_classic() +
 
 # # PLOTS
 
-# height ~ elev by trampling & species
-### *** need to double check variable names
+# height ~ elev by disturbance & species
 
-ggplot(dat, aes(elev, height, color = trail)) +
-  geom_point(size = 5, alpha = 0.5) +
+x <- dat$altitude
+y <- dat$height_mm
+
+ggplot(dat, aes(x, y, color = dist)) +
+  geom_point(size = 3, alpha = 0.5) +
   ylab('Plant Height [mm]') + xlab('Elevation [m]') + labs(title = '') + 
-  geom_smooth() +
-  facet_wrap(~species, scales = "free_y") #separate panels into species
+  stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
+  facet_wrap(~species, scales = "free_y") + #separate panels into species
+  theme_classic()
 
 
+### *** ex of other plots to try: boxplots of disturbance vs. no dist regardless of elevation
 
-
-####################################################################################################
-
-# # INTERACTION PLOTS # # 
-
-####################################################################################################
-
-# # EXAMPLE FROM ZUUR ET AL # #
-
-#Figure 11: coplot to visualize potential presence of interactions
-Sparrows <- read.table(file = "SparrowsElphick.txt", header = TRUE)
-
-#Take the data from species 1, Sex = 0 and Wing length >= 65
-I1 <- Sparrows$SpeciesCode == 1 & Sparrows$Sex != "0" & Sparrows$wingcrd < 65
-Wing1<- Sparrows$wingcrd[I1]
-Wei1 <- Sparrows$wt[I1]
-Mon1 <- factor(Sparrows$Month[I1])
-Sex1<- factor(Sparrows$Sex[I1])
-
-
-#Define Month and Sex as categorical variables
-fMonth1 <- factor(Mon1,levels=c(5,6,7,8,9),
-                  labels=c("May","Jun","Jul","Aug","Sep"))
-fSex1   <- factor(Sex1, levels=c(4,5),labels=c("Male","Female"))
-
-M1 <- lm(Wei1 ~ Wing1*fMonth1*fSex1)
-summary(M1)
-anova(M1)
-
-
-#Make the coplot: if all bivariate regression lines are parallel, then there are probably no 
-#significant interactions
-
-coplot(Wei1 ~ Wing1 | fMonth1 * fSex1, ylab = "Weight (g)",
-       xlab = "Wing length (mm)",
-       panel = function(x, y, ...) {
-         tmp <- lm(y ~ x, na.action = na.omit)
-         abline(tmp)
-         points(x, y) })

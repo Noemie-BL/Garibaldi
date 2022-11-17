@@ -37,6 +37,44 @@ load('quad.RData') #gps & transect data matched to quad data (merge_fielddata.R)
 
 
 
+
+####################################################################################################
+
+# # ABBREVIATIONS IN DATAFRAMES # # 
+
+####################################################################################################
+
+# Trail locations: Taylor Meadows (TM), Black Tusk (BT), and Panorama Ridge (PR)
+
+# Transect data: 
+
+# - samplers: Nathalie Chardon (NC), Carly Hilbert (CH), Mackenzie Urquhart-Cronish (MUC), 
+# Brianna Ragsdale (BR), Teagan MacLachlan (TL), Vickie Lee (VL), Christian Lauber (CL), 
+# Carolyn Chong (CC)
+
+# - d_trail_m: distance from trail edge [m]
+
+
+# Quad data:
+
+# - species: Vaccinium ovalifolium (vacova), Cassiope mertensiana (casmer), 
+# Phyllodoce empetriformis (phyemp), Phyllodoce grandiflora (phygra), Carex sp. (carspp)
+
+# - height_mm: maximum height of plant adjusted for ruler offsets [mm]
+
+# - mxdiam_mm: maximum diameter of plant [mm]
+
+# - flws: number of flowers per plant
+
+# - frts: number of fruits per plant
+
+# - buds: number of buds per plant
+
+# - dist: 0 = off-trail (even) transects, 1 = trail-side (odd) transects
+
+
+
+
 ####################################################################################################
 
 # # GPS COORDINATES DATA # # 
@@ -360,7 +398,7 @@ save(trans, file = 'trans_ALL.RData')
 # Keep only relevant columns
 
 trans <- trans %>% 
-  select(c(location, transect, slope, aspect, ruler_offset, latitude, longitude, altitude))
+  select(c(location, transect, slope, aspect, ruler_offset, latitude, longitude, altitude, transect.no))
 
 
 # Join transect to quad data
@@ -372,6 +410,14 @@ quad <- left_join(quad.raw, trans, by = 'transect')
 
 head(quad) #look at data
 str(quad) #check data structure
+
+
+# Add disturbance column to quad
+
+quad$x_logical <- quad$transect.no %% 2 == 0 #create even/odd logical
+
+quad <- quad %>% 
+  mutate(dist = if_else(x_logical == TRUE, 0, 1)) #0 = off-trail (even) transects, 1 = trail-side (odd) transects
 
 
 
@@ -480,6 +526,19 @@ summary(quad$height_adj)
 # # SAVE DATA # # 
 
 ####################################################################################################
+
+# Remove unnecessary columns
+
+quad <- quad %>% 
+  select(!c('x_logical', 'height_mm', 'ruler_offset')) #remove irrelevant columns
+
+
+# Rename height column
+
+quad <- rename(quad, height_mm = height_adj)
+
+
+# Save
 
 setwd(comp_dat)
 save(quad, file = 'quad.RData') #gps & transect data matched to quad data (merge_fielddata.R)

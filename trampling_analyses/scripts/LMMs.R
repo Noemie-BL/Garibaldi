@@ -6,15 +6,18 @@
 
 # Author: Nathalie Chardon
 # Date created: 11 Nov 2022
-# Date updated: 11 Nov 2022
+# Date updated: 16 Nov 2022
 
-# # LIBRARIES # #
+###*** install these packages
+# # LIBRARIES # # 
+library(tidyverse)
 library(lme4)
+library(lmerTest)
 
 
 rm(list=ls()) 
 
-
+###*** create new object 'comp_dat' for your working directory
 # # WORKING DIRECTORIES # #
 comp_dat <- '~/Desktop/Code/Garibaldi/trampling_analyses/compiled_data/' #WD for NC
 
@@ -31,6 +34,34 @@ load('quad.RData') #gps & transect data matched to quad data (merge_fielddata.R)
 
 ####################################################################################################
 
+###*** run this section
+# # DATA # # 
+
+####################################################################################################
+
+# Data
+dat <- quad #generic dataframe name
+str(dat)
+
+
+# Convert categorical predictor variables to factor
+ff <- c('transect', 'species', 'dist')
+dat[ff] <- lapply(dat[ff], as.factor)
+
+
+# Check for correlation in predictor variables
+# - not needed for this analyses because only 1 continuous variable - 
+
+
+# Calculate variance inflation factor (VIF)
+# - not needed for this analyses because only 1 continuous variable - 
+
+
+
+
+####################################################################################################
+
+###*** modify below to test other variable you are interested in (e.g., plant diameter)
 # # COMPILE MODEL # # 
 
 ####################################################################################################
@@ -38,28 +69,19 @@ load('quad.RData') #gps & transect data matched to quad data (merge_fielddata.R)
 # Check out this resource for a visual explanation of hierarchical models: 
 # http://mfviz.com/hierarchical-models/
 
-# Data
-dat <- quad #generic dataframe name
-
-
-# Convert categorical predictor variables to factor
-### *** do this
-
-# Check for correlation in predictor variables
-# - not needed for this analyses because only 1 continuous variable - 
-
-# Calculate variance inflation factor (VIF)
-# - not needed for this analyses because only 1 continuous variable - 
-
+# Question: Does disturbance differentially affect plant height at different elevations?
 
 # Fit model
-### *** check variable names
+mod <- lmer(height_mm ~ dist * altitude + (1|transect) + (1|species), data = dat)
 
-mod <- lmer(height ~ elevation * trail + species + (1|transect), data = dat)
-
+# Model summary
+summary(mod)
 
 # Goodness of fit
-### *** do this (e.g., extract from model object or get_gof from package modelsummary)
+ff <- fitted(mod) #predicted values
+oo <- dat$height_mm #observed values
+cor(ff, oo) #correlation between predicted and observed values
+
 
 
 
@@ -87,6 +109,6 @@ qqnorm(rr, main="normal qq-plot, residuals")
 qqline(rr)
 
 
-# Look up additional assumptions to check with hierarchical models
+# TO DO: Look up additional assumptions to check with hierarchical models
 
 

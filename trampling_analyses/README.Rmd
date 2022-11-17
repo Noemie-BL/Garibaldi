@@ -37,12 +37,19 @@ Goals: We aim to quantify the continued effects of human trampling on these plan
 ## Raw data
 FILENAME <description of file contents, date collected>
 
+Trampling-TRANSECTS_data.csv/xlsx: 10 m x 0.5 m transect-level data (see merge_fielddata.R for abbreviations); July-Aug 2022
+
+Trampling-QUADS_data.csv/xlsx: quad-level data (see merge_fielddata.R for abbreviations); July-Aug 2022
+
 GPS_with-elev: lat, long, elev for each transect (see merge_fielddata.R for data details); July-Aug 2022
 
 ## Compiled data
 FILENAME <description of file contents, date modified, whether mid or final version>
 
-quad.R: gps & transect data matched to quad data; created in merge_fielddata.R; created on XXX; final version (PLACEHOLDER, STILL NEED TO CREATE)
+quad.RData: gps & transect data matched to quad data; created in merge_fielddata.R; modifed on 16 Nov 2022; final version 
+
+trans_ALL.RData: all transect field data, gps, and altitude; created on 15 Nov 2022; final version
+
 
 #-----------------------------
 ## Analysis notes
@@ -54,10 +61,12 @@ SCRIPTNAME <description of script purpose, coding language, versions of software
 
 merge_fielddata.R: merge GPS, elevation, transect, and quad-level data; R; tidyverse, dplyr, lattice
 
-LMMs.R: basic linear mixed models testing the effects of trampling and elevation on plant responses; R; lme4
+LMMs.R: basic linear mixed models testing the effects of trampling and elevation on plant responses; R; tidyverse, lme4
 
 figs.R: figures visualizing data; R; ggplot2
 
 #-----------------------------
 ## Figures
 FOLDERNAME <folder containing some figures made by the scripts above>
+
+/BC_PARF/xxx.pdf ###*** placeholder for Carly's figures
