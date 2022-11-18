@@ -9,6 +9,7 @@
 
 # # LIBRARIES # #
 library(ggplot2)
+library(ggsignif)
 
 
 rm(list=ls()) 
@@ -76,3 +77,28 @@ ggplot(dat, aes(x, y, color = dist)) +
 
 ### *** ex of other plots to try: boxplots of disturbance vs. no dist regardless of elevation
 
+# height boxplot of disturbance vs no distubance by species
+
+#full species names
+species_names <- c('carspp'= "Carex spp.", 'casmer' = "Cassiope mertensiana", 'phyemp' = "Phyllodoce empetriformis", 'phygla' = "Phyllodoce glanduliflora", 'vacova' = "Vaccinium ovalifolium")
+
+ggplot(dat, aes(x=dist, y=height_mm, fill=dist)) +
+  geom_boxplot() +
+  facet_grid(.~ species, labeller = as_labeller(species_names)) + #separate by species and rename with full species names
+  geom_signif(comparisons = list(c("0", "1")), map_signif_level=TRUE) + #significance stars
+  scale_x_discrete(labels=c("0" = "Off Trail", "1" = "On Trail")) + #rename dist variable from 0 and 1
+  theme(axis.text.x = element_text(angle = 60, hjust=1)) + #angle text
+  ylab("Height (mm)") +
+  theme(legend.position = "none") #no legend
+
+
+# max diameter boxplot of disturbance vs no distubance by species
+
+ggplot(dat, aes(x=dist, y=mxdiam_mm, fill=dist)) +
+  geom_boxplot() +
+  facet_grid(.~ species, labeller = as_labeller(species_names)) + #separate by species and rename with full species names
+  geom_signif(comparisons = list(c("0", "1")), map_signif_level=TRUE) + #significance stars
+  scale_x_discrete(labels=c("0" = "Off Trail", "1" = "On Trail")) + #rename dist variable from 0 and 1
+  theme(axis.text.x = element_text(angle = 60, hjust=1)) + #angle text
+  ylab("Maximum diameter (mm)") +
+  theme(legend.position = "none") #no legend
