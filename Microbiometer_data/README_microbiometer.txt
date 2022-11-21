@@ -13,11 +13,9 @@ Transcribed into Excel by Allen Z.
 #-----------------------------
 ## Data files
 
-## Raw files
-Microbiometer_Data
-
 ## Compiled files
-Alpine_cores_names_2022_Garibaldi
+Microbiometer_Data
+Alpine_cores_names_2022_Garibaldi- plot and soil sampling/root core metadata 
 
 #-----------------------------
 ## Scripts
