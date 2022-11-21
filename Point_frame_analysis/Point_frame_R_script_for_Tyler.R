@@ -27,15 +27,16 @@ library(ggplot2)
 library(scales)
 library(lubridate)
 
+# first change path to where you want the figures output to
 pathname <- "/home/celphin/projects/def-henryg/Garibaldi_Lake_data_summer2022/celphin_point_frame_workingdir/output/"
 
 # Split filename column into different factors and change column headers before import
 
-pf_data <- read.table("pf_compiled_final.csv", header=TRUE, sep =",", dec = ".")
+pf_data <- read.table("./Point_frame_data/pf_compiled_final.csv", header=TRUE, sep =",", dec = ".")
 
 ###################################################
+# clean up the compiled file
 # check all species, site and tissue names
-
 
 plot_naming <- function(data_column, orig_name1, new_name1){
   data_column <- as.character(data_column)
@@ -65,71 +66,39 @@ unique(pf_data$Flag.1)
 
 ##############################################
 
-> unique(pf_data$filename)
- [1] "SAL_1C.csv"   "SAL_2W.csv"   "SAL_3C.csv"   "SAL_4W.csv"   "SAL_5C.csv"
- [6] "SAL_6W.csv"   "SAL_7C.csv"   "SAL_8W.csv"   "Mead_22W.csv" "CASS_10W.csv"
-[11] "CASS_11C.csv" "CASS_12W.csv" "CASS_13C.csv" "CASS_14W.csv" "CASS_15C.csv"
-[16] "CASS_16W.csv" "Mead_17C.csv" "Mead_18W.csv" "Mead_19C.csv" "Mead_20W.csv"
-[21] "Mead_21C.csv" "Mead_23C.csv" "Mead_24W.csv" "CASS_9C.csv"
-> unique(pf_data$X)
- [1]  0 10 20 30 40 50 60 70 80 90
-> unique(pf_data$Y)
- [1]  0 10 20 30 40 50 60 70 80 90
-> unique(pf_data$HitOrder)
-[1] "Top"    "Bottom"
-> unique(pf_data$SPP)
- [1] "x"               "caraur"          "litter"          "soil"
- [5] "triglu"          "furry salix"     "p2 soil sample"  ""
- [9] "carspp"          "equvar"          "na"              "rock"
-[13] "tomst"           "soil p1"         "tag"             "moss"
-[17] "kalmic"          "carapp"          "caruar"          "furry salix "
-[21] " x"              "lichen"          "x "              "caraqu"
-[25] "equarv"          "junmer"          "junarc"          "0"
-[29] "casmer"          "phygla"          "pinvul"          "jundru"
-[33] "galhul"          "lupspp"          "MOSS"            "n/a"
-[37] "antalp"          "triglu (?) pink" "salix hairy"     " equvar"
-[41] "salix gla"       "casspp"          "equvsr"          "kalmi c"
-[45] "carnig"          "salixgla"        "naa"             "root core p3"
-[49] "root core t2"    "galhum"          "lit"             "sd"
-[53] "toms"            "carmer"          "salbar"          "sol"
-[57] "eqivar"          "camera marker"   "tea bag tag"     "?"
-[61] "salix-hairy"
-> unique(pf_data$STATUS)
-[1] ""   "sd" "l"  "ad" "lf" "SD" "L"  "d"  "1"
+unique(pf_data$filename)
 
-> unique(pf_data$Extra.sp)
-[1] ""                     "salbar. Equvar"       "caraur. Salix fuzzy?"
-[4] "caraur"               "butterwort - Pinvul"  "lupine"
-[7] "see spp list"
-> unique(pf_data$SITE)
-[1] "salix"    "mead"     "Meadow"   "Cassiope" "cassiope"
-> unique(pf_data$PLOT)
- [1] "1"   "2"   "3"   "4"   "5"   "6"   "7"   "8"   "22"  "10W" "11c" "12W"
-[13] "13C" "14W" "15C" "16w" "17c" "18w" "19c" "20w" "21c" "23c" "24w" "9C"
-> unique(pf_data$TRTMT)
-[1] "control" "warming" "c"       "w"       "W"       "C"
-> unique(pf_data$Observer)
- [1] "joanna"              "Courtney"            "courtney"
- [4] "spencer / cassandra" "Cassandra"           "anya"
- [7] "spencercourtney"     "vh"                  "cc"
-[10] "cassandra"           "cassandra/anya"      "Joanna"
-> unique(pf_data$DATE)
- [1] "sept 25 2022" "9/26/22"      "sept 26 2022" "Aug 7 2022"   "Aug 8 2022"
- [6] "08-08-2019"   "aug8 2022"    "aug 8 2022"   "aug 9 2022"   "aug9 2022"
-[11] "06-08-2022"   "aug 7 2022"   "07-08-2022"
-> unique(pf_data$TOMST)
- [1] ""       "48; 47" "32;65"  "22;34"  "83;42"  "63;73"  "62;29"  "68;52"
- [9] "22;38"  "45; 35" "45;45"  "51; 48" "39; 52" "49;39"  "51;52"  "45;40"
-[17] "2;28"
-> unique(pf_data$Flag)
- [1] ""       "80; 23" "85;50"  "65;0"   "62;7"   "30;-10" "20;10"  "0;58"
- [9] "45;12"  "5; 82"  "20;14"  "0; 20"  "4; 36"  "58;80"  "5;13"   "80;12"
-[17] "57;98"
+unique(pf_data$X)
+
+unique(pf_data$Y)
+
+unique(pf_data$HitOrder)
+
+unique(pf_data$SPP)
+
+unique(pf_data$STATUS)
+
+unique(pf_data$Extra.sp)
+
+unique(pf_data$SITE)
+
+unique(pf_data$PLOT)
+
+unique(pf_data$TRTMT)
+
+unique(pf_data$Observer)
+
+unique(pf_data$DATE)
+
+unique(pf_data$TOMST)
+
+unique(pf_data$Flag)
+
 
 ############################################################
 
-> unique(pf_data$SITE)
-[1] "salix"    "mead"     "Meadow"   "Cassiope" "cassiope"
+unique(pf_data$SITE)
+#[1] "salix"    "mead"     "Meadow"   "Cassiope" "cassiope"
 
 pf_data$SITE <- plot_naming(pf_data$SITE, "mead", "Meadow")
 pf_data$SITE <- plot_naming(pf_data$SITE, "salix", "Salix")
@@ -139,8 +108,8 @@ unique(pf_data$SITE)
 
 #-------------------------------------------
 
-> unique(pf_data$TRTMT)
-[1] "control" "warming" "c"       "w"       "W"       "C"
+unique(pf_data$TRTMT)
+#[1] "control" "warming" "c"       "w"       "W"       "C"
 
 pf_data$TRTMT <- plot_naming(pf_data$TRTMT, "w", "warming")
 pf_data$TRTMT <- plot_naming(pf_data$TRTMT, "c", "control")
@@ -151,8 +120,8 @@ unique(pf_data$TRTMT)
 
 #-------------------------------------------
 
-> unique(pf_data$STATUS)
-[1] ""   "sd" "l"  "ad" "lf" "SD" "L"  "d"  "1"
+unique(pf_data$STATUS)
+#[1] ""   "sd" "l"  "ad" "lf" "SD" "L"  "d"  "1"
 
 pf_data$STATUS <- plot_naming(pf_data$STATUS, "l", "live")
 pf_data$STATUS <- plot_naming(pf_data$STATUS, "lf", "live")
@@ -166,23 +135,23 @@ pf_data$STATUS <- plot_naming(pf_data$STATUS, "d", "standing_dead")
 unique(pf_data$STATUS)
 
 #---------------------------------------------
-> unique(pf_data$SPP)
- [1] "x"               "caraur"          "litter"          "soil"
- [5] "triglu"          "furry salix"     "p2 soil sample"  ""
- [9] "carspp"          "equvar"          "na"              "rock"
-[13] "tomst"           "soil p1"         "tag"             "moss"
-[17] "kalmic"          "carapp"          "caruar"          "furry salix "
-[21] " x"              "lichen"          "x "              "caraqu"
-[25] "equarv"          "junmer"          "junarc"          "0"
-[29] "casmer"          "phygla"          "pinvul"          "jundru"
-[33] "galhul"          "lupspp"          "MOSS"            "n/a"
-[37] "antalp"          "triglu (?) pink" "salix hairy"     " equvar"
-[41] "salix gla"       "casspp"          "equvsr"          "kalmi c"
-[45] "carnig"          "salixgla"        "naa"             "root core p3"
-[49] "root core t2"    "galhum"          "lit"             "sd"
-[53] "toms"            "carmer"          "salbar"          "sol"
-[57] "eqivar"          "camera marker"   "tea bag tag"     "?"
-[61] "salix-hairy"
+unique(pf_data$SPP)
+# [1] "x"               "caraur"          "litter"          "soil"
+# [5] "triglu"          "furry salix"     "p2 soil sample"  ""
+# [9] "carspp"          "equvar"          "na"              "rock"
+# [13] "tomst"           "soil p1"         "tag"             "moss"
+# [17] "kalmic"          "carapp"          "caruar"          "furry salix "
+# [21] " x"              "lichen"          "x "              "caraqu"
+# [25] "equarv"          "junmer"          "junarc"          "0"
+# [29] "casmer"          "phygla"          "pinvul"          "jundru"
+# [33] "galhul"          "lupspp"          "MOSS"            "n/a"
+# [37] "antalp"          "triglu (?) pink" "salix hairy"     " equvar"
+# [41] "salix gla"       "casspp"          "equvsr"          "kalmi c"
+# [45] "carnig"          "salixgla"        "naa"             "root core p3"
+# [49] "root core t2"    "galhum"          "lit"             "sd"
+# [53] "toms"            "carmer"          "salbar"          "sol"
+# [57] "eqivar"          "camera marker"   "tea bag tag"     "?"
+# [61] "salix-hairy"
 
 
 pf_data$SPP <- plot_naming(pf_data$SPP, "lit", "litter")
@@ -194,23 +163,6 @@ pf_data$SPP <- plot_naming(pf_data$SPP, "n/a", "NA")
 pf_data$SPP <- plot_naming(pf_data$SPP, "na", "NA")
 pf_data$SPP <- plot_naming(pf_data$SPP, "0", "NA")
 pf_data$SPP <- plot_naming(pf_data$SPP, "naa", "NA")
-
-> unique(pf_data$SPP)
- [1] "x"               "caraur"          "litter"          "soil"
- [5] "triglu"          "furry salix"     "p2 soil sample"  "NA"
- [9] "carspp"          "equvar"          "rock"            "tomst"
-[13] "soil p1"         "tag"             "moss"            "kalmic"
-[17] "carapp"          "caruar"          "furry salix "    "lichen"
-[21] "caraqu"          "equarv"          "junmer"          "junarc"
-[25] "casmer"          "phygla"          "pinvul"          "jundru"
-[29] "galhul"          "lupspp"          "MOSS"            "antalp"
-[33] "triglu (?) pink" "salix hairy"     " equvar"         "salix gla"
-[37] "casspp"          "equvsr"          "kalmi c"         "carnig"
-[41] "salixgla"        "naa"             "root core p3"    "root core t2"
-[45] "galhum"          "sd"              "toms"            "carmer"
-[49] "salbar"          "sol"             "eqivar"          "camera marker"
-[53] "tea bag tag"     "?"               "salix-hairy"
-
 
 pf_data$SPP <- plot_naming(pf_data$SPP, "toms", "tomst")
 pf_data$SPP <- plot_naming(pf_data$SPP, "furry salix", "salbar")
@@ -233,29 +185,10 @@ pf_data$SPP_sub <- plot_naming(pf_data$SPP_sub, "sol", "other")
 pf_data$SPP_sub <- plot_naming(pf_data$SPP_sub, "root core p3", "other")
 pf_data$SPP_sub <- plot_naming(pf_data$SPP_sub, "root core t2", "other")
 
-
-> unique(pf_data$SPP_sub)
- [1] "x"               "caraur"          "litter"          "soil"
- [5] "triglu"          "salbar"          "other"           "NA"
- [9] "carspp"          "equvar"          "rock"            "moss"
-[13] "kalmic"          "carapp"          "caruar"          "lichen"
-[17] "caraqu"          "equarv"          "junmer"          "junarc"
-[21] "casmer"          "phygla"          "pinvul"          "jundru"
-[25] "galhul"          "lupspp"          "antalp"          "triglu (?) pink"
-[29] "salix gla"       "casspp"          "kalmi c"         "carnig"
-[33] "salixgla"        "galhum"          "sd"              "carmer"
-
 pf_data$SPP_sub <- plot_naming(pf_data$SPP_sub, "kalmi c", "kalmic")
 pf_data$SPP_sub <- plot_naming(pf_data$SPP_sub, "caruar", "caraur")
 pf_data$SPP_sub <- plot_naming(pf_data$SPP_sub, "triglu (?) pink", "triglu")
 
- unique(pf_data$SPP_sub)
- [1] "x"         "caraur"    "litter"    "soil"      "triglu"    "salbar"
- [7] "other"     "NA"        "carspp"    "equvar"    "rock"      "moss"
-[13] "kalmic"    "carapp"    "lichen"    "caraqu"    "equarv"    "junmer"
-[19] "junarc"    "casmer"    "phygla"    "pinvul"    "jundru"    "galhul"
-[25] "lupspp"    "antalp"    "salix gla" "casspp"    "carnig"    "salixgla"
-[31] "galhum"    "sd"        "carmer"
 
 pf_data$SPP_sub <- plot_naming(pf_data$SPP_sub, "casspp", "casmer")
 pf_data$SPP_sub <- plot_naming(pf_data$SPP_sub, "salixgla", "salgla")
@@ -264,18 +197,18 @@ pf_data$SPP_sub <- plot_naming(pf_data$SPP_sub, "sd", "?")
 
 unique(pf_data$SPP_sub)
 
-[1] "x"      "caraur" "litter" "soil"   "triglu" "salbar" "other"  "NA"
- [9] "carspp" "equvar" "rock"   "moss"   "kalmic" "carapp" "lichen" "caraqu"
-[17] "equarv" "junmer" "junarc" "casmer" "phygla" "pinvul" "jundru" "galhul"
-[25] "lupspp" "antalp" "salgla" "carnig" "galhum" "?"      "carmer"
+# [1] "x"      "caraur" "litter" "soil"   "triglu" "salbar" "other"  "NA"
+# [9] "carspp" "equvar" "rock"   "moss"   "kalmic" "carapp" "lichen" "caraqu"
+# [17] "equarv" "junmer" "junarc" "casmer" "phygla" "pinvul" "jundru" "galhul"
+# [25] "lupspp" "antalp" "salgla" "carnig" "galhum" "?"      "carmer"
 
 pf_data$SPP <- pf_data$SPP_sub
 
 #---------------------------------------
 unique(pf_data$TISSUE)
 # [1] ""            "leaf"        "flower"      "stem"        "flower_stem"
- [6] "fl"          "stem "       "f"           "sflst"       "FL"
-[11] "LF"          "ls"
+# [6] "fl"          "stem "       "f"           "sflst"       "FL"
+# [11] "LF"          "ls"
 
 pf_data$TISSUE <- plot_naming(pf_data$TISSUE, "lf", "leaf")
 pf_data$TISSUE <- plot_naming(pf_data$TISSUE, "LF", "leaf")
@@ -315,11 +248,19 @@ pf_data$PLOT <- plot_naming(pf_data$PLOT, "24w", "24")
 
 unique(pf_data$PLOT)
 
+
+
+#----------------------------------------------
+# this would be good to clean up
+unique(pf_data$Observer)
+
+
+
 ###########################################################################
 
 # write out pf file here
 
-write.csv(pf_data, file = "cleaned_Garibaldi_point_frame_data.csv")
+write.csv(pf_data, file = "./Point_frame_data/cleaned_Garibaldi_point_frame_data.csv")
 
 
 #####################################   
@@ -343,7 +284,7 @@ library(car)
 library(ggplot2)
 
 #import point frame data
-#pfdata <- read.csv("cleaned_Garibaldi_point_frame_data.csv", header=TRUE)
+#pfdata <- read.csv("./Point_frame_data/cleaned_Garibaldi_point_frame_data.csv", header=TRUE)
 
 pfdata <- pfdata[,-1]
 
@@ -363,9 +304,9 @@ sppmat <-  NULL
 
 # for loop to determine presence or absence of each species at each order within each point
 for (i in 1:length(SPPlist)){
-X <- rep(0,nrow(pfdata))
-X[which(pfdata$SPP==SPPlist[i])]=1
-sppmat <- cbind(sppmat,X)
+  X <- rep(0,nrow(pfdata))
+  X[which(pfdata$SPP==SPPlist[i])]=1
+  sppmat <- cbind(sppmat,X)
 }
 
 #add species names as column names
@@ -381,8 +322,8 @@ aggsppmat <-  NULL
 
 # for loop to determine presence or absence of each species at each point
 for (i in 1:length(SPPlist)){
-aggX <- aggregate(df[,(8+i)]~ filename+Y+X+PLOT+TRTMT+SITE+Observer+DATE, data=df, "max")[9]
-aggsppmat <- cbind(aggsppmat, as.matrix(aggX))
+  aggX <- aggregate(df[,(8+i)]~ filename+Y+X+PLOT+TRTMT+SITE+Observer+DATE, data=df, "max")[9]
+  aggsppmat <- cbind(aggsppmat, as.matrix(aggX))
 }
 colnames(aggsppmat)=SPPlist
 
@@ -647,12 +588,3 @@ adonis(species.data ~ PLOT*Observer*DATE, data=site.data, permutations=9999)
 #  http://ecology.msu.montana.edu/labdsv/R/labs/lab13/lab13.html  
 #
 #####################################
-
-
-
-
-
-
-
-
-
