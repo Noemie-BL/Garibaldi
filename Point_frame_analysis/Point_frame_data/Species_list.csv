@@ -1,0 +1,27 @@
+SPP_code,Species name,Description
+x,Not measured,These were points that we did not measure – 30/100 points were not measured in many plots
+other,Other,"These were points that hit something other than the soil, rock or a species (e.g. tags, sensors, etc)"
+litter,Litter,Dead material that was no longer attached to the plants
+soil,Soil,Bare soil without moss or lichen on it
+rock,Rock,Points that hit rocks where a rock was defined as anything larger than 1cm diameter
+moss,Bryophyte ,All bryophytes were grouped together as no one knew them to species
+lichen,Lichen,All lichen were grouped together as no one knew them to species
+caraur,Carex aurea,
+triglu,Triantha glutinosa,
+salbar,Salix barclayi,
+carspp,Carex spp. ,A sedge we could not ID to species
+equvar,Equisetum variegatum,
+kalmic,Kalmia microphylla,
+caraqu,Carex aquatilis,
+equarv,Equisetum arvense,
+junmer,Juncus mertensiana,
+junarc,Juncus arcticus,
+casmer,Cassiope mertensiana,
+phygla,Phyllodoce glanduliflora,
+pinvul,Pinguicula vulgaris,
+jundru,Juncus drummondii ,
+lupspp,Lupinus spp. ,
+antalp,Antennaria alpina,
+salgla,Salix glauca,
+carnig,Carex nigricans,
+galhum,Gaultheria humifusa,
