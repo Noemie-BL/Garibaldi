@@ -376,8 +376,8 @@ fisher.alpha(species.data) #this is Fisher's alpha from the log-series distribut
 site.data$shannon<-(diversity(species.data, index = "shannon"))#makes a new column in site data with the shannon values
 
 # effects of OBSERVER on shannon diversity
-model1<-lm(shannon~OBSERVER, data =site.data) 
-#summary(lm(shannon~OBSERVER, data =site.data))
+model1<-lm(shannon~Observer, data =site.data)
+#summary(lm(shannon~Observer, data =site.data))
 anova(model1)
 
 # effects of Site on shannon diversity
@@ -405,6 +405,11 @@ ggplot(data=site.data, aes(x=SITE, y=shannon, colour=Observer)) + geom_point(siz
 
 ggplot(data=site.data, aes(x=TRTMT, y=shannon, colour=SITE)) + geom_point(size=3)+
   stat_smooth(method = "lm")#add the line
+
+# example of how to save a jpeg image in R
+jpeg("./Point_frame_figures/Shannon_diversity_OTC_site.jpg", width = 856, height = 540)
+ggplot(data=site.data, aes(x=TRTMT, y=shannon, colour=SITE)) + geom_point(size=3, position = "jitter")
+dev.off()
 
 
 #####################################
