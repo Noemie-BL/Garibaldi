@@ -10,21 +10,18 @@ caraur,Carex aurea
 triglu,Triantha glutinosa
 salbar,Salix barclayi
 carspp,Carex spp. - a sedge we could not ID to species
-equvar,
-kalmic,
-carapp,
-caraqu,
-equarv,
-junmer,
-junarc,
-casmer,
-phygla,
-pinvul,
-jundru,
-galhul,
-lupspp,
-antalp,
-salgla,
-carnig,
-galhum,
-carmer,
+equvar,Equisetum variegatum
+kalmic,Kalmia microphylla var. Microphylla
+caraqu,Carex aquatilis
+equarv,Equisetum arvense
+junmer,Juncus mertensiana
+junarc,Juncus arcticus
+casmer,Cassiope mertensiana
+phygla,Phyllodoce glanduliflora
+pinvul,Pinguicula vulgaris
+jundru,Juncus drummondii 
+lupspp,Lupinus spp. 
+antalp,Antennaria alpina
+salgla,Salix glauca
+carnig,Carex nigricans
+galhum,Gaultheria humifusa

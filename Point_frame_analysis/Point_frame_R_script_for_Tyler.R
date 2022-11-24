@@ -194,7 +194,11 @@ pf_data$SPP_sub <- plot_naming(pf_data$SPP_sub, "triglu (?) pink", "triglu")
 pf_data$SPP_sub <- plot_naming(pf_data$SPP_sub, "casspp", "casmer")
 pf_data$SPP_sub <- plot_naming(pf_data$SPP_sub, "salixgla", "salgla")
 pf_data$SPP_sub <- plot_naming(pf_data$SPP_sub, "salix gla", "salgla")
-pf_data$SPP_sub <- plot_naming(pf_data$SPP_sub, "sd", "?")
+pf_data$SPP_sub <- plot_naming(pf_data$SPP_sub, "sd", "other")
+pf_data$SPP_sub <- plot_naming(pf_data$SPP_sub, "NA", "other")
+pf_data$SPP_sub <- plot_naming(pf_data$SPP_sub, "galhul", "galhum")
+pf_data$SPP_sub <- plot_naming(pf_data$SPP_sub, "carmer", "casmer")
+pf_data$SPP_sub <- plot_naming(pf_data$SPP_sub, "carapp", "casspp")
 
 unique(pf_data$SPP_sub)
 
@@ -285,7 +289,7 @@ library(car)
 library(ggplot2)
 
 #import point frame data
-#pfdata <- read.csv("./Point_frame_data/cleaned_Garibaldi_point_frame_data.csv", header=TRUE)
+pfdata <- read.csv("./Point_frame_data/cleaned_Garibaldi_point_frame_data.csv", header=TRUE)
 
 pfdata <- pfdata[,-1]
 
