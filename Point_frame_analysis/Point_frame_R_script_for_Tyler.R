@@ -29,6 +29,7 @@ library(lubridate)
 
 # first change path to where you want the figures output to
 pathname <- "/home/celphin/projects/def-henryg/Garibaldi_Lake_data_summer2022/celphin_point_frame_workingdir/output/"
+setwd("~/GitHub/Garibaldi/Point_frame_analysis")
 
 # Split filename column into different factors and change column headers before import
 
