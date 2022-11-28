@@ -520,6 +520,11 @@ summary(quad$height_adj)
 
 
 
+# Force negative height values to zero
+
+quad$height_adj <- ifelse(quad$height_adj <0, 0, quad$height_adj)
+
+
 
 ####################################################################################################
 
