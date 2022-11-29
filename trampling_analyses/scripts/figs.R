@@ -62,7 +62,7 @@ mytheme <-   theme_classic() +
 
 # # PLOTS
 
-# height ~ elev by disturbance & species
+# height ~ elev by disturbance & species: only Carex spp shows an interesting interaction with elev, so leave out elev for now
 
 x <- dat$altitude
 y <- dat$height_mm
