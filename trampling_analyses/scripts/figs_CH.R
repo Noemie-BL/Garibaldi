@@ -97,7 +97,7 @@ ggsave(gplot, filename = 'height_dist.pdf')
 
 # max diameter boxplot of disturbance vs no distubance by species
 
-ggplot(dat, aes(x=dist, y=mxdiam_mm, fill=dist)) +
+widthplot <- ggplot(dat, aes(x=dist, y=mxdiam_mm, fill=dist)) +
   geom_boxplot() +
   facet_grid(.~ species, labeller = as_labeller(species_names)) + #separate by species and rename with full species names
   geom_signif(comparisons = list(c("0", "1")), map_signif_level=TRUE) + #significance stars
@@ -105,11 +105,14 @@ ggplot(dat, aes(x=dist, y=mxdiam_mm, fill=dist)) +
   theme(axis.text.x = element_text(angle = 60, hjust=1)) + #angle text
   ylab("Maximum diameter (mm)") +
   theme(legend.position = "none") #no legend
+widthplot
+
+ggsave(widthplot, filename= 'width_dist.pdf')
 
 
 # bud number boxplot of disturbance vs no distubance by species
 
-ggplot(dat, aes(x=dist, y=buds, fill=dist)) +
+budplot <- ggplot(dat, aes(x=dist, y=buds, fill=dist)) +
   geom_boxplot() +
   facet_grid(.~ species, labeller = as_labeller(species_names)) + #separate by species and rename with full species names
   geom_signif(comparisons = list(c("0", "1")), map_signif_level=TRUE) + #significance stars
@@ -117,11 +120,13 @@ ggplot(dat, aes(x=dist, y=buds, fill=dist)) +
   theme(axis.text.x = element_text(angle = 60, hjust=1)) + #angle text
   ylab("Buds") +
   theme(legend.position = "none") #no legend
+budplot
 
+ggsave(budplot, filename = 'bud_dist.pdf')
 
 # flower number boxplot of disturbance vs no distubance by species
 
-ggplot(dat, aes(x=dist, y=flws, fill=dist)) +
+flowersplot <- ggplot(dat, aes(x=dist, y=flws, fill=dist)) +
   geom_boxplot() +
   facet_grid(.~ species, labeller = as_labeller(species_names)) + #separate by species and rename with full species names
   geom_signif(comparisons = list(c("0", "1")), map_signif_level=TRUE) + #significance stars
@@ -129,7 +134,9 @@ ggplot(dat, aes(x=dist, y=flws, fill=dist)) +
   theme(axis.text.x = element_text(angle = 60, hjust=1)) + #angle text
   ylab("Flowers") +
   theme(legend.position = "none") #no legend
+flowersplot
 
+ggsave(flowersplot, filename = 'flowers_dist.pdf')
 
 # fruit number boxplot of disturbance vs no distubance by species
 
