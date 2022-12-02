@@ -115,6 +115,10 @@ ggplot(dat, aes(x=dist, y=buds, fill=dist)) +
   ylab("Buds") +
   theme(legend.position = "none") #no legend
 
+#Two way ANOVA for bud number with species and disturbance as factors
+budANOVA <- aov(buds ~ species * dist, data = dat)
+summary(budANOVA)
+
 
 # flower number boxplot of disturbance vs no distubance by species
 
@@ -127,6 +131,10 @@ ggplot(dat, aes(x=dist, y=flws, fill=dist)) +
   ylab("Flowers") +
   theme(legend.position = "none") #no legend
 
+#Two way ANOVA for flower number with species and disturbance as factors
+flowerANOVA <- aov(flws ~ species * dist, data = dat)
+summary(flowerANOVA)
+
 
 # fruit number boxplot of disturbance vs no distubance by species
 
@@ -138,6 +146,10 @@ ggplot(dat, aes(x=dist, y=frts, fill=dist)) +
   theme(axis.text.x = element_text(angle = 60, hjust=1)) + #angle text
   ylab("Fruits") +
   theme(legend.position = "none") #no legend
+
+#Two way ANOVA for fruit number with species and disturbance as factors
+fruitANOVA <- aov(frts ~ species * dist, data = dat)
+summary(fruitANOVA)
 
 
 # bud flower and fruit number boxplot of disturbance vs no distubance by species
