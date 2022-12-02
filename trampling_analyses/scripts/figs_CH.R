@@ -1,5 +1,3 @@
-### *** NEED TO RUN MERGE_FIELDDATA.R BEFORE RUNNING ANYTHING HERE
-
 # Aims:
 # 1. Visualize data
 
