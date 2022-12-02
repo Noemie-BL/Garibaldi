@@ -83,6 +83,48 @@ oo <- dat$height_mm #observed values
 cor(ff, oo) #correlation between predicted and observed values
 
 
+# Question: Does disturbance affect plant height?
+
+# Fit model
+mod <- lmer(height_mm ~ dist + (1|transect) + (1|species), data = dat)
+
+# Model summary
+summary(mod)
+
+# Goodness of fit
+ff <- fitted(mod) #predicted values
+oo <- dat$height_mm #observed values
+cor(ff, oo) #correlation between predicted and observed values
+
+
+# Question: Does disturbance affect plant diameter?
+
+# Fit model
+mod <- lmer(mxdiam_mm ~ dist + (1|transect) + (1|species), data = dat)
+
+# Model summary
+summary(mod)
+
+# Goodness of fit ## IP: REMOVE NAs
+ff <- fitted(mod) #predicted values
+oo <- dat$flws #observed values
+cor(ff, oo) #correlation between predicted and observed values
+
+
+# Question: Does disturbance affect plant reproduction?
+
+# Fit model
+mod <- lmer(flws ~ dist + (1|transect) + (1|species), data = dat)
+
+# Model summary
+summary(mod)
+
+# Goodness of fit ## IP: REMOVE NAs
+ff <- fitted(mod) #predicted values
+oo <- dat$flws #observed values
+cor(ff, oo) #correlation between predicted and observed values
+
+
 
 
 ####################################################################################################
