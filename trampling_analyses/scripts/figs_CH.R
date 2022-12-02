@@ -39,6 +39,7 @@ load('quad.RData') #gps & transect data matched to quad data (merge_fielddata.R)
 
 # # DATA # #
 
+setwd(figs)
 dat <- quad #generic dataframe name
 
 # Convert categorical predictor variables to factor
@@ -51,10 +52,10 @@ dat[ff] <- lapply(dat[ff], as.factor)
 setwd(figs) #location to save figures
 
 mytheme <-   theme_classic() +
-  theme(axis.text.x = element_text(colour = 'black', size = 25), #x axis text size
+  theme(axis.text.x = element_text(colour = 'black', size = 20), #x axis text size
         axis.text.y = element_text(colour = 'black', size = 25), #y axis text size
         axis.title.x = element_text(size = 28), #x axis label size
-        axis.title.y = element_text(size = 28), #x axis label size
+        axis.title.y = element_text(size = 28), #y axis label size
         plot.title = element_text(size = 30, #title size
                                   hjust = 0.5), #align title to center
         legend.title = element_text(size = 24), legend.text = element_text(size = 22)) 
@@ -82,14 +83,18 @@ ggplot(dat, aes(x, y, color = dist)) +
 #full species names
 species_names <- c('carspp'= "Carex spp.", 'casmer' = "Cassiope mertensiana", 'phyemp' = "Phyllodoce empetriformis", 'phygla' = "Phyllodoce glanduliflora", 'vacova' = "Vaccinium ovalifolium")
 
-ggplot(dat, aes(x=dist, y=height_mm, fill=dist)) +
+gplot <- ggplot(dat, aes(x=dist, y=height_mm, fill=dist)) +
   geom_boxplot() +
   facet_grid(.~ species, labeller = as_labeller(species_names)) + #separate by species and rename with full species names
-  geom_signif(comparisons = list(c("0", "1")), map_signif_level=TRUE) + #significance stars
+  # geom_signif(comparisons = list(c("0", "1")), map_signif_level=TRUE) + #significance stars --> cannot run Wilcox test with nested sampling design
   scale_x_discrete(labels=c("0" = "Off Trail", "1" = "On Trail")) + #rename dist variable from 0 and 1
   theme(axis.text.x = element_text(angle = 60, hjust=1)) + #angle text
   ylab("Height (mm)") +
-  theme(legend.position = "none") #no legend
+  theme(legend.position = "none") + #no legend 
+  mytheme
+gplot
+
+ggsave(gplot, filename = 'height_dist.pdf')
 
 
 # max diameter boxplot of disturbance vs no distubance by species
