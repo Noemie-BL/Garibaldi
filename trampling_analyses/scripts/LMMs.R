@@ -1,5 +1,3 @@
-### *** NEED TO RUN MERGE_FIELDDATA.R BEFORE RUNNING ANYTHING HERE
-
 # Aims:
 # 1. Fit LMMs to test effects of trampling and elevation on plant responses
 # 2. Check model residuals & goodness of fit
@@ -8,8 +6,8 @@
 # Date created: 11 Nov 2022
 # Date updated: 16 Nov 2022
 
-###*** install these packages
 # # LIBRARIES # # 
+# install.packages('tidyverse', 'lme4', 'lmerTest')
 library(tidyverse)
 library(lme4)
 library(lmerTest)
