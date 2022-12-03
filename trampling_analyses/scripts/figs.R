@@ -9,7 +9,6 @@
 
 # # LIBRARIES # #
 library(ggplot2)
-library(ggsignif)
 
 
 rm(list=ls()) 
@@ -85,7 +84,6 @@ species_names <- c('carspp'= "Carex spp.", 'casmer' = "Cassiope mertensiana", 'p
 ggplot(dat, aes(x=dist, y=height_mm, fill=dist)) +
   geom_boxplot() +
   facet_grid(.~ species, labeller = as_labeller(species_names)) + #separate by species and rename with full species names
-  geom_signif(comparisons = list(c("0", "1")), map_signif_level=TRUE) + #significance stars
   scale_x_discrete(labels=c("0" = "Off Trail", "1" = "On Trail")) + #rename dist variable from 0 and 1
   theme(axis.text.x = element_text(angle = 60, hjust=1)) + #angle text
   ylab("Height (mm)") +
@@ -97,7 +95,6 @@ ggplot(dat, aes(x=dist, y=height_mm, fill=dist)) +
 ggplot(dat, aes(x=dist, y=mxdiam_mm, fill=dist)) +
   geom_boxplot() +
   facet_grid(.~ species, labeller = as_labeller(species_names)) + #separate by species and rename with full species names
-  geom_signif(comparisons = list(c("0", "1")), map_signif_level=TRUE) + #significance stars
   scale_x_discrete(labels=c("0" = "Off Trail", "1" = "On Trail")) + #rename dist variable from 0 and 1
   theme(axis.text.x = element_text(angle = 60, hjust=1)) + #angle text
   ylab("Maximum diameter (mm)") +
@@ -109,15 +106,10 @@ ggplot(dat, aes(x=dist, y=mxdiam_mm, fill=dist)) +
 ggplot(dat, aes(x=dist, y=buds, fill=dist)) +
   geom_boxplot() +
   facet_grid(.~ species, labeller = as_labeller(species_names)) + #separate by species and rename with full species names
-  geom_signif(comparisons = list(c("0", "1")), map_signif_level=TRUE) + #significance stars
   scale_x_discrete(labels=c("0" = "Off Trail", "1" = "On Trail")) + #rename dist variable from 0 and 1
   theme(axis.text.x = element_text(angle = 60, hjust=1)) + #angle text
   ylab("Buds") +
   theme(legend.position = "none") #no legend
-
-#Two way ANOVA for bud number with species and disturbance as factors
-budANOVA <- aov(buds ~ species * dist, data = dat)
-summary(budANOVA)
 
 
 # flower number boxplot of disturbance vs no distubance by species
@@ -125,15 +117,10 @@ summary(budANOVA)
 ggplot(dat, aes(x=dist, y=flws, fill=dist)) +
   geom_boxplot() +
   facet_grid(.~ species, labeller = as_labeller(species_names)) + #separate by species and rename with full species names
-  geom_signif(comparisons = list(c("0", "1")), map_signif_level=TRUE) + #significance stars
-  scale_x_discrete(labels=c("0" = "Off Trail", "1" = "On Trail")) + #rename dist variable from 0 and 1
+ scale_x_discrete(labels=c("0" = "Off Trail", "1" = "On Trail")) + #rename dist variable from 0 and 1
   theme(axis.text.x = element_text(angle = 60, hjust=1)) + #angle text
   ylab("Flowers") +
   theme(legend.position = "none") #no legend
-
-#Two way ANOVA for flower number with species and disturbance as factors
-flowerANOVA <- aov(flws ~ species * dist, data = dat)
-summary(flowerANOVA)
 
 
 # fruit number boxplot of disturbance vs no distubance by species
@@ -141,15 +128,10 @@ summary(flowerANOVA)
 ggplot(dat, aes(x=dist, y=frts, fill=dist)) +
   geom_boxplot() +
   facet_grid(.~ species, labeller = as_labeller(species_names)) + #separate by species and rename with full species names
-  geom_signif(comparisons = list(c("0", "1")), map_signif_level=TRUE) + #significance stars
   scale_x_discrete(labels=c("0" = "Off Trail", "1" = "On Trail")) + #rename dist variable from 0 and 1
   theme(axis.text.x = element_text(angle = 60, hjust=1)) + #angle text
   ylab("Fruits") +
   theme(legend.position = "none") #no legend
-
-#Two way ANOVA for fruit number with species and disturbance as factors
-fruitANOVA <- aov(frts ~ species * dist, data = dat)
-summary(fruitANOVA)
 
 
 # bud flower and fruit number boxplot of disturbance vs no distubance by species
@@ -159,7 +141,6 @@ dat$BudsFlwsFrts <- rowSums(dat[ , c(5,6,7)])
 ggplot(dat, aes(x=dist, y=BudsFlwsFrts, fill=dist)) +
   geom_boxplot() +
   facet_grid(.~ species, labeller = as_labeller(species_names)) + #separate by species and rename with full species names
-  geom_signif(comparisons = list(c("0", "1")), map_signif_level=TRUE) + #significance stars
   scale_x_discrete(labels=c("0" = "Off Trail", "1" = "On Trail")) + #rename dist variable from 0 and 1
   theme(axis.text.x = element_text(angle = 60, hjust=1)) + #angle text
   ylab("Reproductive structures") +
