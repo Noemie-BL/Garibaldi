@@ -12,6 +12,14 @@ install.packages("reshape2")
 install.packages("ggplot2")
 install.packages("scales")
 install.packages("lubridate")
+install.packages("vegan")
+install.packages("BiodiversityR") 
+install.packages("car")
+install.packages("ggplot2")
+install.packages("tcltk")
+install.packages("permute")
+install.packages("lattice")
+install.packages("ggthemes")
 
 #--------------------------
 library(plyr)
@@ -26,9 +34,14 @@ library(reshape2)
 library(ggplot2)
 library(scales)
 library(lubridate)
+library(BiodiversityR)
+library(vegan)
+library(car)
+library(ggplot2)
+library(ggthemes)
 
 # first change path to where you want the figures output to
-pathname <- "/home/celphin/projects/def-henryg/Garibaldi_Lake_data_summer2022/celphin_point_frame_workingdir/output/"
+pathname <- "/User/Desktop/UBC/Garibaldi R"
 setwd("~/GitHub/Garibaldi/Point_frame_analysis")
 
 # Split filename column into different factors and change column headers before import
@@ -174,6 +187,7 @@ pf_data$SPP <- plot_naming(pf_data$SPP, "MOSS", "moss")
 pf_data$SPP <- plot_naming(pf_data$SPP, " equvar", "equvar")
 pf_data$SPP <- plot_naming(pf_data$SPP, "eqivar", "equvar")
 pf_data$SPP <- plot_naming(pf_data$SPP, "equvsr", "equvar")
+pf_data$SPP <- plot_naming(pf_data$SPP, "equarv",)
 
 pf_data$SPP_sub <- plot_naming(pf_data$SPP, "tomst", "other")
 pf_data$SPP_sub <- plot_naming(pf_data$SPP_sub, "soil p1", "other")
@@ -259,6 +273,17 @@ unique(pf_data$PLOT)
 # this would be good to clean up
 unique(pf_data$Observer)
 
+pf_data$Observer <- plot_naming(pf_data$Observer, "courtney", "Courtney")
+pf_data$Observer <- plot_naming(pf_data$Observer, "joanna", "Joanna")
+pf_data$Observer <- plot_naming(pf_data$Observer, "cc", "Courtney")
+pf_data$Observer <- plot_naming(pf_data$Observer, "spencer / cassandra", "Spencer/Cassandra")
+pf_data$Observer <- plot_naming(pf_data$Observer, "spencercourtney", "Spencer/Courtney")
+pf_data$Observer <- plot_naming(pf_data$Observer, "anya", "Anya")
+pf_data$Observer <- plot_naming(pf_data$Observer, "cassandra", "Cassandra")
+pf_data$Observer <- plot_naming(pf_data$Observer, "cassandra/anya", "Cassandra/Anya")
+pf_data$Observer <- plot_naming(pf_data$Observer, "vh", "Vincent")
+
+unique(pf_data$Observer)
 
 
 ###########################################################################
@@ -355,6 +380,9 @@ site.data <- aggregate(df2[,(8+1)]~ filename+PLOT+TRTMT+SITE+Observer+DATE, data
 #create mixed treatment of tree species and location
 site.data$SITE.TRTMT<- paste(site.data$SITE, site.data$TRTMT, sep=".")
 
+#creating a matrix including only known plant species (removing x, soil, rock, litter, other)
+plantspeciesonly.data = subset(aggsppmat1, select = -c(1,3,4,7,10))
+
 #write files to csv
 write.csv(species.data, file = "garibaldi_pf_species_matrix.csv")
 write.csv(site.data, file = "garibaldi_pf_site_matrix.csv")
@@ -437,7 +465,25 @@ model5<-lm(PielouJ~TRTMT, data =site.data)
 anova(model5)
 
 boxplot(shannon~SITE, data=site.data, col="light blue", xlab="SITE", ylab="Shannon Diversity Index", main="Shannon Diversity")
-boxplot(shannon~SITE.TRTMT, data=site.data, col="light blue", xlab="Site/TRTMT", ylab="Shannon Diversity Index", main="Shannon Diversity")
+
+#Revised Shannon vs Site/TRTMT graph
+ggplot(site.data, aes(x=SITE.TRTMT, y= shannon)) +
+  geom_boxplot(color = "black", fill = "light blue") +
+  theme_solarized_2() +
+  labs(x = 'Site/TRTMT', y = 'Shannon Diversity Index', title = 'Shannon Diversity') +
+  theme(axis.text.x = element_text(angle=90, vjust=0.5)) +
+  theme(plot.title = element_text(hjust = 0.5))
+
+boxplot(shannon~SITE.TRTMT, data=site.data, las=2, col="light blue", xlab="Site/TRTMT", ylab="Shannon Diversity Index", main="Shannon Diversity")
+
+#Revised PielouJ vs Site/TRTMT graph
+ggplot(site.data, aes(x=SITE.TRTMT, y=PielouJ)) +
+  geom_boxplot(color = "black", fill = "light blue") +
+  theme_solarized_2() +
+  labs(x = 'Site/TRTMT', y = 'PielouJ', title = "Pielou's J evenness") +
+  theme(axis.text.x = element_text(angle=90, vjust=0.5)) +
+  theme(plot.title = element_text(hjust = 0.5))
+
 boxplot(PielouJ~SITE.TRTMT, data=site.data, col="light blue", xlab="TRTMT", ylab="Pielou's J Evenness", main="Pielou's J evenness")
 
 #####################################
@@ -475,32 +521,33 @@ radlattice(radfit(colSums(species.data))) #other functions for rank-abundance, t
 #
 #####################################
 
-RankAbun.1 <- rankabundance(species.data) 
+
+RankAbun.1 <- rankabundance(plantspeciesonly.data) 
 RankAbun.1 # a dataframe of the rank of each species
-rankabunplot(RankAbun.1,scale='abundance', addit=FALSE, specnames=c(1:31)) #rank abudnance plot, labelling the most common 3 species
+rankabunplot(RankAbun.1,scale='abundance', addit=FALSE, specnames=c(1:31), srt = 45, xlim = c(1,32), ylim = c(0,650)) #rank abundance plot, labelling the most common 3 species
 
 site.data$TRTMT <- as.factor(site.data$TRTMT)
 site.data$SITE <- as.factor(site.data$SITE)
 site.data$Observer <- as.factor(site.data$Observer)
 site.data$SITE.TRTMT <- as.factor(site.data$SITE.TRTMT)
 
-rankabuncomp(species.data, y=site.data, factor=c('TRTMT'),scale='proportion', legend=TRUE) #click on where on plot you want to have the legend
-rankabuncomp(species.data, y=site.data, factor=c('SITE'),scale='proportion', legend=TRUE, specnames=c(1:3)) #click on where on plot you want to have the legend
-rankabuncomp(species.data, y=site.data, factor=c('Observer'),scale='proportion', legend=TRUE) #click on where on plot you want to have the legend
-rankabuncomp(species.data, y=site.data, factor=c('SITE.TRTMT'),scale='proportion', legend=TRUE) #click on where on plot you want to have the legend
+rankabuncomp(plantspeciesonly.data, y=site.data, factor=c('TRTMT'),scale='proportion', legend=TRUE) #click on where on plot you want to have the legend
+rankabuncomp(plantspeciesonly.data, y=site.data, factor=c('SITE'),scale='proportion', legend=TRUE, specnames=c(1:3)) #click on where on plot you want to have the legend
+rankabuncomp(plantspeciesonly.data, y=site.data, factor=c('Observer'),scale='proportion', legend=TRUE) #click on where on plot you want to have the legend
+rankabuncomp(plantspeciesonly.data, y=site.data, factor=c('SITE.TRTMT'),scale='proportion', legend=TRUE) #click on where on plot you want to have the legend
 
 #------------------------------------
-RankAbun.SAL <- rankabundance(species.data[which(site.data$SITE=="Salix"),]) 
+RankAbun.SAL <- rankabundance(plantspeciesonly.data[which(site.data$SITE=="Salix"),]) 
 RankAbun.SAL # a dataframe of the rank of each species
-rankabunplot(RankAbun.SAL,scale='abundance', addit=FALSE, specnames=c(1:12)) #rank abudnance plot, labelling the most common 3 species
+rankabunplot(RankAbun.SAL,scale='abundance', addit=FALSE, specnames=c(1:12), srt = 45, ylim = c(0,225)) #rank abudnance plot, labelling the most common 3 species
 
-RankAbun.CASS <- rankabundance(species.data[which(site.data$SITE=="Cassiope"),]) 
+RankAbun.CASS <- rankabundance(plantspeciesonly.data[which(site.data$SITE=="Cassiope"),]) 
 RankAbun.CASS # a dataframe of the rank of each species
-rankabunplot(RankAbun.CASS,scale='abundance', addit=FALSE, specnames=c(1:22)) #rank abudnance plot, labelling the most common 3 species
+rankabunplot(RankAbun.CASS,scale='abundance', addit=FALSE, specnames=c(1:22), srt = 45, ylim = c(0,175)) #rank abudnance plot, labelling the most common 3 species
 
-RankAbun.Mead <- rankabundance(species.data[which(site.data$SITE=="Meadow"),]) 
+RankAbun.Mead <- rankabundance(plantspeciesonly.data[which(site.data$SITE=="Meadow"),]) 
 RankAbun.Mead # a dataframe of the rank of each species
-rankabunplot(RankAbun.Mead,scale='abundance', addit=FALSE, specnames=c(1:14)) #rank abudnance plot, labelling the most common 3 species
+rankabunplot(RankAbun.Mead,scale='abundance', addit=FALSE, specnames=c(1:14), srt = 45, ylim = c(0,400)) #rank abudnance plot, labelling the most common 3 species
 
 #####################################
 #
@@ -598,3 +645,42 @@ adonis(species.data ~ PLOT*Observer*DATE, data=site.data, permutations=9999)
 #  http://ecology.msu.montana.edu/labdsv/R/labs/lab13/lab13.html  
 #
 #####################################
+
+####ADDITIONAL GRAPHS, ORDIPLOTS WITHOUT X, OTHER, LITTER, SOIL, ROCK
+
+
+myNMDSrevised<-metaMDS(plantspeciesonly.data,k=2)
+myNMDSrevised #most important: is the stress low?
+stressplot(myNMDSrevised) #low stress means that the observed dissimilarity between site pairs matches that on the 2-D plot fairly well (points hug the line)
+
+plot(myNMDSrevised)#sites are open circles and species are red +'s 
+
+#the following commands create layers on a plot, and should be run sequentially
+ordiplot(myNMDSrevised,type="n") #this clears the symbols from the plot
+orditorp(myNMDSrevised,display="species",col="red",air=0.01) #this adds red species names
+orditorp(myNMDSrevised,display="sites",cex=0.75,air=0.01) #this adds black site labels, cex is the font size
+
+# connect sites in the same treatment with a polygon use "ordihull" 
+ordiplot(myNMDSrevised,type="n") 
+ordihull(myNMDSrevised,groups=site.data$SITE,draw="polygon",col="grey90",label=T)
+orditorp(myNMDSrevised,display="species",col="red",air=0.01) 
+orditorp(myNMDSrevised,display="sites",cex=0.75,air=0.01)
+
+# link the sites within a treatment by lines
+ordiplot(myNMDSrevised,type="n") 
+ordispider(myNMDSrevised,groups=site.data$SITE.TRTMT,spiders="centroid",col="black",label=F)
+orditorp(myNMDSrevised,display="species",col="red",air=0.01) 
+orditorp(myNMDSrevised,display="sites",cex=0.75,air=0.01)
+
+#other plots
+ordiplot(myNMDSrevised,type="n") 
+ordihull(myNMDSrevised,groups=site.data$SITE,draw="polygon",col='blue',label=T)
+
+ordiplot(myNMDSrevised,type="n") 
+ordihull(myNMDSrevised,groups=site.data$Observer,draw="polygon",col='blue',label=T)
+
+ordiplot(myNMDSrevised,type="n") 
+ordispider(myNMDSrevised,groups=site.data$SITE,spiders="centroid",col="black",label=T)
+
+ordiplot(myNMDSrevised,type="n") 
+ordihull(myNMDSrevised,groups=site.data$SITE,draw="polygon",col='blue',label=T)
