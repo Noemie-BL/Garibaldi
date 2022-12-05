@@ -58,8 +58,8 @@ mytheme <-   theme_classic() +
         axis.title.y = element_text(size = 18), #y axis label size
         plot.title = element_text(size = 30, #title size
                                   hjust = 0.5), #align title to center
-        legend.title = element_text(size = 24), #Legend title text size
-        legend.text = element_text(size = 22)) #Actual legend text
+        legend.title = element_text(size = 18), #Legend title text size
+        legend.text = element_text(size = 10)) #Actual legend text
 
 
 # # PLOTS
@@ -84,8 +84,9 @@ ggplot(dat, aes(x, y, color = dist)) +
 #full species names
 species_names <- c('carspp'= "Carex spp.", 'casmer' = "Cassiope mertensiana", 'phyemp' = "Phyllodoce empetriformis", 'phygla' = "Phyllodoce glanduliflora", 'vacova' = "Vaccinium ovalifolium")
 
+dev.off()
 gplot <- ggplot(dat, aes(x=dist, y=height_mm, fill=dist)) +
-  geom_boxplot(fill=c('darkolivegreen', 'steelblue2', 'darkolivegreen', 'steelblue2', 'darkolivegreen', 'steelblue2', 'darkolivegreen', 'steelblue2', 'darkolivegreen', 'steelblue2')) +
+  geom_boxplot(fill=c('grey', 'red3', 'grey', 'red3', 'grey', 'red3', 'grey', 'red3', 'grey', 'red3')) +
   facet_grid(.~ species, labeller = as_labeller(species_names)) + #separate by species and rename with full species names
   # geom_signif(comparisons = list(c("0", "1")), map_signif_level=TRUE) + #significance stars --> cannot run Wilcox test with nested sampling design
   scale_x_discrete(labels=c("0" = "Off Trail", "1" = "On Trail")) + #rename dist variable from 0 and 1
@@ -103,8 +104,9 @@ ggsave(gplot, filename = 'height_dist.pdf')
 
 species_names <- c('carspp'= "Carex spp.", 'casmer' = "Cassiope mertensiana", 'phyemp' = "Phyllodoce empetriformis", 'phygla' = "Phyllodoce glanduliflora", 'vacova' = "Vaccinium ovalifolium")
 
+dev.off()
 widthplot <- ggplot(dat, aes(x=dist, y=mxdiam_mm, fill=dist)) +
-  geom_boxplot(fill=c('darkolivegreen', 'steelblue2', 'darkolivegreen', 'steelblue2', 'darkolivegreen', 'steelblue2', 'darkolivegreen', 'steelblue2', 'darkolivegreen', 'steelblue2')) + # colour palette
+  geom_boxplot(fill=cfill=c('grey', 'red3', 'grey', 'red3', 'grey', 'red3', 'grey', 'red3', 'grey', 'red3')) + # colour palette
   facet_grid(.~ species, labeller = as_labeller(species_names)) + #separate by species and rename with full species names
   # geom_signif(comparisons = list(c("0", "1")), map_signif_level=TRUE) + #significance stars
   scale_x_discrete(labels=c("0" = "Off Trail", "1" = "On Trail")) + #rename dist variable from 0 and 1
@@ -120,13 +122,14 @@ ggsave(widthplot, filename= 'width_dist.pdf')
 # bud number boxplot of disturbance vs no distubance by species
 
 budplot <- ggplot(dat, aes(x=dist, y=buds, fill=dist)) +
-  geom_boxplot() +
+  geom_boxplot(fill=c('grey', 'red3', 'grey', 'red3', 'grey', 'red3', 'grey', 'red3', 'grey', 'red3')) +
   facet_grid(.~ species, labeller = as_labeller(species_names)) + #separate by species and rename with full species names
   # geom_signif(comparisons = list(c("0", "1")), map_signif_level=TRUE) + #significance stars
   scale_x_discrete(labels=c("0" = "Off Trail", "1" = "On Trail")) + #rename dist variable from 0 and 1
   theme(axis.text.x = element_text(angle = 60, hjust=1)) + #angle text
   ylab("Buds") +
-  theme(legend.position = "none") #no legend
+  theme(legend.position = "none") + #no legend
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
 budplot
 
 ggsave(budplot, filename = 'bud_dist.pdf')
