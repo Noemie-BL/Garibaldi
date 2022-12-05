@@ -8,6 +8,7 @@
 # # LIBRARIES # #
 library(ggplot2)
 library(ggsignif)
+library(tidyr)
 
 rm(list=ls()) 
 
@@ -158,7 +159,9 @@ ggplot(dat, aes(x=dist, y=frts, fill=dist)) +
 
 # bud flower and fruit number boxplot of disturbance vs no distubance by species
 
-dat$BudsFlwsFrts <- rowSums(dat[ , c(5,6,7)])
+dat$BudsFlwsFrts <- rowSums(dat[ , c(5,6,7)])/dat$mxdiam_mm #NC edit: need to standardize repro counts
+dat <- drop_na(dat) #drop NA values to calculate correlation
+cor(dat$BudsFlwsFrts, dat$mxdiam_mm) #check that mxdiam and repro counts aren't correlated
 
 ggplot(dat, aes(x=dist, y=BudsFlwsFrts, fill=dist)) +
   geom_boxplot() +
