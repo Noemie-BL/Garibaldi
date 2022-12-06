@@ -104,20 +104,19 @@ ggsave(gplot, filename = 'height_dist.pdf')
 
 species_names <- c('carspp'= "Carex spp.", 'casmer' = "Cassiope mertensiana", 'phyemp' = "Phyllodoce empetriformis", 'phygla' = "Phyllodoce glanduliflora", 'vacova' = "Vaccinium ovalifolium")
 
-dev.off()
 widthplot <- ggplot(dat, aes(x=dist, y=mxdiam_mm, fill=dist)) +
-  geom_boxplot(fill=cfill=c('grey', 'red3', 'grey', 'red3', 'grey', 'red3', 'grey', 'red3', 'grey', 'red3')) + # colour palette
+  geom_boxplot(fill=c('grey', 'red3', 'grey', 'red3', 'grey', 'red3', 'grey', 'red3', 'grey', 'red3')) + # colour palette
   facet_grid(.~ species, labeller = as_labeller(species_names)) + #separate by species and rename with full species names
   # geom_signif(comparisons = list(c("0", "1")), map_signif_level=TRUE) + #significance stars
   scale_x_discrete(labels=c("0" = "Off Trail", "1" = "On Trail")) + #rename dist variable from 0 and 1
   theme(axis.text.x = element_text(angle = 60, hjust=1)) + #angle text
   ylab("Maximum diameter (mm)") +
-  theme(legend.position = "none") #no legend
+  theme(legend.position = "none") + #no legend
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))+ #gets rid of background
   mytheme
 widthplot
 
-ggsave(widthplot, filename= 'width_dist.pdf')
-
+ggsave('width_dist.pdf', height=12, width=20)#might help with the graph on GitHub
 
 # bud number boxplot of disturbance vs no distubance by species
 
