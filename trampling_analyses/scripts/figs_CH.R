@@ -56,7 +56,7 @@ mytheme <-   theme_classic() +
         axis.text.y = element_text(colour = 'black', size = 10), #y axis text size
         axis.title.x = element_text(size = 18), #x axis label size
         axis.title.y = element_text(size = 18), #y axis label size
-        plot.title = element_text(size = 30, #title size
+        plot.title = element_text(size = 18, #title size
                                   hjust = 0.5), #align title to center
         legend.title = element_text(size = 18), #Legend title text size
         legend.text = element_text(size = 10)) #Actual legend text
