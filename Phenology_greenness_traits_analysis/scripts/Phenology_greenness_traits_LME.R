@@ -105,6 +105,7 @@ CASS_trait_data <- list.files(path = "./data/Sphinx_CASS/Traits/", pattern = "*.
 #---------------------------------------
 # clean up data
 
+#-------------------------
 # trait data
 # convert n/a to NA
 data_column[which(data_column==orig_name1)] <- new_name1
@@ -116,6 +117,15 @@ data_column[which(data_column==orig_name1)] <- new_name1
 
 
 # convert VEG and FLOW columns to numeric
+
+
+#-------------------------
+# phenology data dates
+# convert to day of year
+
+
+
+
 
 
 
