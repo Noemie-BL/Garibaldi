@@ -612,3 +612,5 @@ write.csv(pinalb, file = 'P_albicaulis_Garibaldi_Aug2022.csv', row.names = F)
 # Manual edits: 
 # add dates from Gaia
 # add '1' for Gaia GPS points
+# rename column names to be more clear
+# rename locations to match trail names
