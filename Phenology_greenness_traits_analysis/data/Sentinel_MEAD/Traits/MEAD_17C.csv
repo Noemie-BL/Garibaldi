@@ -1,7 +1,7 @@
-plant,VEG_1,VEG_2,VEG_3,VEG_4,VEG_5,FLOW_1,FLOW_2,FLOW_3,FLOW_4,FLOW_5
-EQU_VAR,10.6,16.4,n/a,10,n/a,n/a,n/a,n/a,n/a,n/a
-EQU_ARV,5,9.9,10.5,13,12,n/a,n/a,n/a,n/a,n/a
-CAR_AQU,13.6,20,14.5,8,20.5,17.7,19.2,16.5,16,25
-SAL_BAR,11,3.9,4.5,4.5,12,n/a,n/a,n/a,n/a,n/a
-JUN_MER,9.7,6.7,5.5,6.5,13,11.9,8.8,12.5,12,19
-JUN_ARC,n/a,n/a,28,n/a,n/a,n/a,n/a,8.5,n/a,n/a
+Plot,plant,VEG_1,VEG_2,VEG_3,VEG_4,VEG_5,FLOW_1,FLOW_2,FLOW_3,FLOW_4,FLOW_5
+17C,EQU_VAR,10.6,16.4,n/a,10,n/a,n/a,n/a,n/a,n/a,n/a
+17C,EQU_ARV,5,9.9,10.5,13,12,n/a,n/a,n/a,n/a,n/a
+17C,CAR_AQU,13.6,20,14.5,8,20.5,17.7,19.2,16.5,16,25
+17C,SAL_BAR,11,3.9,4.5,4.5,12,n/a,n/a,n/a,n/a,n/a
+17C,JUN_MER,9.7,6.7,5.5,6.5,13,11.9,8.8,12.5,12,19
+17C,JUN_ARC,n/a,n/a,28,n/a,n/a,n/a,n/a,8.5,n/a,n/a
