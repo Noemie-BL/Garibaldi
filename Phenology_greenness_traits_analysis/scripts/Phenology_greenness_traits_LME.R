@@ -29,7 +29,7 @@ setwd("~/GitHub/Garibaldi/Phenology_greenness_traits_analysis")
 
 #------------------------------
 # import the data
-greenness_data <- read.table("./data/Photo_Phenology_Data.csv", header=TRUE, sep =",", dec = ".")
+#greenness_data <- read.table("./data/XXX.csv", header=TRUE, sep =",", dec = ".")
 
 
 
@@ -186,6 +186,29 @@ photo_pheno_data2$Trmt <- as.factor(photo_pheno_data2$Trmt)
 
 photo_pheno_data2_long <- gather(photo_pheno_data2, Stage, DOY, Elongation.S:Senescence, factor_key=TRUE)
 
+#--------------------------------------
+# flower count data
+
+# Cassiope
+
+CASS_FLWR_count_data$Site <- as.factor(CASS_FLWR_count_data$Site)
+CASS_FLWR_count_data$Plant.Flower.count <- as.factor(CASS_FLWR_count_data$Plant.Flower.count)
+CASS_FLWR_count_data$Trmt <- as.factor(CASS_FLWR_count_data$Trmt)
+
+CASS_FLWR_count_data$X <- as.numeric(CASS_FLWR_count_data$X)
+
+# Meadow
+
+MEAD_FLWR_count_data$Site <- as.factor(MEAD_FLWR_count_data$Site)
+MEAD_FLWR_count_data$Plant <- as.factor(MEAD_FLWR_count_data$Plant)
+MEAD_FLWR_count_data$Trmt <- as.factor(MEAD_FLWR_count_data$Trmt)
+
+MEAD_FLWR_count_data$Inflouresc_Count <- as.numeric(MEAD_FLWR_count_data$Inflouresc_Count)
+
+
+
+
+
 #------------------------------------------
 # Linear Mixed Effect Models
 
@@ -194,17 +217,22 @@ library(nlme)
 library(lme4)
 
 # phenology photo data 
-LM <- lm(DOY~Site+Trmt+Stage,  data=photo_pheno_data2_long)
-summary(LM)
+Pheno_LM <- lm(DOY~Site*Trmt*Stage,  data=photo_pheno_data2_long)
+summary(Pheno_LM)
 par(mfrow = c(2,2))
-plot(LM)
+plot(Pheno_LM)
 
 # trait data
 
+Veg_traits_LM <- lm(Leaf_height~Trmt*Site*plant, data=veg_trait_data_long)
+summary(Veg_traits_LM)
+par(mfrow = c(2,2))
+plot(Veg_traits_LM)
 
-
-# flower count data
-
+Flower_traits_LM <- lm(Flwr_height~Trmt*Site*plant, data=flwr_trait_data_long)
+summary(Flower_traits_LM)
+par(mfrow = c(2,2))
+plot(Flower_traits_LM)
 
 
 
@@ -219,13 +247,17 @@ par(mar=c(5.1,4.1,4.1,2.1))
 #<plot code>
 dev.off()
 
+#----------------
+# Phenology
+
 jpeg("./figures/Photo_phenology_boxplot.jpg", width = 1000, height = 1000)
 # sets the bottom, left, top and right margins
 par(mar=c(10,4.1,4.1,2.1))
 boxplot(DOY~Trmt+Site+Stage, data=photo_pheno_data2_long, las=2, col="light blue", xlab="Stage/TRTMT", ylab="DOY", main="Phenology")
 dev.off()
 
-
+#------------------
+# trait data
 jpeg("./figures/Flower_height_boxplot.jpg", width = 3000, height = 1000)
 # sets the bottom, left, top and right margins
 par(mar=c(15,4.1,4.1,2.1))
@@ -238,7 +270,42 @@ par(mar=c(15,4.1,4.1,2.1))
 boxplot(Leaf_height~Trmt+Site+plant, data=veg_trait_data_long, las=2, col="light blue", xlab="Spp/Site/TRTMT", ylab="Leaf Height (mm)", main="Veg Height")
 dev.off()
 
+#-------------------
+# flower count data
 
+jpeg("./figures/MEAD_flower_count_boxplot.jpg", width = 3000, height = 1000)
+# sets the bottom, left, top and right margins
+par(mar=c(15,4.1,4.1,2.1))
+boxplot(Inflouresc_Count~Trmt+Site+Plant, data=MEAD_FLWR_count_data, las=2, col="light blue", 
+        xlab="Spp/Site/TRTMT", ylab="Flower count", main="Flower count Meadow")
+dev.off()
+
+jpeg("./figures/CASS_flower_count_boxplot.jpg", width = 3000, height = 1000)
+# sets the bottom, left, top and right margins
+par(mar=c(15,4.1,4.1,2.1))
+boxplot(X~Trmt+Site+Plant.Flower.count, data=CASS_FLWR_count_data, las=2, col="light blue", 
+        xlab="Spp/Site/TRTMT", ylab="Flower count", main="Flower count Cassiope")
+dev.off()
+
+#-----------------------------
+# Greenness index plots
+
+
+# #plotting function daily values for a year
+# data_OTCdiff_DOYSUB <- data_OTCdiff_DOY[which(data_OTCdiff_DOY$DOY>150 & data_OTCdiff_DOY$DOY<250),]
+# jpeg(paste0("C:/Users/gaiaa/Documents/Cassandra/PhD/OTC_Climate_data/ITEX_climate_data/Figures/", filename, "_OTCdiff_DOY_SUMMER.jpg"), width = 1000, height = 500)
+# par(mar=c(20,20,4,4))
+# ggplot(data=data_OTCdiff_DOYSUB,
+#        aes(x = DOY, y = OTCdiff, colour = factor(Year)))+
+#   geom_hline(yintercept=0,linetype="dotted",size=1)+
+#   geom_line(aes(group=factor(Year)))+
+#   geom_smooth(aes(group=1),size=2,se=FALSE)+
+#   theme_bw()+
+#   theme(legend.title=element_text(size=20,face="bold"),legend.text=element_text(size=20),legend.position="top",legend.key = element_rect(colour = "white"),legend.key.size=unit(1,"cm"),axis.text.x=element_text(size=20,face="bold"),axis.text.y=element_text(hjust=1,size=20),axis.title.x=element_text(size=20,face="bold"),axis.title.y=element_text(angle=90,size=20,face="bold",vjust=0.5),axis.ticks = element_blank(),panel.grid.minor=element_blank(),panel.grid.major=element_blank())+
+#   ylab("Difference between Warm and Control (W-C, °C)\n")+
+#   xlab("\nDAY OF THE YEAR")+
+#   guides(col=guide_legend(nrow=2,title="YEAR "))
+# dev.off()
 
 
 
