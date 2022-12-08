@@ -28,9 +28,23 @@ setwd("~/GitHub/Garibaldi/Phenology_greenness_traits_analysis")
 
 #------------------------------
 # import the data
-photo_pheno_data <- read.table("./data/Photo_Phenology_Data.csv", header=TRUE, sep =",", dec = ".")
 greenness_data <- read.table("./data/Photo_Phenology_Data.csv", header=TRUE, sep =",", dec = ".")
 
+
+
+#----------------------------
+# phenology photo data
+photo_pheno_data <- read.table("./data/Photo_Phenology_Data.csv", header=TRUE, sep =",", dec = ".")
+
+# extract site, treatment, plot
+photo_pheno_data$file <- photo_pheno_data$Site
+
+photo_pheno_data$Plot <- sub("([A-Z]{3,4})_*", "", photo_pheno_data$file, ignore.case = TRUE)
+photo_pheno_data$Trmt <- sub("([0-9]{1,2})*", "", photo_pheno_data$Plot, ignore.case = TRUE)
+photo_pheno_data$Site <- sub("*_([0-9]{1,2})([W,C]{1})$", "", photo_pheno_data$file, ignore.case = TRUE)
+
+
+#----------------------------------
 # https://www.geeksforgeeks.org/merge-multiple-csv-files-using-r/?ref=rp
 
 # Mead flower counts
@@ -121,13 +135,24 @@ data_column[which(data_column==orig_name1)] <- new_name1
 
 #-------------------------
 # phenology data dates
-# convert to day of year
+# convert #-month to day of year
 
+# check all date formats
 
+# https://www.r-bloggers.com/2013/08/date-formats-in-r/
+# https://stackoverflow.com/questions/11609252/r-tick-data-merging-date-and-time-into-a-single-object
 
+# Alex
+photo_pheno_data2 <- photo_pheno_data
 
+photo_pheno_data2$Year <- rep("2022", nrow(photo_pheno_data2))
 
-
+for (i in 3:7){
+  photo_pheno_data2[,i] <- paste(photo_pheno_data2$Year, photo_pheno_data2[,i], sep = "-")
+  photo_pheno_data2[which(photo_pheno_data2[,i]==2022-NA),i] <- NA
+  photo_pheno_data2[,i] <- as.POSIXct(photo_pheno_data2[,i], format="%Y-%d-%m")
+  photo_pheno_data2[,i] <- yday(photo_pheno_data2[,i])
+}
 
 #------------------------------------------
 # Linear Mixed Effect Models
