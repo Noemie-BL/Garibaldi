@@ -229,13 +229,13 @@ dev.off()
 jpeg("./figures/Flower_height_boxplot.jpg", width = 3000, height = 1000)
 # sets the bottom, left, top and right margins
 par(mar=c(15,4.1,4.1,2.1))
-boxplot(Flwr_height~Trmt+Site+plant, data=flwr_trait_data_long, las=2, col="light blue", xlab="Stage/TRTMT", ylab="DOY", main="Phenology")
+boxplot(Flwr_height~Trmt+Site+plant, data=flwr_trait_data_long, las=2, col="light blue", xlab="Spp/Site/TRTMT", ylab="Flower Height (mm)", main="Flwr Height")
 dev.off()
 
 jpeg("./figures/Leaf_height_boxplot.jpg", width = 3000, height = 1000)
 # sets the bottom, left, top and right margins
 par(mar=c(15,4.1,4.1,2.1))
-boxplot(DOY~Trmt+Site+Stage, data=veg_trait_data_long, las=2, col="light blue", xlab="Stage/TRTMT", ylab="DOY", main="Phenology")
+boxplot(Leaf_height~Trmt+Site+plant, data=veg_trait_data_long, las=2, col="light blue", xlab="Spp/Site/TRTMT", ylab="Leaf Height (mm)", main="Veg Height")
 dev.off()
 
 
