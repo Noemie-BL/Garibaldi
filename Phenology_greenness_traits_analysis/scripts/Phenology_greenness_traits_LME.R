@@ -206,12 +206,9 @@ MEAD_FLWR_count_data$Trmt <- as.factor(MEAD_FLWR_count_data$Trmt)
 MEAD_FLWR_count_data$Inflouresc_Count <- as.numeric(MEAD_FLWR_count_data$Inflouresc_Count)
 
 
-
-
-
 #------------------------------------------
 # Linear Mixed Effect Models
-
+# https://www.r-bloggers.com/2017/12/linear-mixed-effect-models-in-r/
 
 library(nlme)
 library(lme4)
