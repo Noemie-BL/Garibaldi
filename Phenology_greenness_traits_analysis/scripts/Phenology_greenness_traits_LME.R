@@ -18,9 +18,9 @@ library(ggplot2)
 library(ggthemes)
 
 
-install.packages("devtools")
-library(devtools)
-install_github("https://github.com/TundraEcologyLab/tundra_lab_r_package")
+# install.packages("devtools")
+# library(devtools)
+# install_github("https://github.com/TundraEcologyLab/tundra_lab_r_package")
 
 
 #------------------------------
@@ -55,8 +55,8 @@ read_csv_withnames <- function(x){
   y$file <- sub(".csv$", "", y$filename, ignore.case = TRUE)
   y$file <- sub("./data/Sentinel_MEAD/Flower_Counts/", "", y$file, ignore.case = TRUE)
   y$Plot <- sub("(MEAD)_*", "", y$file, ignore.case = TRUE)
-  y$Trmt <- sub("(MEAD)_([0-9]{2})*", "", y$file, ignore.case = TRUE)
-  y$Site <- sub("*_([0-9]{2})([W,C]{1})", "", y$file, ignore.case = TRUE)
+  y$Trmt <- sub("(MEAD)_([0-9]{1,2})*", "", y$file, ignore.case = TRUE)
+  y$Site <- sub("*_([0-9]{1,2})([W,C]{1})", "", y$file, ignore.case = TRUE)
   return(y)
 }
 
@@ -72,8 +72,8 @@ read_csv_withnames <- function(x){
   y$file <- sub(".csv$", "", y$filename, ignore.case = TRUE)
   y$file <- sub("./data/Sentinel_MEAD/Traits/", "", y$file, ignore.case = TRUE)
   y$Plot <- sub("(MEAD)_*", "", y$file, ignore.case = TRUE)
-  y$Trmt <- sub("(MEAD)_([0-9]{2})*", "", y$file, ignore.case = TRUE)
-  y$Site <- sub("*_([0-9]{2})([W,C]{1})", "", y$file, ignore.case = TRUE)
+  y$Trmt <- sub("(MEAD)_([0-9]{1,2})*", "", y$file, ignore.case = TRUE)
+  y$Site <- sub("*_([0-9]{1,2})([W,C]{1})", "", y$file, ignore.case = TRUE)
   return(y)
 }
 
@@ -90,8 +90,8 @@ read_csv_withnames <- function(x){
   y$file <- sub("_FC.csv$", "", y$filename, ignore.case = TRUE)
   y$file <- sub("./data/Sphinx_CASS/Flower_Counts/", "", y$file, ignore.case = TRUE)
   y$Plot <- sub("(CASS)_*", "", y$file, ignore.case = TRUE)
-  y$Trmt <- sub("(CASS)_([0-9]{2})*", "", y$file, ignore.case = TRUE)
-  y$Site <- sub("*_([0-9]{2})([W,C]{1})", "", y$file, ignore.case = TRUE)
+  y$Trmt <- sub("(CASS)_([0-9]{1,2})*", "", y$file, ignore.case = TRUE)
+  y$Site <- sub("*_([0-9]{1,2})([W,C]{1})", "", y$file, ignore.case = TRUE)
   return(y)
 }
 
@@ -107,9 +107,9 @@ read_csv_withnames <- function(x){
   y$filename <- rep(x, nrow(y))
   y$file <- sub(".csv$", "", y$filename, ignore.case = TRUE)
   y$file <- sub("./data/Sphinx_CASS/Traits/", "", y$file, ignore.case = TRUE)
-  y$Plot <- sub("(MEAD)_*", "", y$file, ignore.case = TRUE)
-  y$Trmt <- sub("(MEAD)_([0-9]{2})*", "", y$file, ignore.case = TRUE)
-  y$Site <- sub("*_([0-9]{2})([W,C]{1})", "", y$file, ignore.case = TRUE)
+  y$Plot <- sub("(CASS)_*", "", y$file, ignore.case = TRUE)
+  y$Trmt <- sub("(CASS)_([0-9]{1,2})*", "", y$file, ignore.case = TRUE)
+  y$Site <- sub("*_([0-9]{1,2})([W,C]{1})", "", y$file, ignore.case = TRUE)
   return(y)
 }
 
@@ -128,21 +128,33 @@ CASS_trait_data <- list.files(path = "./data/Sphinx_CASS/Traits/", pattern = "*.
 trait_data <- rbind(MEAD_trait_data, CASS_trait_data)
 
 #make veg and flow columns long
-flwr_trait_data <- trait_data[,c(1:2,7:16)]
-veg_trait_data <- trait_data[,c(1:6,12:16)]
+flwr_trait_data <- trait_data[,c(1:2,8:16)]
+veg_trait_data <- trait_data[,c(1:7,13:16)]
 
 flwr_trait_data_long <- gather(flwr_trait_data, Flower, Flwr_height, FLOW_1:FLOW_5, factor_key=TRUE)
 veg_trait_data_long <- gather(veg_trait_data, Leaf, Leaf_height, VEG_1:VEG_5, factor_key=TRUE)
 
 
 # convert n/a to NA
-data_column[which(data_column=="n/a")] <- NA
+flwr_trait_data_long$Flwr_height[which(flwr_trait_data_long$Flwr_height=="n/a")] <- NA
+
+veg_trait_data_long$Leaf_height[which(veg_trait_data_long$Leaf_height=="n/a")] <- NA
 
 
 # convert Height columns to numeric
+veg_trait_data_long$Leaf_height <- as.numeric(veg_trait_data_long$Leaf_height)
+flwr_trait_data_long$Flwr_height <- as.numeric(flwr_trait_data_long$Flwr_height)
+
 
 # convert TRMT, site and Spp to factors
+veg_trait_data_long$Trmt <- as.factor(veg_trait_data_long$Trmt)
+flwr_trait_data_long$Trmt <- as.factor(flwr_trait_data_long$Trmt)
 
+veg_trait_data_long$Site <- as.factor(veg_trait_data_long$Site)
+flwr_trait_data_long$Site <- as.factor(flwr_trait_data_long$Site)
+
+veg_trait_data_long$plant <- as.factor(veg_trait_data_long$plant)
+flwr_trait_data_long$plant <- as.factor(flwr_trait_data_long$plant)
 
 
 #-------------------------
@@ -191,7 +203,9 @@ plot(LM)
 
 
 
-# 
+# flower count data
+
+
 
 
 
@@ -212,8 +226,17 @@ boxplot(DOY~Trmt+Site+Stage, data=photo_pheno_data2_long, las=2, col="light blue
 dev.off()
 
 
+jpeg("./figures/Flower_height_boxplot.jpg", width = 3000, height = 1000)
+# sets the bottom, left, top and right margins
+par(mar=c(15,4.1,4.1,2.1))
+boxplot(Flwr_height~Trmt+Site+plant, data=flwr_trait_data_long, las=2, col="light blue", xlab="Stage/TRTMT", ylab="DOY", main="Phenology")
+dev.off()
 
-
+jpeg("./figures/Leaf_height_boxplot.jpg", width = 3000, height = 1000)
+# sets the bottom, left, top and right margins
+par(mar=c(15,4.1,4.1,2.1))
+boxplot(DOY~Trmt+Site+Stage, data=veg_trait_data_long, las=2, col="light blue", xlab="Stage/TRTMT", ylab="DOY", main="Phenology")
+dev.off()
 
 
 
