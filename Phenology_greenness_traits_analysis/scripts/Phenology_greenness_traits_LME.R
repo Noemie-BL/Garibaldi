@@ -122,16 +122,27 @@ CASS_trait_data <- list.files(path = "./data/Sphinx_CASS/Traits/", pattern = "*.
 
 #-------------------------
 # trait data
+
+# join MEAD and CASS data
+
+trait_data <- rbind(MEAD_trait_data, CASS_trait_data)
+
+#make veg and flow columns long
+flwr_trait_data <- trait_data[,c(1:2,7:16)]
+veg_trait_data <- trait_data[,c(1:6,12:16)]
+
+flwr_trait_data_long <- gather(flwr_trait_data, Flower, Flwr_height, FLOW_1:FLOW_5, factor_key=TRUE)
+veg_trait_data_long <- gather(veg_trait_data, Leaf, Leaf_height, VEG_1:VEG_5, factor_key=TRUE)
+
+
 # convert n/a to NA
-data_column[which(data_column==orig_name1)] <- new_name1
+data_column[which(data_column=="n/a")] <- NA
 
-# remove spaces from species names
 
+# convert Height columns to numeric
 
 # convert TRMT, site and Spp to factors
 
-
-# convert VEG and FLOW columns to numeric
 
 
 #-------------------------
@@ -163,13 +174,6 @@ photo_pheno_data2$Trmt <- as.factor(photo_pheno_data2$Trmt)
 
 photo_pheno_data2_long <- gather(photo_pheno_data2, Stage, DOY, Elongation.S:Senescence, factor_key=TRUE)
 
-photo_pheno_data2[which(photo_pheno_data2$Stage==Elongation.S),] <- Elong.Start
-
-#----------------------------------
-# attache the dataset you wnat to run and run the code below
-
-#attach(photo_pheno_data2)
-
 #------------------------------------------
 # Linear Mixed Effect Models
 
@@ -177,10 +181,17 @@ photo_pheno_data2[which(photo_pheno_data2$Stage==Elongation.S),] <- Elong.Start
 library(nlme)
 library(lme4)
 
+# phenology photo data 
 LM <- lm(DOY~Site+Trmt+Stage,  data=photo_pheno_data2_long)
 summary(LM)
 par(mfrow = c(2,2))
 plot(LM)
+
+# trait data
+
+
+
+# 
 
 
 
@@ -189,13 +200,31 @@ plot(LM)
 
 # example of how to save a jpeg image in R
 jpeg("./figures/NAME.jpg", width = 856, height = 540)
+# sets the bottom, left, top and right margins # default below
+par(mar=c(5.1,4.1,4.1,2.1))
 #<plot code>
 dev.off()
 
-jpeg("./figures/Photo_phenology_boxplot.jpg", width = 856, height = 540)
-boxplot(DOY~Site+Trmt+Stage, data=photo_pheno_data2_long, las=2, col="light blue", xlab="Stage/TRTMT", ylab="DOY", main="Phenology")
+jpeg("./figures/Photo_phenology_boxplot.jpg", width = 1000, height = 1000)
+# sets the bottom, left, top and right margins
+par(mar=c(10,4.1,4.1,2.1))
+boxplot(DOY~Trmt+Site+Stage, data=photo_pheno_data2_long, las=2, col="light blue", xlab="Stage/TRTMT", ylab="DOY", main="Phenology")
 dev.off()
 
+
+
+
+
+
+
+
+
+
+
+
+
+#---------------------------------
+# other plotting code
 # other box plot code
 plot(DOY~Trmt+Stage, data=photo_pheno_data2_long, cex=1.2, xlab="Stage/TRTMT", ylab="DOY", main="Phenology")
 stripchart(DOY~Trmt+Stage, vertical = TRUE, method = "jitter", pch = 16,cex.lab=1.5,cex.axis=1.2,
