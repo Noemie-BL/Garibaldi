@@ -101,8 +101,19 @@ boxplot(DOY~Trmt+Site+Stage, data=photo_pheno_data2_long, las=2, col="light blue
 dev.off()
 
 
+#New figure for poster 
+#Courtney 
 
+plotdat<-subset(photo_pheno_data2_long, Stage!="Elongation.S"& DOY!=226)%>%#remove senescence outlier 
+  mutate(Stage=case_when(Stage=="Elongation.E"~"Elongation", 
+                         Stage=="M.Flower"~"Flower",
+                         Stage=="Seed"~"Seed",
+                         Stage=="Senescence"~"Senescence"))
 
-
+ggplot(data=plotdat, aes(x=Site, y=DOY))+
+  geom_boxplot(aes(x=Site, y=DOY, fill=Trmt))+
+  facet_wrap(~Stage, scales = "free")+ theme_classic()+
+  scale_fill_manual(values=c( "#89C5DA", "#DA5724"))+
+  labs(fill="Treatment")
 
 
