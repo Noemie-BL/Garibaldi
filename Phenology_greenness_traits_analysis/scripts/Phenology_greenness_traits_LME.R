@@ -15,6 +15,7 @@ library(BiodiversityR)
 library(vegan)
 library(car)
 library(ggplot2)
+library(ggthemes)
 
 
 install.packages("devtools")
@@ -154,23 +155,55 @@ for (i in 3:7){
   photo_pheno_data2[,i] <- yday(photo_pheno_data2[,i])
 }
 
+photo_pheno_data2$Site <- as.factor(photo_pheno_data2$Site)
+photo_pheno_data2$Spp <- as.factor(photo_pheno_data2$Spp)
+photo_pheno_data2$Trmt <- as.factor(photo_pheno_data2$Trmt)
+
+# make phenology data long
+
+photo_pheno_data2_long <- gather(photo_pheno_data2, Stage, DOY, Elongation.S:Senescence, factor_key=TRUE)
+
+photo_pheno_data2[which(photo_pheno_data2$Stage==Elongation.S),] <- Elong.Start
+
+#----------------------------------
+# attache the dataset you wnat to run and run the code below
+
+#attach(photo_pheno_data2)
+
 #------------------------------------------
 # Linear Mixed Effect Models
 
-library(lme)
 
+library(nlme)
+library(lme4)
 
-Y ~ TRMT * SITE  
-
-
+LM <- lm(DOY~Site+Trmt+Stage,  data=photo_pheno_data2_long)
+summary(LM)
+par(mfrow = c(2,2))
+plot(LM)
 
 
 
 #-----------------------------------
 # Figures
 
+# example of how to save a jpeg image in R
+jpeg("./figures/NAME.jpg", width = 856, height = 540)
+#<plot code>
+dev.off()
+
+jpeg("./figures/Photo_phenology_boxplot.jpg", width = 856, height = 540)
+boxplot(DOY~Site+Trmt+Stage, data=photo_pheno_data2_long, las=2, col="light blue", xlab="Stage/TRTMT", ylab="DOY", main="Phenology")
+dev.off()
+
+# other box plot code
+plot(DOY~Trmt+Stage, data=photo_pheno_data2_long, cex=1.2, xlab="Stage/TRTMT", ylab="DOY", main="Phenology")
+stripchart(DOY~Trmt+Stage, vertical = TRUE, method = "jitter", pch = 16,cex.lab=1.5,cex.axis=1.2,
+           col = "black", data=photo_pheno_data2_long, add=TRUE)
 
 
+# code to make histrogram for greenness?
+hist(total.fruits, col = "grey", main = "Total fruits", xlab = NULL)
 
 
 
