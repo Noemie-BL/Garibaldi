@@ -80,7 +80,7 @@ greenness_data$Date_form <- as.POSIXct(greenness_data$Date, format="%Y-%m-%d")
 greenness_data$Trmt <- factor(greenness_data$X, levels = c("W", "C"))
 
 # plot
-jpeg(paste0("./figures/Greenness_per_day_Site.jpg"), width = 2000, height = 600)
+jpeg(paste0("./figures/Greenness_per_day_Site.jpg"), width = 2000, height = 750)
 par(mar=c(20,20,4,4))
 ggplot(data=greenness_data,
        aes(x = Date_form, y = Moving_Avg_5, colour = factor(Trmt), group=Trmt))+
