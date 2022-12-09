@@ -45,8 +45,15 @@ greenness_data_by_plot <- group_by(greenness_data, PlotTrmt)
 
 greenness_plot_slope <- summarise(greenness_data_by_plot, slope=greenness_slope(Moving_Avg_5, Date))
 
-greenness_data$PlotTrmt <- as.factor(greenness_data$PlotTrmt)
+greenness_plot_slope$Plot <- as.factor(greenness_plot_slope$PlotTrmt)
 
+greenness_plot_slope$Site <- c("SAL","SAL","SAL","SAL","SAL","SAL","SAL","SAL",
+                               "CASS","CASS","CASS","CASS","CASS","CASS","CASS","CASS",
+                               "MEAD","MEAD","MEAD","MEAD","MEAD","MEAD","MEAD","MEAD")
+greenness_plot_slope$Site <- as.factor(greenness_plot_slope$Site)
+
+greenness_plot_slope$Trmt <- c("C","W","C","W","C","W","C","W","C","W","C","W","C","W","C","W","C","W","C","W","C","W","C","W")
+greenness_plot_slope$Trmt <- as.factor(greenness_plot_slope$Trmt)
 
 #------------------------------------------
 # Linear Mixed Effect Models
@@ -56,10 +63,10 @@ library(nlme)
 library(lme4)
 
 # greenness photo data 
-Pheno_LM <- lm(DOY~Site*Trmt*Stage,  data=photo_pheno_data2_long)
-summary(Pheno_LM)
+Green_Slope_LM <- lm(slope~Trmt,  data=greenness_plot_slope)
+summary(Green_Slope_LM)
 par(mfrow = c(2,2))
-plot(Pheno_LM)
+plot(Green_Slope_LM)
 
 
 #-----------------------------------
@@ -70,28 +77,28 @@ plot(Pheno_LM)
 
 jpeg(paste0("./figures/Greenness_per_day.jpg"), width = 1000, height = 500)
 par(mar=c(20,20,4,4))
-ggplot(data=data_OTCdiff_DOYSUB,
-       aes(x = DOY, y = OTCdiff, colour = factor(Year)))+
+ggplot(data=greenness_data,
+       aes(x = DOY, y = OTCdiff, colour = factor(Plot)))+
   geom_hline(yintercept=0,linetype="dotted",size=1)+
   geom_line(aes(group=factor(Year)))+
   geom_smooth(aes(group=1),size=2,se=FALSE)+
   theme_bw()+
   theme(legend.title=element_text(size=20,face="bold"),legend.text=element_text(size=20),legend.position="top",legend.key = element_rect(colour = "white"),legend.key.size=unit(1,"cm"),axis.text.x=element_text(size=20,face="bold"),axis.text.y=element_text(hjust=1,size=20),axis.title.x=element_text(size=20,face="bold"),axis.title.y=element_text(angle=90,size=20,face="bold",vjust=0.5),axis.ticks = element_blank(),panel.grid.minor=element_blank(),panel.grid.major=element_blank())+
-  ylab("Difference between Warm and Control (W-C, °C)\n")+
-  xlab("\nDAY OF THE YEAR")+
+  ylab("Greenness 5 day moving avg")+
+  xlab("Date")+
   guides(col=guide_legend(nrow=2,title="YEAR "))
 dev.off()
 
 
-# Boxplot?
-jpeg("./figures/CASS_flower_count_boxplot.jpg", width = 3000, height = 1000)
-# sets the bottom, left, top and right margins
-par(mar=c(15,4.1,4.1,2.1))
-boxplot(X~Trmt+Site+Plant.Flower.count, data=CASS_FLWR_count_data, las=2, col="light blue", 
-        xlab="Spp/Site/TRTMT", ylab="Flower count", main="Flower count Cassiope")
-dev.off()
+# Boxplot
 
-
+#jpeg("./figures/greenness_slope_boxplot.jpg", width = 3000, height = 1000)
+ggplot(data=greenness_plot_slope, aes(x=Trmt, y=slope))+
+  geom_boxplot(aes(x=Trmt, y=slope, fill=Trmt))+
+  facet_wrap(~Site, scales = "free")+ theme_classic()+
+  scale_fill_manual(values=c( "#89C5DA", "#DA5724"))+
+  labs(fill="Treatment")
+#dev.off()
 
 
 
