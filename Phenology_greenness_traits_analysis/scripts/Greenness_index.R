@@ -29,7 +29,7 @@ setwd("~/GitHub/Garibaldi/Phenology_greenness_traits_analysis")
 
 #------------------------------
 # import the data
-#greenness_data <- read.table("./data/XXX.csv", header=TRUE, sep =",", dec = ".")
+greenness_data <- read.table("./data/2022_Photo_greenness.csv", header=TRUE, sep =",", dec = ".")
 
 #------------------------------------------
 # Linear Mixed Effect Models
