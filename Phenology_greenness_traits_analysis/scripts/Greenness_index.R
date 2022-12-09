@@ -77,15 +77,16 @@ plot(Green_Slope_LM)
 
 # edit date format
 greenness_data$Date_form <- as.POSIXct(greenness_data$Date, format="%Y-%m-%d")
+greenness_data$Trmt <- factor(greenness_data$X, levels = c("W", "C"))
 
 # plot
 jpeg(paste0("./figures/Greenness_per_day_Site.jpg"), width = 2000, height = 600)
 par(mar=c(20,20,4,4))
 ggplot(data=greenness_data,
-       aes(x = Date_form, y = Moving_Avg_5, colour = factor(X), group=X))+
+       aes(x = Date_form, y = Moving_Avg_5, colour = factor(Trmt), group=Trmt))+
   geom_hline(yintercept=0,linetype="dotted",size=1)+
   geom_line(aes(group=factor(PlotTrmt)))+
-  geom_smooth(aes(group=X),size=2,se=FALSE)+
+  geom_smooth(aes(group=Trmt),size=2,se=FALSE)+
   facet_wrap(~Site, scales = "free")+
   theme_bw()+
   theme(legend.title=element_text(size=20,face="bold"),legend.text=element_text(size=20),legend.position="top",legend.key = element_rect(colour = "white"),legend.key.size=unit(1,"cm"),axis.text.x=element_text(size=20,face="bold"),axis.text.y=element_text(hjust=1,size=20),axis.title.x=element_text(size=20,face="bold"),axis.title.y=element_text(angle=90,size=20,face="bold",vjust=0.5),axis.ticks = element_blank(),panel.grid.minor=element_blank(),panel.grid.major=element_blank())+
