@@ -31,12 +31,37 @@ setwd("~/GitHub/Garibaldi/Phenology_greenness_traits_analysis")
 # import the data
 greenness_data <- read.table("./data/2022_Photo_greenness.csv", header=TRUE, sep =",", dec = ".")
 
+#-----------------------------------------
+# find slopes for greenness over time
+
+greenness_data_by_plot <- group_by(greenness_data, PlotTrmt, Hour=format.Date(form_date_time, "%H"), month=format.Date(form_date_time, "%m"))
+
+data_OTCavg_hour <- data_OTC_hour  %>% summarise(
+  avg = mean(measure, na.rm=TRUE)#,
+  #count = n()
+) 
+
+
+
 #------------------------------------------
 # Linear Mixed Effect Models
 # https://www.r-bloggers.com/2017/12/linear-mixed-effect-models-in-r/
 
 library(nlme)
 library(lme4)
+
+greenness_data$PlotTrmt <- as.factor(greenness_data$PlotTrmt)
+
+mod <- lm(Moving_Avg_5 ~ Date + PlotTrmt, data=greenness_data)
+cf <- coef(mod)
+
+# cf will now contain a vector with the (Intercept) and x (a.k.a, the slope). 
+# You can then extract these using either numbers:
+  
+Intercept <- cf[1]
+Slope <- cf[2]
+
+
 
 # phenology photo data 
 Pheno_LM <- lm(DOY~Site*Trmt*Stage,  data=photo_pheno_data2_long)
