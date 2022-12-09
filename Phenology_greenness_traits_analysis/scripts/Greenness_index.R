@@ -75,18 +75,37 @@ plot(Green_Slope_LM)
 # X= date, Y=greenness, lines for each plot
 #plotting daily values for a year
 
-jpeg(paste0("./figures/Greenness_per_day.jpg"), width = 1000, height = 500)
+# edit date format
+
+greenness_data$Date_form <- as.POSIXct(greenness_data$Date, format="%Y-%m-%d")
+
+jpeg(paste0("./figures/Greenness_per_day_Trmt.jpg"), width = 1000, height = 500)
 par(mar=c(20,20,4,4))
 ggplot(data=greenness_data,
-       aes(x = DOY, y = OTCdiff, colour = factor(Plot)))+
+       aes(x = Date_form, y = Moving_Avg_5, colour = factor(X)))+
   geom_hline(yintercept=0,linetype="dotted",size=1)+
-  geom_line(aes(group=factor(Year)))+
+  geom_line(aes(group=factor(PlotTrmt)))+
   geom_smooth(aes(group=1),size=2,se=FALSE)+
   theme_bw()+
   theme(legend.title=element_text(size=20,face="bold"),legend.text=element_text(size=20),legend.position="top",legend.key = element_rect(colour = "white"),legend.key.size=unit(1,"cm"),axis.text.x=element_text(size=20,face="bold"),axis.text.y=element_text(hjust=1,size=20),axis.title.x=element_text(size=20,face="bold"),axis.title.y=element_text(angle=90,size=20,face="bold",vjust=0.5),axis.ticks = element_blank(),panel.grid.minor=element_blank(),panel.grid.major=element_blank())+
   ylab("Greenness 5 day moving avg")+
   xlab("Date")+
-  guides(col=guide_legend(nrow=2,title="YEAR "))
+  guides(col=guide_legend(nrow=2,title="Trmt "))
+dev.off()
+
+jpeg(paste0("./figures/Greenness_per_day_Site.jpg"), width = 2000, height = 600)
+par(mar=c(20,20,4,4))
+ggplot(data=greenness_data,
+       aes(x = Date_form, y = Moving_Avg_5, colour = factor(X)))+
+  geom_hline(yintercept=0,linetype="dotted",size=1)+
+  geom_line(aes(group=factor(PlotTrmt)))+
+  geom_smooth(aes(group=1),size=2,se=FALSE)+
+  facet_wrap(~Site, scales = "free")+
+  theme_bw()+
+  theme(legend.title=element_text(size=20,face="bold"),legend.text=element_text(size=20),legend.position="top",legend.key = element_rect(colour = "white"),legend.key.size=unit(1,"cm"),axis.text.x=element_text(size=20,face="bold"),axis.text.y=element_text(hjust=1,size=20),axis.title.x=element_text(size=20,face="bold"),axis.title.y=element_text(angle=90,size=20,face="bold",vjust=0.5),axis.ticks = element_blank(),panel.grid.minor=element_blank(),panel.grid.major=element_blank())+
+  ylab("Greenness 5 day moving avg")+
+  xlab("Date")+
+  guides(col=guide_legend(nrow=2,title="Trmt "))
 dev.off()
 
 
