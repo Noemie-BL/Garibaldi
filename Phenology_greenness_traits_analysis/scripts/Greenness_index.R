@@ -34,13 +34,18 @@ greenness_data <- read.table("./data/2022_Photo_greenness.csv", header=TRUE, sep
 #-----------------------------------------
 # find slopes for greenness over time
 
-greenness_data_by_plot <- group_by(greenness_data, PlotTrmt, Hour=format.Date(form_date_time, "%H"), month=format.Date(form_date_time, "%m"))
+greenness_slope <- function(Moving_Avg_5, Date){  
+  mod <- lm(Moving_Avg_5 ~ Date)
+  cf <- coef(mod)
+  Slope <- cf[2]
+  return(Slope)
+}
 
-data_OTCavg_hour <- data_OTC_hour  %>% summarise(
-  avg = mean(measure, na.rm=TRUE)#,
-  #count = n()
-) 
+greenness_data_by_plot <- group_by(greenness_data, PlotTrmt)
 
+greenness_plot_slope <- summarise(greenness_data_by_plot, slope=greenness_slope(Moving_Avg_5, Date))
+
+greenness_data$PlotTrmt <- as.factor(greenness_data$PlotTrmt)
 
 
 #------------------------------------------
@@ -50,20 +55,7 @@ data_OTCavg_hour <- data_OTC_hour  %>% summarise(
 library(nlme)
 library(lme4)
 
-greenness_data$PlotTrmt <- as.factor(greenness_data$PlotTrmt)
-
-mod <- lm(Moving_Avg_5 ~ Date + PlotTrmt, data=greenness_data)
-cf <- coef(mod)
-
-# cf will now contain a vector with the (Intercept) and x (a.k.a, the slope). 
-# You can then extract these using either numbers:
-  
-Intercept <- cf[1]
-Slope <- cf[2]
-
-
-
-# phenology photo data 
+# greenness photo data 
 Pheno_LM <- lm(DOY~Site*Trmt*Stage,  data=photo_pheno_data2_long)
 summary(Pheno_LM)
 par(mfrow = c(2,2))
@@ -72,6 +64,24 @@ plot(Pheno_LM)
 
 #-----------------------------------
 # Figures
+
+# X= date, Y=greenness, lines for each plot
+#plotting daily values for a year
+
+jpeg(paste0("./figures/Greenness_per_day.jpg"), width = 1000, height = 500)
+par(mar=c(20,20,4,4))
+ggplot(data=data_OTCdiff_DOYSUB,
+       aes(x = DOY, y = OTCdiff, colour = factor(Year)))+
+  geom_hline(yintercept=0,linetype="dotted",size=1)+
+  geom_line(aes(group=factor(Year)))+
+  geom_smooth(aes(group=1),size=2,se=FALSE)+
+  theme_bw()+
+  theme(legend.title=element_text(size=20,face="bold"),legend.text=element_text(size=20),legend.position="top",legend.key = element_rect(colour = "white"),legend.key.size=unit(1,"cm"),axis.text.x=element_text(size=20,face="bold"),axis.text.y=element_text(hjust=1,size=20),axis.title.x=element_text(size=20,face="bold"),axis.title.y=element_text(angle=90,size=20,face="bold",vjust=0.5),axis.ticks = element_blank(),panel.grid.minor=element_blank(),panel.grid.major=element_blank())+
+  ylab("Difference between Warm and Control (W-C, °C)\n")+
+  xlab("\nDAY OF THE YEAR")+
+  guides(col=guide_legend(nrow=2,title="YEAR "))
+dev.off()
+
 
 # Boxplot?
 jpeg("./figures/CASS_flower_count_boxplot.jpg", width = 3000, height = 1000)
@@ -83,21 +93,7 @@ dev.off()
 
 
 
-# #plotting function daily values for a year
-# data_OTCdiff_DOYSUB <- data_OTCdiff_DOY[which(data_OTCdiff_DOY$DOY>150 & data_OTCdiff_DOY$DOY<250),]
-# jpeg(paste0("C:/Users/gaiaa/Documents/Cassandra/PhD/OTC_Climate_data/ITEX_climate_data/Figures/", filename, "_OTCdiff_DOY_SUMMER.jpg"), width = 1000, height = 500)
-# par(mar=c(20,20,4,4))
-# ggplot(data=data_OTCdiff_DOYSUB,
-#        aes(x = DOY, y = OTCdiff, colour = factor(Year)))+
-#   geom_hline(yintercept=0,linetype="dotted",size=1)+
-#   geom_line(aes(group=factor(Year)))+
-#   geom_smooth(aes(group=1),size=2,se=FALSE)+
-#   theme_bw()+
-#   theme(legend.title=element_text(size=20,face="bold"),legend.text=element_text(size=20),legend.position="top",legend.key = element_rect(colour = "white"),legend.key.size=unit(1,"cm"),axis.text.x=element_text(size=20,face="bold"),axis.text.y=element_text(hjust=1,size=20),axis.title.x=element_text(size=20,face="bold"),axis.title.y=element_text(angle=90,size=20,face="bold",vjust=0.5),axis.ticks = element_blank(),panel.grid.minor=element_blank(),panel.grid.major=element_blank())+
-#   ylab("Difference between Warm and Control (W-C, °C)\n")+
-#   xlab("\nDAY OF THE YEAR")+
-#   guides(col=guide_legend(nrow=2,title="YEAR "))
-# dev.off()
+
 
 
 
