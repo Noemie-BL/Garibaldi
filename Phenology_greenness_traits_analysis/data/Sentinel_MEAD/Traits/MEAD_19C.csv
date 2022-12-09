@@ -1,0 +1,7 @@
+plant,VEG_1,VEG_2,VEG_3,VEG_4,VEG_5,FLOW_1,FLOW_2,FLOW_3,FLOW_4,FLOW_5
+EQU_VAR,12.5,n/a,4.5,32,16,n/a,n/a,n/a,n/a,n/a
+EQU_ARV,10,6,15,5,8.5,n/a,n/a,n/a,n/a,n/a
+CAR_AQU,19,10,11,11.5,11.5,14.5,8,12,15.5,15
+SAL_BAR,8.5,10,3,3.5,5,n/a,n/a,n/a,n/a,n/a
+JUN_MER,10,8,7.5,12.5,n/a,18,13,14,18.5,n/a
+JUN_ARC,n/a,n/a,n/a,18.5,n/a,n/a,n/a,n/a,16.5,n/a
