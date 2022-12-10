@@ -547,3 +547,70 @@ quad <- rename(quad, height_mm = height_adj)
 
 setwd(comp_dat)
 save(quad, file = 'quad.RData') #gps & transect data matched to quad data (merge_fielddata.R)
+
+
+
+
+####################################################################################################
+
+# # P. ALBICAULIS DATA FOR BC PARKS # # 
+
+####################################################################################################
+
+# Data
+
+setwd(raw_dat)
+gps.raw <- read.table('GPS_with-elev.txt', header = T, fill = T) #lat, long, elev, ID for each transect
+trans.raw <- read.csv('Trampling-TRANSECTS_data.csv')
+
+
+# Keep only relevant columns & rename
+
+gps <- gps.raw %>% 
+  select(latitude, longitude, altitude, transect = X.m., name)
+
+length(unique(gps$transect)) # should have 28 transects + 2 P. albicaulis points + garbage pile cam = 31
+
+
+# Add matching column name for transect
+
+trans.raw$transect.no <- trans.raw$transect
+trans.raw$transect <- trans.raw$start_gps
+
+
+# Check consistency between dataframes
+
+trans.raw <- trans.raw[1:28, ] #keep only first 28 rows with data
+
+trans.raw <- trans.raw %>% 
+  mutate(transect = if_else(transect == 'BR-14', 'BT-14', transect)) #fix typo
+
+anti_join(gps, trans.raw, by = 'transect')$transect #should only be 3 for non-transect GPS data
+nrow(anti_join(trans.raw, gps, by = 'transect')) 
+
+
+# Join transect to GPS data 
+
+gps.pinalb <- full_join(gps, trans.raw, by = 'transect') 
+
+
+# Organize dataframe
+
+pinalb <- gps.pinalb %>% 
+  filter(transect != 'garbage_pile_cam') %>% #remove garbage pile cam GPS
+  select(date, p_albicaulis = p_albicaula, m_from_transect, healthy..1..yes..0...no., cones..2...many..1...few..0...none.,
+         transect, location, latitude, longitude, altitude) #keep only relevant columns
+
+pinalb$contact <- 'nathalie.chardon@gmail.com' #add contact info
+
+
+# Save dataframe
+setwd(comp_dat)
+write.csv(pinalb, file = 'P_albicaulis_Garibaldi_Aug2022.csv', row.names = F)
+
+
+# Manual edits: 
+# add dates from Gaia
+# add '1' for Gaia GPS points
+# rename column names to be more clear
+# rename locations to match trail names

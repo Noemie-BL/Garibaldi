@@ -1,0 +1,1 @@
+Flower counting was done on Tri glu., Equ var. and butterwort only. "n/c" indicates flowers of this species were not counted.
