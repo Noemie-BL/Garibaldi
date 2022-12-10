@@ -70,11 +70,13 @@ x <- dat$altitude
 y <- dat$height_mm
 
 ggplot(dat, aes(x, y, color = dist)) +
+  scale_color_manual(values=c('grey','red3'))+ #Gotta match the colour scheme
   geom_point(size = 3, alpha = 0.5) +
   ylab('Plant Height [mm]') + xlab('Elevation [m]') + labs(title = '') + 
   stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
   facet_wrap(~species, scales = "free_y") + #separate panels into species
-  theme_classic()
+  theme_classic()+
+  theme(legend.position='none')#Hide legend
 
 
 ### *** ex of other plots to try: boxplots of disturbance vs. no dist regardless of elevation
@@ -92,8 +94,8 @@ gplot <- ggplot(dat, aes(x=dist, y=height_mm, fill=dist)) +
   scale_x_discrete(labels=c("0" = "Off Trail", "1" = "On Trail")) + #rename dist variable from 0 and 1
   theme(axis.text.x = element_text(angle = 60, hjust=1)) + #angle text
   ylab("Height (mm)") +
-  theme(legend.position = "none") + #no legend 
-  mytheme +
+  #theme(legend.position = "none") + #no legend 
+  #mytheme +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), axis.line = element_line(colour = "black"))
 gplot
 
