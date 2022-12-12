@@ -9,6 +9,7 @@
 library(ggplot2)
 library(ggsignif)
 library(tidyr)
+library(dplyr)
 
 rm(list=ls()) 
 
@@ -64,12 +65,12 @@ mytheme <-   theme_classic() +
 
 # # PLOTS
 
-# height ~ elev by disturbance & species: only Carex spp shows an interesting interaction with elev, so leave out elev for now
+# width ~ elev by disturbance & species: only Carex spp shows an interesting interaction with elev, so leave out elev for now
 
 x <- dat$altitude
-y <- dat$height_mm
+y <- dat$mxdiam_mm
 
-ggplot(dat, aes(x, y, color = dist)) +
+ggplot(dat, aes(x, y, color = dist))+
   scale_color_manual(values=c('grey','red3'))+ #Gotta match the colour scheme
   geom_point(size = 3, alpha = 0.5) +
   ylab('Plant Height [mm]') + xlab('Elevation [m]') + labs(title = '') + 
@@ -77,7 +78,6 @@ ggplot(dat, aes(x, y, color = dist)) +
   facet_wrap(~species, scales = "free_y") + #separate panels into species
   theme_classic()+
   theme(legend.position='none')#Hide legend
-
 
 ### *** ex of other plots to try: boxplots of disturbance vs. no dist regardless of elevation
 
