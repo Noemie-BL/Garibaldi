@@ -25,11 +25,12 @@ library(ggplot2)
 library(scales)
 library(lubridate)
 
-pathname <- "/home/celphin/projects/def-henryg/Garibaldi_Lake_data_summer2022/celphin_TOMST_workingdir/output/"
+pathname <- "./TOMST_figures/"
+setwd("~/GitHub/Garibaldi/TOMST_analysis")
 
 # Split filename column into different factors and change column headers before import
 
-TOMSTx <- read.table("TOMST_compiled_data_2022.csv", header=TRUE, sep =";", dec = ",")
+TOMST<- read.table("TOMST_compiled_data_2022.csv", header=TRUE, sep =";", dec = ",")
 
 ###################################################
 # convert  all treatment names to OTC and Control 
@@ -40,8 +41,8 @@ plot_naming <- function(data_column, orig_Cname, orig_Wname){
   data_column
 }
 
-TOMSTx$treatment <- plot_naming(TOMST$treatment, "C", "W")
-TOMSTx$otc_treatment <- TOMST$treatment
+TOMST$treatment <- plot_naming(TOMST$treatment, "C", "W")
+TOMST$otc_treatment <- TOMST$treatment
 ##################################################
 # check all date formats
 
@@ -50,14 +51,16 @@ TOMSTx$otc_treatment <- TOMST$treatment
 
 # All measurement runs in UTC, please use time zone parameter for recalculation to the local time. 
 
-TOMSTx$form_date_time <- as.POSIXct(TOMST$date_time_UTC , format="%Y.%m.%d %H:%M", tz = "UTC")
+TOMST$form_date_time_UTC <- as.POSIXct(TOMST$date_time_UTC , format="%Y.%m.%d %H:%M", tz = "PST")
+
+TOMST$form_date_time <- force_tz(TOMST$form_date_time_UTC, "UTC")
 
 ###################################################
 # remove data before placed in field - start July 23? DOY203
 
-TOMSTx$DOY=yday(TOMSTx$form_date_time)
+TOMST$DOY=yday(TOMST$form_date_time)
 
-TOMST <- TOMSTx[which(TOMSTx$DOY>"203"),]
+TOMST <- TOMST[which(TOMST$DOY>"203"),]
 
 ####################################################
 # Functions
@@ -136,7 +139,7 @@ OTC_plot_DOY <- function(data_OTCdiff_DOY, filename, Title){
   data_OTCdiff_DOY_SUB <- data_OTCdiff_DOY
   #data_OTCdiff_DOY_SUB2 <- data_OTCdiff_DOY_SUB[which(data_OTCdiff_DOY_SUB$DOY>130 & data_OTCdiff_DOY_SUB<270),]
   
-  jpeg(paste("C:/Users/gaiaa/Documents/Cassandra/PhD/OTC_Climate_data/R_Figures_Final/", filename, "_OTCdiff_Daily.jpg", sep=""), width = 2000, height = 1000)
+  jpeg(paste("./TOMST_figures/", filename, "_OTCdiff_Daily.jpg", sep=""), width = 2000, height = 1000)
   par(mar=c(20,20,4,4))
   ggplot(data=data_OTCdiff_DOY_SUB,
          aes(x = DOY, y = OTCdiff, colour = factor(Year)))+
@@ -155,7 +158,7 @@ OTC_plot_DOY <- function(data_OTCdiff_DOY, filename, Title){
 
 OTC_plot_hourly <- function(data_OTCdiff_hour, filename, Title){
   data_OTCdiff_hour_SUB <- data_OTCdiff_hour[c(which(data_OTCdiff_hour$month=="06"), which(data_OTCdiff_hour$month=="07"), which(data_OTCdiff_hour$month=="08")),]
-  jpeg(paste0("C:/Users/gaiaa/Documents/Cassandra/PhD/OTC_Climate_data/R_Figures_Final/", filename, "_OTCdiff_hourly.jpg"), width = 1000, height = 500)
+  jpeg(paste0("./TOMST_figures/", filename, "_OTCdiff_hourly.jpg"), width = 1000, height = 500)
   par(mar=c(20,20,4,4))
   ggplot(data=data_OTCdiff_hour_SUB,
          aes(x = Hour, y = OTCdiff, colour = factor(month)))+
@@ -196,31 +199,33 @@ Year_list <- function(mydata){
 
 Year_list(TOMST)
 
-###############################################
-# running code
-
 mydata <- TOMST
-mydata$measure <-  as.numeric(as.character(mydata$Temp_2))
-mydata <- mydata[-which(mydata$measure>50 | mydata$measure<(-50)),]
-filename <- "TOMST_tmp2_mid"
+
+###############################################
+# running code 
+# each set of lines below must be run 
+
+# mydata$measure <-  as.numeric(as.character(mydata$Temp_2))
+# mydata <- mydata[-which(mydata$measure>50 | mydata$measure<(-50)),]
+# filename <- "TOMST_tmp2_mid"
 
 mydata$measure <-  as.numeric(as.character(mydata$Temp_3))
 mydata <- mydata[-which(mydata$measure>50 | mydata$measure<(-50)),]
 filename <- "TOMST_tmp3_air"
 
-mydata$measure <-  as.numeric(as.character(mydata$Temp_1))
-mydata <- mydata[-which(mydata$measure>50 | mydata$measure<(-50)),]
-filename <- "TOMST_tmp1_soil"
-
+# mydata$measure <-  as.numeric(as.character(mydata$Temp_1))
+# mydata <- mydata[-which(mydata$measure>50 | mydata$measure<(-50)),]
+# filename <- "TOMST_tmp1_soil"
+ 
 # soil mositure no relative values
-mydata$measure <-  as.numeric(as.character(mydata$soil_moisture))
-filename <- "TOMST_soil_moist"
+# mydata$measure <-  as.numeric(as.character(mydata$soil_moisture))
+# filename <- "TOMST_soil_moist"
 
 #-----------------------------------
 # relative soil mositure
 # take the starting value for each plot and subtract it from all values
 
-TOMST$soil_moisture_rel <- 
+#TOMST$soil_moisture_rel <- 
 
 ##############################################
 # function to take OTC - control difference each hour avg each month
@@ -314,7 +319,7 @@ ggplot(data=data_OTCdiff_hour_site,
   geom_smooth(aes(group=1),size=2,se=FALSE)+
   theme_bw()+
   theme(legend.title=element_text(size=20,face="bold"),legend.text=element_text(size=20),legend.position="top",legend.key = element_rect(colour = "white"),legend.key.size=unit(1,"cm"),axis.text.x=element_text(size=20,face="bold"),axis.text.y=element_text(hjust=1,size=20),axis.title.x=element_text(size=20,face="bold"),axis.title.y=element_text(angle=90,size=20,face="bold",vjust=0.5),axis.ticks = element_blank(),panel.grid.minor=element_blank(),panel.grid.major=element_blank())+
-  ylab("Temperature Difference (°C)\n")+
+  ylab("Temperature Difference OTC-Control (°C)\n")+
   xlab("\nHour")+
   guides(col=guide_legend(nrow=2,title="Site "))
 dev.off()

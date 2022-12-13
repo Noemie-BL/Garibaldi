@@ -220,3 +220,41 @@ boxplot(X~Trmt+Site+Plant.Flower.count, data=CASS_FLWR_count_data, las=2, col="l
 dev.off()
 
 #-----------------------------
+# new figure
+# mix veg and flower but keep spp separate
+
+veg_trait_data_long$type <- rep("Veg", nrow(veg_trait_data_long))
+flwr_trait_data_long$type <- rep("Flwr", nrow(flwr_trait_data_long))
+
+colnames(flwr_trait_data_long) <- c("PlotID", "Spp", "Filename", "File", "Trmt", "Site", "Replicate", "Height", "Type")
+colnames(veg_trait_data_long) <- c("PlotID", "Spp", "Filename", "File", "Trmt", "Site", "Replicate", "Height", "Type")
+
+trait_data_long <- rbind(flwr_trait_data_long, veg_trait_data_long)
+
+trait_data_long$Spp <- as.character(trait_data_long$Spp)
+
+trait_data_long$Spp[which(trait_data_long$Spp=="Butter wort")] <- "Pingucula vulgaris"
+trait_data_long$Spp[which(trait_data_long$Spp=="CAR_AQU")] <- "Carex aquatalis"
+trait_data_long$Spp[which(trait_data_long$Spp=="Cas mer")] <- "Cassiope mertensiana"
+trait_data_long$Spp[which(trait_data_long$Spp=="EQU_ARV")] <- "Equisetum arvense"
+trait_data_long$Spp[which(trait_data_long$Spp=="Equ var")] <- "Equisetum variegatum"
+trait_data_long$Spp[which(trait_data_long$Spp=="EQU_VAR")] <- "Equisetum variegatum"
+trait_data_long$Spp[which(trait_data_long$Spp=="JUN_ARC")] <- "Juncus arcticus"
+trait_data_long$Spp[which(trait_data_long$Spp=="JUN_MER")] <- "Juncus mertensiana"
+trait_data_long$Spp[which(trait_data_long$Spp=="Kal mic")] <- "Kalmia microphylla"
+trait_data_long$Spp[which(trait_data_long$Spp=="Phy gla")] <- "Phyllodoce glanduliflora"
+trait_data_long$Spp[which(trait_data_long$Spp=="SAL_BAR")] <- "Salix barclayi"
+trait_data_long$Spp[which(trait_data_long$Spp=="Tri glu")] <- "Triantha occidentalis"
+
+trait_data_long$Spp <- as.factor(trait_data_long$Spp)
+
+trait_data_long$Type <- as.factor(trait_data_long$Type)
+
+trait_data_long$Type_Trmt <- paste0(trait_data_long$Type, "_", trait_data_long$Trmt)
+
+ggplot(data=trait_data_long, aes(x=Type_Trmt, y=Height))+
+  geom_boxplot(aes(x=Type_Trmt, y=Height, fill=Trmt))+
+  facet_wrap(~Spp, scales = "free")+ theme_classic()+
+  scale_fill_manual(values=c( "#89C5DA", "#DA5724"))+
+  labs(fill="Treatment")
+
