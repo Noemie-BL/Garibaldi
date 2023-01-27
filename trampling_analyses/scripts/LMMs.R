@@ -73,7 +73,8 @@ str(dat) #check data structure
 
 
 ###*** TO DO:
-# Calculate reproductive metric combining buds, flws, frts and standardize by plant diameter 
+# Calculate reproductive metric combining buds, flws, frts (look into different ways of doing)
+# Standardize reproductive metric by diameter (i.e. repro counts/diameter)
 
 
 # Check for correlation in predictor variables
@@ -118,7 +119,7 @@ aictab(list(mod1 = mod1, mod2 = mod2, mod5 = mod5, mod6 = mod6)) #mod2 has lowes
 
 
 
-
+ 
 ####################################################################################################
 
 # # COMPILE MODELS # # 
