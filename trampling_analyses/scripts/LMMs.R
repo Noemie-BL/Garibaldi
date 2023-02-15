@@ -16,7 +16,7 @@
 library(tidyverse)
 library(lmerTest) #lmer from lme4 with added p-values
 library(AICcmodavg) #calculate AICc
-
+library(DHARMa)
 
 rm(list=ls()) 
 
@@ -174,6 +174,15 @@ hist(rr, breaks = 100)
 qqnorm(rr, main="normal qq-plot, residuals")
 qqline(rr)
 
+
+# model testing with DHARMa
+
+#DHARMa test for over/underdispersion
+simulationOutput<- simulateResiduals(fittedModel = mod)
+plot(simulationOutput)
+
+#DHARMa nonparametric disperision test using standard deviation of fitted vs simulated residuals
+testDispersion(mod)
 
 ###*** TO DO: 
 # Check additional assumptions to check with hierarchical models
