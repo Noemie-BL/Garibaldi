@@ -8,7 +8,7 @@
 
 # Author: Nathalie Chardon
 # Date created: 11 Nov 2022
-# Date updated: 9 Dec 2022 (NC) ###*** edit here if updating script
+# Date updated: 15 Feb 2023 (NC) ###*** edit here if updating script
 
 
 # # LIBRARIES # # 
@@ -20,7 +20,6 @@ library(AICcmodavg) #calculate AICc
 
 rm(list=ls()) 
 
-###*** create your own new object 'comp_dat' to mirror your computer's filepath to this folder
 # # WORKING DIRECTORIES # #
 comp_dat <- '~/Desktop/Code/Garibaldi/trampling_analyses/compiled_data/' #WD for NC
 
@@ -74,7 +73,7 @@ str(dat) #check data structure
 
 ###*** TO DO:
 # Calculate reproductive metric combining buds, flws, frts (look into different ways of doing)
-# Standardize reproductive metric by diameter (i.e. repro counts/diameter)
+# Standardize reproductive metric by diameter (i.e. repro counts/diameter) - see repro.R
 
 
 # Check for correlation in predictor variables
@@ -102,10 +101,10 @@ mod1 <- lmer(height_mm ~ dist + altitude + (1|trans.pair) + (1|species), data = 
 mod2 <- lmer(height_mm ~ dist * altitude + (1|trans.pair) + (1|species), data = dat, REML = F)
 
 # FE: dist + altitude; RE: trans.pair (slopes) + species (intercept)
-mod3 <- lmer(height_mm ~ dist + altitude + (species|trans.pair), data = dat, REML = F) #convergence issues => drop
+mod3 <- lmer(height_mm ~ dist + altitude + (dist+altitude|species) + (1|trans.pair), data = dat, REML = F) #convergence issues => drop
 
 # FE: dist * altitude; RE: trans.pair (slopes) + species (intercept)
-mod4 <- lmer(height_mm ~ dist * altitude + (species|trans.pair), data = dat, REML = F) #convergence issues => drop
+mod4 <- lmer(height_mm ~ dist * altitude + (dist*altitude|species) + (1|trans.pair), data = dat, REML = F) #convergence issues => drop
 
 # FE: dist + altitude; RE: trans.pair (slopes)
 mod5 <- lmer(height_mm ~ dist + altitude + (1|trans.pair), data = dat, REML = F)

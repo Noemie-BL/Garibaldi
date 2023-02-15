@@ -3,9 +3,9 @@
 What is the effect of human trampling on plant communities across an elevational gradient?
 
 ## Contributors: 
-Nathalie Chardon (nathalie.chardon@gmail.com), Carly Hilbert (chilbe02@student.ubc.ca)
+Nathalie Chardon (nathalie.chardon@gmail.com), Carly Hilbert (chilbe02@student.ubc.ca), Philippa Stone (philippa.stone@botany.ubc.ca), Cassandra Elphinstone (cassandra.elphinstone@shaw.ca)
 
-Last edited: 11 Nov 2022
+Last edited: 15 Feb 2023
 
 #-----------------------------
 ## Data collection notes summer 2022 - Who, when, where, why and how the data were collected
@@ -46,9 +46,11 @@ GPS_with-elev: lat, long, elev for each transect (see merge_fielddata.R for data
 ## Compiled data
 FILENAME <description of file contents, date modified, whether mid or final version>
 
-quad.RData: gps & transect data matched to quad data; created in merge_fielddata.R; modifed on 16 Nov 2022; final version 
+quad.RData: gps & transect data matched to quad data; created in merge_fielddata.R; modifed on 16 Nov 2022; final version; variables described in merge_fielddata.R 
 
-trans_ALL.RData: all transect field data, gps, and altitude; created on 15 Nov 2022; final version
+trans_ALL.RData: all transect field data, gps, and altitude; created on 15 Nov 2022; final version; variables described in merge_fielddata.R 
+
+P_albicaulis_Garibaldi_Aug2022.csv: Pinus albicaulis locations for BC Rangers; emailed data to Kym Welstead (Kym.Welstead@gov.bc.ca) on 7 Dec 2022
 
 
 #-----------------------------
@@ -61,9 +63,13 @@ SCRIPTNAME <description of script purpose, coding language, versions of software
 
 merge_fielddata.R: merge GPS, elevation, transect, and quad-level data; R; tidyverse, dplyr, lattice
 
-LMMs.R: basic linear mixed models testing the effects of trampling and elevation on plant responses; R; tidyverse, lme4
+LMMs.R: basic linear mixed models testing the effects of trampling and elevation on plant responses; R; tidyverse, lmerTest, AICmodavg
 
-figs.R: figures visualizing data; R; ggplot2
+figs.R: figures visualizing data; R; ggplot2, ggsignif, tidyr, dplyr
+
+repro.R: define and calculate a standardized reproductive metric
+
+
 
 #-----------------------------
 ## Figures

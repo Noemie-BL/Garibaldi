@@ -6,7 +6,7 @@
 
 # Author: Nathalie Chardon
 # Date created: 11 Nov 2022
-# Date updated: 15 Nov 2022
+# Date updated: 15 Feb 2023
 
 # # LIBRARIES # #
 library(tidyverse)
@@ -32,8 +32,12 @@ quad.raw <- read.csv('Trampling-QUADS_data.csv')
 
 
 # # OUTPUT FILES # #
-
+setwd(comp_dat)
 load('quad.RData') #gps & transect data matched to quad data (merge_fielddata.R)
+
+load('trans_ALL.RData') #all transect field data, gps, and altitude
+
+pinalb <- read.csv('P_albicaulis_Garibaldi_Aug2022.csv') #Pinus albicaulis locations for BC Rangers
 
 
 
@@ -44,23 +48,59 @@ load('quad.RData') #gps & transect data matched to quad data (merge_fielddata.R)
 
 ####################################################################################################
 
-# Trail locations: Taylor Meadows (TM), Black Tusk (BT), and Panorama Ridge (PR)
+## Transect data: 
 
-# Transect data: 
+# - survey date: sampling date
 
 # - samplers: Nathalie Chardon (NC), Carly Hilbert (CH), Mackenzie Urquhart-Cronish (MUC), 
 # Brianna Ragsdale (BR), Teagan MacLachlan (TL), Vickie Lee (VL), Christian Lauber (CL), 
 # Carolyn Chong (CC)
 
+# - location: trail location (Taylor Meadows = TM, Black Tusk = BT, Panorama Ridge = PR)
+
+# - community_type: genus of dominant species found in transect
+
+# - transect: unique text transect ID (trail location-transect number); n = 28
+
 # - d_trail_m: distance from trail edge [m]
 
+# - slope & aspect: measured with Suunto compass [º]
 
-# Quad data:
+# - start_gps: GPS identifier in Gaia
+
+# - tea_bags: letters of teabags buried at start of transect
+
+# - transect_notes: description of transect
+
+# - ruler_offset: ruler offset from 0 [mm]; see below for calibration calculations
+
+# - p_albicaula: presence (1) or absence (0) of Pinus albicaula near transect
+
+# - m_from_transect: distance from transect, if P. albicaula is present [m]
+
+# - healthy...: health stats of P. albicauala, if present (healthy = 1, unhealthy = 0)
+
+# - cones...: how many cones on P. albicaula, if present (many = 2, few = 1, none = 0)
+
+# - data_notes: any abnormalities recorded during field work
+
+# - data_entry_notes: any abnormalities discovered during data entry by C. Hilbert
+
+# - transect.no: unique numeric transect ID; n = 28
+
+# - latitude & longitude: measured with Gaia mobile application v2022 (WGS 84, ESPG: 4326) 84 [º]
+
+# - altitude: derived from DEM (USGS NED1, 30 m resolution; details below) [m]
+
+
+## Quad data:
+
+# - transect: unique text transect ID (trail location-transect number); n = 28
+
+# - quad: unique quad number for that transect; n = 10/transect
 
 # - species: Vaccinium ovalifolium (vacova), Cassiope mertensiana (casmer), 
 # Phyllodoce empetriformis (phyemp), Phyllodoce grandiflora (phygra), Carex sp. (carspp)
-
-# - height_mm: maximum height of plant adjusted for ruler offsets [mm]
 
 # - mxdiam_mm: maximum diameter of plant [mm]
 
@@ -70,7 +110,19 @@ load('quad.RData') #gps & transect data matched to quad data (merge_fielddata.R)
 
 # - buds: number of buds per plant
 
+# - location: trail location (Taylor Meadows = TM, Black Tusk = BT, Panorama Ridge = PR)
+
+# - slope & aspect: measured with Suunto compass [º]
+
+# - latitude & longitude: measured with Gaia mobile application v2022 (WGS 84, ESPG: 4326) 84 [º]
+
+# - altitude: derived from DEM (USGS NED1, 30 m resolution; details below) [m]
+
+# - transect.no: unique numeric transect ID; n = 28
+
 # - dist: 0 = off-trail (even) transects, 1 = trail-side (odd) transects
+
+# - height_mm: maximum height of plant adjusted for ruler offsets [mm]
 
 
 
