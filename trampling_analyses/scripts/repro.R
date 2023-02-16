@@ -141,7 +141,7 @@ ggplot(dat, aes(x= plantArea_cm2, y= flwsByArea, color = dist)) +
 
 ggplot(dat, aes(x= plantArea_cm2, y= frtsByArea, color = dist)) +
   geom_point() +
- # geom_smooth(method = "lm", formula = y~x,   method.args = list(family = gaussian(link = 'log'))) +
+ #geom_smooth(method = "lm", formula = y~x,   method.args = list(family = gaussian(link = 'log'))) +
   stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
   facet_wrap(.~ species, labeller = as_labeller(species_names), scales = "free") + #separate by species and rename with full species names
   coord_trans(y = "log1p") + #log10 y axis 
