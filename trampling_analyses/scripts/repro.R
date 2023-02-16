@@ -17,8 +17,8 @@ rm(list=ls())
 
 
 # # WORKING DIRECTORIES # #
-comp_dat <- '~/Desktop/Code/Garibaldi/trampling_analyses/compiled_data/' #WD for NC
-
+#comp_dat <- '~/Desktop/Code/Garibaldi/trampling_analyses/compiled_data/' #WD for NC
+comp_dat <- 'C:/Users/Owner/Documents/GitHub/Garibaldi/trampling_analyses/compiled_data/' #WD for CE
 
 # # INPUT FILES # #
 setwd(comp_dat)
