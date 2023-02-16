@@ -11,6 +11,7 @@
 library(ggplot2)
 library(ggtext)
 library(scales)
+library(tidyverse)
 
 rm(list=ls()) 
 
@@ -56,6 +57,12 @@ frtsByArea <- dat$frts / dat$plantArea_cm2
 budsByArea <- dat$buds / dat$plantArea_cm2
 dat <- cbind (dat, flwsByArea, frtsByArea, budsByArea)
 
+# Convert Inf and -Inf values to NA
+dat <- dat %>% 
+  mutate_if(is.numeric, ~ replace(., is.infinite(.), NA))
+
+summary(dat) #check that no infinite values exist
+
 # full species names
 species_names <- c('carspp'= "Carex spp.", 'casmer' = "Cassiope mertensiana", 'phyemp' = "Phyllodoce empetriformis", 'phygla' = "Phyllodoce glanduliflora", 'vacova' = "Vaccinium ovalifolium")
 
@@ -84,7 +91,7 @@ ggplot(dat, aes(x= plantArea_cm2, y= budsByArea, color = dist)) +
 
 ggplot(dat, aes(x= plantArea_cm2, y= flwsByArea, color = dist)) +
   geom_point() +
-  #stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
+  stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
   geom_smooth(method = "glm", formula = y~x, method.args = list(family = gaussian(link = 'log'))) +
   coord_trans(y = "log1p") + #log10(x + 1) y axis 
   scale_y_continuous(labels = label_comma()) + #remove scientific notation
@@ -127,7 +134,7 @@ ggplot(dat, aes(x= plantArea_cm2, y= budsByArea, color = dist)) +
 ggplot(dat, aes(x= plantArea_cm2, y= flwsByArea, color = dist)) +
   geom_point() +
   geom_smooth(method = "glm", formula = y~x,   method.args = list(family = gaussian(link = 'log'))) +
-  #stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
+  stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
   facet_wrap(.~ species, labeller = as_labeller(species_names), scales = "free") + #separate by species and rename with full species names
   coord_trans(y = "log1p") + #log10 y axis 
   scale_y_continuous(labels = label_comma()) + #remove scientific notation
