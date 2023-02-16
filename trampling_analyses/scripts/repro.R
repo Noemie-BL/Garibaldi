@@ -70,9 +70,10 @@ species_names <- c('carspp'= "Carex spp.", 'casmer' = "Cassiope mertensiana", 'p
 
 ggplot(dat, aes(x= plantArea_cm2, y= budsByArea, color = dist)) +
   geom_point() +
-   stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") + # stat_smooth for non-log transformed y axis
+  stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") + # stat_smooth for non-log transformed y axis
   geom_smooth(method = "glm", formula = y~x, method.args = list(family = gaussian(link = 'log'))) +
-  scale_y_continuous(trans='log10', labels = label_comma()) + #log10 y axis and remove scientific notation
+  coord_trans(y = "log1p") + #log10(x + 1) y axis 
+  scale_y_continuous(labels = label_comma()) + #remove scientific notation
   scale_x_continuous(labels = label_comma()) + #remove scientific notation
   labs(x = "Plant area (cm^2)", y = "Number of buds / cm^2") +
   scale_color_discrete(labels=c('Undisturbed', 'Disturbed'), name = "Disturbance") + #legend labels and title
@@ -83,8 +84,9 @@ ggplot(dat, aes(x= plantArea_cm2, y= budsByArea, color = dist)) +
 ggplot(dat, aes(x= plantArea_cm2, y= flwsByArea, color = dist)) +
   geom_point() +
   stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
-  geom_smooth(method = "glm", formula = y~x, method.args = list(family = gaussian(link = 'log'))) +
-  scale_y_continuous(trans='log10', labels = label_comma()) + #log10 y axis and remove scientific notation
+  #geom_smooth(method = "glm", formula = y~x, method.args = list(family = gaussian(link = 'log'))) +
+  coord_trans(y = "log1p") + #log10(x + 1) y axis 
+  scale_y_continuous(labels = label_comma()) + #remove scientific notation
   scale_x_continuous(labels = label_comma()) + #remove scientific notation
   labs(x = "Plant area (cm^2)", y = "Number of flowers / cm^2") +
   scale_color_discrete(labels=c('Undisturbed', 'Disturbed'), name = "Disturbance") + #legend labels and title
@@ -95,7 +97,8 @@ ggplot(dat, aes(x= plantArea_cm2, y= flwsByArea, color = dist)) +
 ggplot(dat, aes(x= plantArea_cm2, y= frtsByArea, color = dist)) +
   geom_point() +
   stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
-  scale_y_continuous(trans='log10', labels = label_comma()) + #log10 y axis and remove scientific notation
+  coord_trans(y = "log1p") + #log10(x + 1) y axis 
+  scale_y_continuous(labels = label_comma()) + #remove scientific notation
   scale_x_continuous(labels = label_comma()) + #remove scientific notation
   labs(x = "Plant area (cm^2)", y = "Number of fruits / cm^2") +
   scale_color_discrete(labels=c('Undisturbed', 'Disturbed'), name = "Disturbance") + #legend labels and title
@@ -110,7 +113,8 @@ ggplot(dat, aes(x= plantArea_cm2, y= budsByArea, color = dist)) +
   geom_point() +
   stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
   facet_wrap(.~ species, labeller = as_labeller(species_names), scales = "free") + #separate by species and rename with full species names
-  scale_y_continuous(trans='log10', labels = label_comma()) + #log10 y axis and remove scientific notation
+  coord_trans(y = "log1p") + #log10 y axis 
+  scale_y_continuous(labels = label_comma()) + #remove scientific notation
   scale_x_continuous(labels = label_comma()) + #remove scientific notation
   labs(x = "Plant area (cm^2)", y = "Number of buds / cm^2") +
   scale_color_discrete(labels=c('Undisturbed', 'Disturbed'), name = "Disturbance") + #legend labels and title
@@ -123,7 +127,8 @@ ggplot(dat, aes(x= plantArea_cm2, y= flwsByArea, color = dist)) +
   geom_point() +
   stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
   facet_wrap(.~ species, labeller = as_labeller(species_names), scales = "free") + #separate by species and rename with full species names
-  scale_y_continuous(trans='log10', labels = label_comma()) + #log10 y axis and remove scientific notation
+  coord_trans(y = "log1p") + #log10 y axis 
+  scale_y_continuous(labels = label_comma()) + #remove scientific notation
   scale_x_continuous(labels = label_comma()) + #remove scientific notation
   labs(x = "Plant area (cm^2)", y = "Number of flowers / cm^2") +
   scale_color_discrete(labels=c('Undisturbed', 'Disturbed'), name = "Disturbance") + #legend labels and title
@@ -134,14 +139,15 @@ ggplot(dat, aes(x= plantArea_cm2, y= flwsByArea, color = dist)) +
 
 ggplot(dat, aes(x= plantArea_cm2, y= frtsByArea, color = dist)) +
   geom_point() +
+ # geom_smooth(method = "lm", formula = y~x,   method.args = list(family = gaussian(link = 'log'))) +
   stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
   facet_wrap(.~ species, labeller = as_labeller(species_names), scales = "free") + #separate by species and rename with full species names
-  scale_y_continuous(trans='log10', labels = label_comma()) + #log10 y axis and remove scientific notation
+  coord_trans(y = "log1p") + #log10 y axis 
+  scale_y_continuous(labels = label_comma()) + #remove scientific notation
   scale_x_continuous(labels = label_comma()) + #remove scientific notation
   labs(x = "Plant area (cm^2)", y = "Number of fruits / cm^2") +
   scale_color_discrete(labels=c('Undisturbed', 'Disturbed'), name = "Disturbance") + #legend labels and title
   theme(axis.title.x = element_markdown(), axis.title.y = element_markdown()) #use markdown theme for axes labels
-
 
 
 
