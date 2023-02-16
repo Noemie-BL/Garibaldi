@@ -109,7 +109,7 @@ ggplot(dat, aes(x= plantArea_cm2, y= frtsByArea, color = dist)) +
 ggplot(dat, aes(x= plantArea_cm2, y= budsByArea, color = dist)) +
   geom_point() +
   stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
-  facet_wrap(.~ species, labeller = as_labeller(species_names)) + #separate by species and rename with full species names
+  facet_wrap(.~ species, labeller = as_labeller(species_names), scales = "free") + #separate by species and rename with full species names
   scale_y_continuous(trans='log10', labels = label_comma()) + #log10 y axis and remove scientific notation
   scale_x_continuous(labels = label_comma()) + #remove scientific notation
   labs(x = "Plant area (cm^2)", y = "Number of buds / cm^2") +
@@ -122,7 +122,7 @@ ggplot(dat, aes(x= plantArea_cm2, y= budsByArea, color = dist)) +
 ggplot(dat, aes(x= plantArea_cm2, y= flwsByArea, color = dist)) +
   geom_point() +
   stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
-  facet_wrap(.~ species, labeller = as_labeller(species_names)) + #separate by species and rename with full species names
+  facet_wrap(.~ species, labeller = as_labeller(species_names), scales = "free") + #separate by species and rename with full species names
   scale_y_continuous(trans='log10', labels = label_comma()) + #log10 y axis and remove scientific notation
   scale_x_continuous(labels = label_comma()) + #remove scientific notation
   labs(x = "Plant area (cm^2)", y = "Number of flowers / cm^2") +
@@ -135,7 +135,7 @@ ggplot(dat, aes(x= plantArea_cm2, y= flwsByArea, color = dist)) +
 ggplot(dat, aes(x= plantArea_cm2, y= frtsByArea, color = dist)) +
   geom_point() +
   stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
-  facet_wrap(.~ species, labeller = as_labeller(species_names), ) + #separate by species and rename with full species names
+  facet_wrap(.~ species, labeller = as_labeller(species_names), scales = "free") + #separate by species and rename with full species names
   scale_y_continuous(trans='log10', labels = label_comma()) + #log10 y axis and remove scientific notation
   scale_x_continuous(labels = label_comma()) + #remove scientific notation
   labs(x = "Plant area (cm^2)", y = "Number of fruits / cm^2") +
