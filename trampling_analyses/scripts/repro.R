@@ -10,6 +10,7 @@
 # # LIBRARIES # # 
 library(ggplot2)
 library(ggtext)
+library(scales)
 
 rm(list=ls()) 
 
@@ -83,8 +84,8 @@ ggplot(dat, aes(x= plantArea_cm2, y= budsByArea, color = dist)) +
 
 ggplot(dat, aes(x= plantArea_cm2, y= flwsByArea, color = dist)) +
   geom_point() +
-  stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
-  #geom_smooth(method = "glm", formula = y~x, method.args = list(family = gaussian(link = 'log'))) +
+  #stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
+  geom_smooth(method = "glm", formula = y~x, method.args = list(family = gaussian(link = 'log'))) +
   coord_trans(y = "log1p") + #log10(x + 1) y axis 
   scale_y_continuous(labels = label_comma()) + #remove scientific notation
   scale_x_continuous(labels = label_comma()) + #remove scientific notation
@@ -125,7 +126,8 @@ ggplot(dat, aes(x= plantArea_cm2, y= budsByArea, color = dist)) +
 
 ggplot(dat, aes(x= plantArea_cm2, y= flwsByArea, color = dist)) +
   geom_point() +
-  stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
+  geom_smooth(method = "glm", formula = y~x,   method.args = list(family = gaussian(link = 'log'))) +
+  #stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
   facet_wrap(.~ species, labeller = as_labeller(species_names), scales = "free") + #separate by species and rename with full species names
   coord_trans(y = "log1p") + #log10 y axis 
   scale_y_continuous(labels = label_comma()) + #remove scientific notation
