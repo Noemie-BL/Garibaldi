@@ -48,6 +48,9 @@ str(dat)
 ff <- c('transect', 'species', 'dist')
 dat[ff] <- lapply(dat[ff], as.factor)
 
+# Remove Carex spp.
+dat <- subset(dat, dat$species!= "carspp")
+
 # adding new columns for plant area, buds/area, flowers/area,fruits/area, total repro struct, and total repro struct/area
 
 plantArea_cm2 <-  (dat$mxdiam_mm * dat$height_mm)/100 # I changed it into cm2 here because I found it easier to understand, but might be better to switch it to mm2 or m2?
@@ -117,7 +120,7 @@ ggplot(dat, aes(x= plantArea_cm2, y= frtsByArea, color = dist)) +
   scale_color_discrete(labels=c('Undisturbed', 'Disturbed'), name = "Disturbance") + #legend labels and title
   theme(axis.title.x = element_markdown(), axis.title.y = element_markdown()) #use markdown theme for axes labels
 
-# Plot size vs number of budes, flowers, and fruits/(height * diameter) by disturbed/undisturbed
+# Plot size vs number of buds, flowers, and fruits/(height * diameter) by disturbed/undisturbed
 
 ggplot(dat, aes(x= plantArea_cm2, y= totalReproStructByArea, color = dist)) +
   geom_point() +
@@ -185,7 +188,7 @@ ggplot(dat, aes(x= plantArea_cm2, y= frtsByArea, color = dist)) +
   theme(axis.title.x = element_markdown(), axis.title.y = element_markdown()) #use markdown theme for axes labels
 
 
-# Plot size vs number of budes, flowers, and fruits/(height * diameter) by disturbed/undisturbed
+# Plot size vs number of buds, flowers, and fruits/(height * diameter) by disturbed/undisturbed
 
 ggplot(dat, aes(x= plantArea_cm2, y= totalReproStructByArea, color = dist)) +
   geom_point() +
