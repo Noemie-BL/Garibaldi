@@ -48,14 +48,21 @@ str(dat)
 ff <- c('transect', 'species', 'dist')
 dat[ff] <- lapply(dat[ff], as.factor)
 
-# adding new columns for plant area, buds/area, flowers/area, and fruits/area
+# adding new columns for plant area, buds/area, flowers/area,fruits/area, total repro struct, and total repro struct/area
 
 plantArea_cm2 <-  (dat$mxdiam_mm * dat$height_mm)/100 # I changed it into cm2 here because I found it easier to understand, but might be better to switch it to mm2 or m2?
 dat <- cbind(dat, plantArea_cm2)
+
 flwsByArea <- dat$flws / dat$plantArea_cm2
 frtsByArea <- dat$frts / dat$plantArea_cm2
 budsByArea <- dat$buds / dat$plantArea_cm2
 dat <- cbind (dat, flwsByArea, frtsByArea, budsByArea)
+
+totalReproStruct <- dat$flws + dat$frts + dat$buds
+dat <- cbind(dat, totalReproStruct)
+
+totalReproStructByArea <- dat$totalReproStruct / dat$plantArea_cm2
+dat <- cbind(dat, totalReproStructByArea)
 
 # Convert Inf and -Inf values to NA
 dat <- dat %>% 
@@ -78,8 +85,7 @@ species_names <- c('carspp'= "Carex spp.", 'casmer' = "Cassiope mertensiana", 'p
 
 ggplot(dat, aes(x= plantArea_cm2, y= budsByArea, color = dist)) +
   geom_point() +
-  stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") + # stat_smooth for non-log transformed y axis
-  geom_smooth(method = "glm", formula = y~x, method.args = list(family = gaussian(link = 'log'))) +
+  stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") + # trend line
   coord_trans(y = "log1p") + #log10(x + 1) y axis 
   scale_y_continuous(labels = label_comma()) + #remove scientific notation
   scale_x_continuous(labels = label_comma()) + #remove scientific notation
@@ -92,7 +98,6 @@ ggplot(dat, aes(x= plantArea_cm2, y= budsByArea, color = dist)) +
 ggplot(dat, aes(x= plantArea_cm2, y= flwsByArea, color = dist)) +
   geom_point() +
   stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
-  geom_smooth(method = "glm", formula = y~x, method.args = list(family = gaussian(link = 'log'))) +
   coord_trans(y = "log1p") + #log10(x + 1) y axis 
   scale_y_continuous(labels = label_comma()) + #remove scientific notation
   scale_x_continuous(labels = label_comma()) + #remove scientific notation
@@ -109,6 +114,29 @@ ggplot(dat, aes(x= plantArea_cm2, y= frtsByArea, color = dist)) +
   scale_y_continuous(labels = label_comma()) + #remove scientific notation
   scale_x_continuous(labels = label_comma()) + #remove scientific notation
   labs(x = "Plant area (cm^2)", y = "Number of fruits / cm^2") +
+  scale_color_discrete(labels=c('Undisturbed', 'Disturbed'), name = "Disturbance") + #legend labels and title
+  theme(axis.title.x = element_markdown(), axis.title.y = element_markdown()) #use markdown theme for axes labels
+
+# Plot size vs number of budes, flowers, and fruits/(height * diameter) by disturbed/undisturbed
+
+ggplot(dat, aes(x= plantArea_cm2, y= totalReproStructByArea, color = dist)) +
+  geom_point() +
+  stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
+  coord_trans(y = "log1p") + #log10(x + 1) y axis 
+  scale_y_continuous(labels = label_comma()) + #remove scientific notation
+  scale_x_continuous(labels = label_comma()) + #remove scientific notation
+  labs(x = "Plant area (cm^2)", y = "Number of reproductive structures / cm^2") +
+  scale_color_discrete(labels=c('Undisturbed', 'Disturbed'), name = "Disturbance") + #legend labels and title
+  theme(axis.title.x = element_markdown(), axis.title.y = element_markdown()) #use markdown theme for axes labels
+
+# Plot size vs number of buds, flowers, and fruits by disturbed/undisturbed
+
+ggplot(dat, aes(x= plantArea_cm2, y= totalReproStruct, color = dist)) +
+  geom_point() +
+  stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
+  scale_y_continuous(labels = label_comma()) + #remove scientific notation
+  scale_x_continuous(labels = label_comma()) + #remove scientific notation
+  labs(x = "Plant area (cm^2)", y = "Number of reproductive structures") +
   scale_color_discrete(labels=c('Undisturbed', 'Disturbed'), name = "Disturbance") + #legend labels and title
   theme(axis.title.x = element_markdown(), axis.title.y = element_markdown()) #use markdown theme for axes labels
 
@@ -133,7 +161,6 @@ ggplot(dat, aes(x= plantArea_cm2, y= budsByArea, color = dist)) +
 
 ggplot(dat, aes(x= plantArea_cm2, y= flwsByArea, color = dist)) +
   geom_point() +
-  geom_smooth(method = "glm", formula = y~x,   method.args = list(family = gaussian(link = 'log'))) +
   stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
   facet_wrap(.~ species, labeller = as_labeller(species_names), scales = "free") + #separate by species and rename with full species names
   coord_trans(y = "log1p") + #log10 y axis 
@@ -148,7 +175,6 @@ ggplot(dat, aes(x= plantArea_cm2, y= flwsByArea, color = dist)) +
 
 ggplot(dat, aes(x= plantArea_cm2, y= frtsByArea, color = dist)) +
   geom_point() +
- #geom_smooth(method = "lm", formula = y~x,   method.args = list(family = gaussian(link = 'log'))) +
   stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
   facet_wrap(.~ species, labeller = as_labeller(species_names), scales = "free") + #separate by species and rename with full species names
   coord_trans(y = "log1p") + #log10 y axis 
@@ -158,6 +184,32 @@ ggplot(dat, aes(x= plantArea_cm2, y= frtsByArea, color = dist)) +
   scale_color_discrete(labels=c('Undisturbed', 'Disturbed'), name = "Disturbance") + #legend labels and title
   theme(axis.title.x = element_markdown(), axis.title.y = element_markdown()) #use markdown theme for axes labels
 
+
+# Plot size vs number of budes, flowers, and fruits/(height * diameter) by disturbed/undisturbed
+
+ggplot(dat, aes(x= plantArea_cm2, y= totalReproStructByArea, color = dist)) +
+  geom_point() +
+  stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
+  facet_wrap(.~ species, labeller = as_labeller(species_names), scales = "free") + #separate by species and rename with full species names
+  coord_trans(y = "log1p") + #log10 y axis 
+  scale_y_continuous(labels = label_comma()) + #remove scientific notation
+  scale_x_continuous(labels = label_comma()) + #remove scientific notation
+  labs(x = "Plant area (cm^2)", y = "Number of reproductive structures / cm^2") +
+  scale_color_discrete(labels=c('Undisturbed', 'Disturbed'), name = "Disturbance") + #legend labels and title
+  theme(axis.title.x = element_markdown(), axis.title.y = element_markdown()) #use markdown theme for axes labels
+
+
+# Plot size vs number of buds, flowers, and fruits by disturbed/undisturbed
+
+ggplot(dat, aes(x= plantArea_cm2, y= totalReproStruct, color = dist)) +
+  geom_point() +
+  stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
+  facet_wrap(.~ species, labeller = as_labeller(species_names), scales = "free") + #separate by species and rename with full species names
+  scale_y_continuous(labels = label_comma()) + #remove scientific notation
+  scale_x_continuous(labels = label_comma()) + #remove scientific notation
+  labs(x = "Plant area (cm^2)", y = "Number of reproductive structures") +
+  scale_color_discrete(labels=c('Undisturbed', 'Disturbed'), name = "Disturbance") + #legend labels and title
+  theme(axis.title.x = element_markdown(), axis.title.y = element_markdown()) #use markdown theme for axes labels
 
 
 ####################################################################################################
