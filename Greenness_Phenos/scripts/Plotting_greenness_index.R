@@ -16,6 +16,7 @@ library(vegan)
 library(car)
 library(ggplot2)
 library(ggthemes)
+library(zoo)
 
 
 # install.packages("devtools")
@@ -35,6 +36,9 @@ greenness_data_poster_raw <- read.table("./data/2022_poster_method.csv", header=
 colnames(greenness_data_poster_raw) <- c("Site", "PlotTrmt", "X", "Filename", "Date", "Quad1", "Quad2", "Quad3", "Quad4")
 
 #---------------------
+# remove NA rows
+greenness_data_poster_raw <- na.omit(greenness_data_poster_raw)
+
 # calculate Quad average
 greenness_data_poster_raw$mean <- rowMeans(subset(greenness_data_poster_raw, select = c("Quad1", "Quad2", "Quad3", "Quad4")), na.rm = TRUE)
 
@@ -42,18 +46,21 @@ greenness_data_poster_raw$mean <- rowMeans(subset(greenness_data_poster_raw, sel
 greenness_data_poster_raw$SD <- apply(subset(greenness_data_poster_raw, select = c("Quad1", "Quad2", "Quad3", "Quad4")), 1, sd, na.rm=TRUE)
 
 # Calculate moving average over 5 days
+greenness_data_poster_raw$rollmean5 <- zoo::rollmean(greenness_data_poster_raw$mean, k=5, fill = NA)
 
+# Calculate moving median over 5 days
+greenness_data_poster_raw$rollmedian7 <- zoo::rollmedian(greenness_data_poster_raw$mean, k=7, fill = NA)
 
 #-----------------------
 # subset for specific data 
 
-greenness_data <-  subset(greenness_data_poster_raw, select=c("Site", "PlotTrmt", "Date", "Moving_Avg_5"))
+greenness_data <-  subset(greenness_data_poster_raw, select=c("Site", "PlotTrmt", "Date", "rollmedian7"))
 
 #-----------------------------------------
 # find slopes for greenness over time
 
-greenness_slope <- function(Moving_Avg_5, Date){  
-  mod <- lm(Moving_Avg_5 ~ Date)
+greenness_slope <- function(rollmedian7, Date){  
+  mod <- lm(rollmedian7 ~ Date)
   cf <- coef(mod)
   Slope <- cf[2]
   return(Slope)
@@ -61,7 +68,7 @@ greenness_slope <- function(Moving_Avg_5, Date){
 
 greenness_data_by_plot <- group_by(greenness_data, PlotTrmt)
 
-greenness_plot_slope <- summarise(greenness_data_by_plot, slope=greenness_slope(Moving_Avg_5, Date))
+greenness_plot_slope <- summarise(greenness_data_by_plot, slope=greenness_slope(rollmedian7, Date))
 
 greenness_plot_slope$Plot <- as.factor(greenness_plot_slope$PlotTrmt)
 
@@ -101,7 +108,7 @@ greenness_data$Trmt <- factor(greenness_data$X, levels = c("W", "C"))
 jpeg(paste0("./figures/Greenness_per_day_Site.jpg"), width = 2000, height = 750)
 par(mar=c(20,20,4,4))
 ggplot(data=greenness_data,
-       aes(x = Date_form, y = Moving_Avg_5, colour = factor(Trmt), group=Trmt))+
+       aes(x = Date_form, y = rollmedian7, colour = factor(Trmt), group=Trmt))+
   geom_hline(yintercept=0,linetype="dotted",size=1)+
   geom_line(aes(group=factor(PlotTrmt)))+
   geom_smooth(aes(group=Trmt),size=2,se=FALSE)+
@@ -133,7 +140,8 @@ ggplot(data=greenness_plot_slope, aes(x=Trmt, y=slope))+
 
 
 #---------------------------------
-# other plotting code
+# other older plotting code
+
 # other box plot code
 plot(DOY~Trmt+Stage, data=photo_pheno_data2_long, cex=1.2, xlab="Stage/TRTMT", ylab="DOY", main="Phenology")
 stripchart(DOY~Trmt+Stage, vertical = TRUE, method = "jitter", pch = 16,cex.lab=1.5,cex.axis=1.2,
@@ -142,11 +150,4 @@ stripchart(DOY~Trmt+Stage, vertical = TRUE, method = "jitter", pch = 16,cex.lab=
 
 # code to make histrogram for greenness?
 hist(total.fruits, col = "grey", main = "Total fruits", xlab = NULL)
-
-
-
-
-
-
-
 
