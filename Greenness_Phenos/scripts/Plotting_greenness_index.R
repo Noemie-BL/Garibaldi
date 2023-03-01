@@ -29,8 +29,25 @@ setwd("~/GitHub/Garibaldi/Greenness_Phenos/")
 
 #------------------------------
 # import the data
-greenness_data_edited <- read.table("./data/2022_Poster_Photo_greenness_edited.csv", header=TRUE, sep =",", dec = ".")
-greenness_data <- read.table("./data/2022_poster_method.csv", header=TRUE, sep =",", dec = ".")
+greenness_data_poster_preedited <- read.table("./data/2022_Poster_Photo_greenness_edited.csv", header=TRUE, sep =",", dec = ".")
+greenness_data_poster_raw <- read.table("./data/2022_poster_method.csv", header=FALSE, sep =",", dec = ".")
+
+colnames(greenness_data_poster_raw) <- c("Site", "PlotTrmt", "X", "Filename", "Date", "Quad1", "Quad2", "Quad3", "Quad4")
+
+#---------------------
+# calculate Quad average
+greenness_data_poster_raw$mean <- rowMeans(subset(greenness_data_poster_raw, select = c("Quad1", "Quad2", "Quad3", "Quad4")), na.rm = TRUE)
+
+# calculate SD
+greenness_data_poster_raw$SD <- apply(subset(greenness_data_poster_raw, select = c("Quad1", "Quad2", "Quad3", "Quad4")), 1, sd, na.rm=TRUE)
+
+# Calculate moving average over 5 days
+
+
+#-----------------------
+# subset for specific data 
+
+greenness_data <-  subset(greenness_data_poster_raw, select=c("Site", "PlotTrmt", "Date", "Moving_Avg_5"))
 
 #-----------------------------------------
 # find slopes for greenness over time
