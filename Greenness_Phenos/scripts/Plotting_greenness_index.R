@@ -56,9 +56,6 @@ greenness_data_raw <- greenness_data_oldmeth_Quad_raw
 
 
 #---------------------
-# remove NA rows
-greenness_data_raw <- na.omit(greenness_data_raw)
-
 # calculate Quadrant average
 greenness_data_raw$mean <- rowMeans(subset(greenness_data_raw, select = c("Quad1", "Quad2", "Quad3", "Quad4")), na.rm = TRUE)
 greenness_data_raw$harm_mean <- apply(subset(greenness_data_raw, select = c("Quad1", "Quad2", "Quad3", "Quad4")), 1, harmonic.mean, na.rm=TRUE)
@@ -69,9 +66,10 @@ greenness_data_raw$SD <- apply(subset(greenness_data_raw, select = c("Quad1", "Q
 # remove values with high variation or NA
 greenness_data_raw <- na.omit(greenness_data_raw)
 #greenness_data_raw <- greenness_data_raw[-which(greenness_data_raw$mean < 0.1),]
+#greenness_data_raw <- greenness_data_raw[-which(greenness_data_raw$SD > 1.0),]
 
 #-----------------------
-# Set data set for analysis
+# Set data set for analysis - can choose mean, median or harmonic mean
 greenness_data_raw$Greenness_Index <- greenness_data_raw$mean
 greenness_data <- greenness_data_raw
 
