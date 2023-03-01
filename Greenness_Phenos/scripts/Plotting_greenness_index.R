@@ -25,11 +25,12 @@ library(ggthemes)
 
 #------------------------------
 # first change path to where you want the figures output to
-setwd("~/GitHub/Garibaldi/Phenology_greenness_traits_analysis")
+setwd("~/GitHub/Garibaldi/Greenness_Phenos/")
 
 #------------------------------
 # import the data
-greenness_data <- read.table("./data/2022_Photo_greenness.csv", header=TRUE, sep =",", dec = ".")
+greenness_data_edited <- read.table("./data/2022_Poster_Photo_greenness_edited.csv", header=TRUE, sep =",", dec = ".")
+greenness_data <- read.table("./data/2022_poster_method.csv", header=TRUE, sep =",", dec = ".")
 
 #-----------------------------------------
 # find slopes for greenness over time
