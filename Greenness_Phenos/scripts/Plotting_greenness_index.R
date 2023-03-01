@@ -17,6 +17,8 @@ library(car)
 library(ggplot2)
 library(ggthemes)
 library(zoo)
+library(distillery)
+library(psych) 
 
 
 # install.packages("devtools")
@@ -29,55 +31,108 @@ library(zoo)
 setwd("~/GitHub/Garibaldi/Greenness_Phenos/")
 
 #------------------------------
-# import the data
-greenness_data_poster_preedited <- read.table("./data/2022_Poster_Photo_greenness_edited.csv", header=TRUE, sep =",", dec = ".")
-greenness_data_poster_raw <- read.table("./data/2022_poster_method.csv", header=FALSE, sep =",", dec = ".")
+# import the data - ideally this is the only part of the script that changes per dataset
+# currently works for quadrant data only
 
-colnames(greenness_data_poster_raw) <- c("Site", "PlotTrmt", "X", "Filename", "Date", "Quad1", "Quad2", "Quad3", "Quad4")
+greenness_data_poster_raw <- read.table("./data/2022_poster_method.csv", header=FALSE, sep =",", dec = ".")
+colnames(greenness_data_poster_raw) <- c("Site", "Plot", "Trmt", "Filename", "Date", "Quad1", "Quad2", "Quad3", "Quad4")
+data_name <- "Poster"
+greenness_data_raw <- greenness_data_poster_raw
+
+greenness_data_2G_RBI_quad_raw <- read.table("./data/2022_2G-RBI_quadrants.csv", header=FALSE, sep =",", dec = ".")
+colnames(greenness_data_2G_RBI_quad_raw) <- c("Site", "Plot", "Trmt", "Filename", "Date", "Quad1", "Quad2", "Quad3", "Quad4")
+data_name <- "2G_RBI_quad"
+greenness_data_raw <- greenness_data_2G_RBI_quad_raw
+
+greenness_data_GCC_Quad_raw <- read.table("./data/2022_GCC_quadrants.csv", header=FALSE, sep =",", dec = ".")
+colnames(greenness_data_GCC_Quad_raw) <- c("Site", "Plot", "Trmt", "Filename", "Date", "Quad1", "Quad2", "Quad3", "Quad4")
+data_name <- "GCC_Quad"
+greenness_data_raw <- greenness_data_GCC_Quad_raw
+
+greenness_data_oldmeth_Quad_raw <- read.table("./data/2022_oldmethod_quadrants.csv", header=FALSE, sep =",", dec = ".")
+colnames(greenness_data_oldmeth_Quad_raw) <- c("Site", "Plot", "Trmt", "Filename", "Date", "Quad1", "Quad2", "Quad3", "Quad4")
+data_name <- "oldmeth_Quad"
+greenness_data_raw <- greenness_data_oldmeth_Quad_raw
+
 
 #---------------------
 # remove NA rows
-greenness_data_poster_raw <- na.omit(greenness_data_poster_raw)
+greenness_data_raw <- na.omit(greenness_data_raw)
 
-# calculate Quad average
-greenness_data_poster_raw$mean <- rowMeans(subset(greenness_data_poster_raw, select = c("Quad1", "Quad2", "Quad3", "Quad4")), na.rm = TRUE)
+# calculate Quadrant average
+greenness_data_raw$mean <- rowMeans(subset(greenness_data_raw, select = c("Quad1", "Quad2", "Quad3", "Quad4")), na.rm = TRUE)
+greenness_data_raw$harm_mean <- apply(subset(greenness_data_raw, select = c("Quad1", "Quad2", "Quad3", "Quad4")), 1, harmonic.mean, na.rm=TRUE)
 
 # calculate SD
-greenness_data_poster_raw$SD <- apply(subset(greenness_data_poster_raw, select = c("Quad1", "Quad2", "Quad3", "Quad4")), 1, sd, na.rm=TRUE)
+greenness_data_raw$SD <- apply(subset(greenness_data_raw, select = c("Quad1", "Quad2", "Quad3", "Quad4")), 1, sd, na.rm=TRUE)
 
-# Calculate moving average over 5 days
-greenness_data_poster_raw$rollmean5 <- zoo::rollmean(greenness_data_poster_raw$mean, k=5, fill = NA)
-
-# Calculate moving median over 5 days
-greenness_data_poster_raw$rollmedian7 <- zoo::rollmedian(greenness_data_poster_raw$mean, k=7, fill = NA)
+# remove values with high variation or NA
+greenness_data_raw <- na.omit(greenness_data_raw)
+#greenness_data_raw <- greenness_data_raw[-which(greenness_data_raw$mean < 0.1),]
 
 #-----------------------
-# subset for specific data 
+# Set data set for analysis
+greenness_data_raw$Greenness_Index <- greenness_data_raw$mean
+greenness_data <- greenness_data_raw
 
-greenness_data <-  subset(greenness_data_poster_raw, select=c("Site", "PlotTrmt", "Date", "rollmedian7"))
+#------------------------
+# Calculate rolling average
+greenness_data$Plot <- as.factor(greenness_data$Plot)
+greenness_data_by_plot <- group_by(greenness_data, Plot=Plot)
+
+# Rolling mean
+greenness_roll_mean <- summarise(greenness_data_by_plot, rolling_mean=zoo::rollmean(Greenness_Index, k=7, fill = NA))
+greenness_data$Greenness_Index_rolling <- greenness_roll_mean$rolling_mean
+
+# Calculate rolling median over 5 days
+greenness_roll_mean <- summarise(greenness_data_by_plot, rolling_median=zoo::rollmedian(Greenness_Index, k=7, fill = NA))
+greenness_data$Greenness_Index_rolling_med <- greenness_roll_mean$rolling_median
+
+#--------------------------------
+# For each plot normalize greenness to first value
+
+greenness_normalize <- function(Greenness){  
+  Greenness_norm =  Greenness - mean(Greenness,na.rm=TRUE)
+  return(Greenness_norm)
+}
+greenness_data_by_plot <- group_by(greenness_data, Plot=Plot)
+greenness_normalize <- summarise(greenness_data_by_plot, normalized=greenness_normalize(Greenness_Index_rolling))
+
+greenness_data$Greenness_Index_rolling_norm <- greenness_normalize$normalized
 
 #-----------------------------------------
 # find slopes for greenness over time
 
-greenness_slope <- function(rollmedian7, Date){  
-  mod <- lm(rollmedian7 ~ Date)
+greenness_slope <- function(Greenness, Date){  
+  mod <- lm(Greenness ~ Date)
   cf <- coef(mod)
   Slope <- cf[2]
   return(Slope)
 }
 
-greenness_data_by_plot <- group_by(greenness_data, PlotTrmt)
+# remove NA rows
+greenness_data <- na.omit(greenness_data)
 
-greenness_plot_slope <- summarise(greenness_data_by_plot, slope=greenness_slope(rollmedian7, Date))
+greenness_data$Plot <- as.factor(greenness_data$Plot)
+greenness_data$Date_form <- as.POSIXct(greenness_data$Date, format="%Y-%m-%d")
+greenness_data_by_plot <- group_by(greenness_data, Plot=Plot)
+greenness_plot_slope <- summarise(greenness_data_by_plot, slope=greenness_slope(Greenness_Index_rolling_norm, Date_form))
 
-greenness_plot_slope$Plot <- as.factor(greenness_plot_slope$PlotTrmt)
+greenness_plot_slope$Plot_num <- as.numeric(as.character(greenness_plot_slope$Plot))
+greenness_plot_slope$Trmt <- greenness_plot_slope$Plot_num
+greenness_plot_slope$Trmt[which(distillery::is.even(greenness_plot_slope$Plot_num))] <- "W"
+greenness_plot_slope$Trmt[which(distillery::is.odd(greenness_plot_slope$Plot_num))] <- "C"
 
-greenness_plot_slope$Site <- c("SAL","SAL","SAL","SAL","SAL","SAL","SAL","SAL",
-                               "CASS","CASS","CASS","CASS","CASS","CASS","CASS","CASS",
-                               "MEAD","MEAD","MEAD","MEAD","MEAD","MEAD","MEAD","MEAD")
+# greenness_plot_slope$Site <- c("SAL","SAL","SAL","SAL","SAL","SAL","SAL","SAL",
+#                                "CASS","CASS","CASS","CASS","CASS","CASS","CASS","CASS",
+#                                "MEAD","MEAD","MEAD","MEAD","MEAD","MEAD","MEAD","MEAD")
+
+greenness_plot_slope$Site <- greenness_plot_slope$Trmt
+greenness_plot_slope$Site[which(greenness_plot_slope$Plot_num < 9 )] <- "SAL"
+greenness_plot_slope$Site[which(greenness_plot_slope$Plot_num > 16 )] <- "MEAD"
+greenness_plot_slope$Site[which(greenness_plot_slope$Plot_num < 17 & greenness_plot_slope$Plot_num > 8)] <- "CASS"
+
 greenness_plot_slope$Site <- as.factor(greenness_plot_slope$Site)
-
-greenness_plot_slope$Trmt <- c("C","W","C","W","C","W","C","W","C","W","C","W","C","W","C","W","C","W","C","W","C","W","C","W")
 greenness_plot_slope$Trmt <- as.factor(greenness_plot_slope$Trmt)
 
 #------------------------------------------
@@ -101,16 +156,17 @@ plot(Green_Slope_LM)
 #plotting daily values for a year
 
 # edit date format
-greenness_data$Date_form <- as.POSIXct(greenness_data$Date, format="%Y-%m-%d")
-greenness_data$Trmt <- factor(greenness_data$X, levels = c("W", "C"))
+#greenness_data$Trmt <- greenness_data$Plot
+#greenness_data$Trmt[which(distillery::is.even(greenness_data$Plot))] <- "W"
+#greenness_data$Trmt[which(distillery::is.odd(greenness_data$Plot))] <- "C"
 
 # plot
-jpeg(paste0("./figures/Greenness_per_day_Site.jpg"), width = 2000, height = 750)
+jpeg(paste0("./figures/", data_name, "_Greenness_per_day_Site.jpg"), width = 2000, height = 850)
 par(mar=c(20,20,4,4))
 ggplot(data=greenness_data,
-       aes(x = Date_form, y = rollmedian7, colour = factor(Trmt), group=Trmt))+
+       aes(x = Date_form, y = Greenness_Index_rolling_norm, colour = factor(Trmt), group=Trmt))+
   geom_hline(yintercept=0,linetype="dotted",size=1)+
-  geom_line(aes(group=factor(PlotTrmt)))+
+  geom_line(aes(group=factor(Plot)))+
   geom_smooth(aes(group=Trmt),size=2,se=FALSE)+
   facet_wrap(~Site, scales = "free")+
   theme_bw()+
@@ -123,13 +179,13 @@ dev.off()
 
 # Boxplot
 
-#jpeg("./figures/greenness_slope_boxplot.jpg", width = 3000, height = 1000)
+jpeg(paste0("./figures/", data_name, "_Greenness_slope_boxplot.jpg"), width = 800, height = 500)
 ggplot(data=greenness_plot_slope, aes(x=Trmt, y=slope))+
   geom_boxplot(aes(x=Trmt, y=slope, fill=Trmt))+
   facet_wrap(~Site, scales = "free")+ theme_classic()+
   scale_fill_manual(values=c( "#89C5DA", "#DA5724"))+
   labs(fill="Treatment")
-#dev.off()
+dev.off()
 
 
 
@@ -141,13 +197,13 @@ ggplot(data=greenness_plot_slope, aes(x=Trmt, y=slope))+
 
 #---------------------------------
 # other older plotting code
-
-# other box plot code
-plot(DOY~Trmt+Stage, data=photo_pheno_data2_long, cex=1.2, xlab="Stage/TRTMT", ylab="DOY", main="Phenology")
-stripchart(DOY~Trmt+Stage, vertical = TRUE, method = "jitter", pch = 16,cex.lab=1.5,cex.axis=1.2,
-           col = "black", data=photo_pheno_data2_long, add=TRUE)
-
-
-# code to make histrogram for greenness?
-hist(total.fruits, col = "grey", main = "Total fruits", xlab = NULL)
+# 
+# # other box plot code
+# plot(DOY~Trmt+Stage, data=photo_pheno_data2_long, cex=1.2, xlab="Stage/TRTMT", ylab="DOY", main="Phenology")
+# stripchart(DOY~Trmt+Stage, vertical = TRUE, method = "jitter", pch = 16,cex.lab=1.5,cex.axis=1.2,
+#            col = "black", data=photo_pheno_data2_long, add=TRUE)
+# 
+# 
+# # code to make histrogram for greenness?
+# hist(total.fruits, col = "grey", main = "Total fruits", xlab = NULL)
 
