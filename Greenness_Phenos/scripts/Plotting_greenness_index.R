@@ -83,8 +83,8 @@ greenness_roll_mean <- summarise(greenness_data_by_plot, rolling_mean=zoo::rollm
 greenness_data$Greenness_Index_rolling <- greenness_roll_mean$rolling_mean
 
 # Calculate rolling median over 5 days
-greenness_roll_mean <- summarise(greenness_data_by_plot, rolling_median=zoo::rollmedian(Greenness_Index, k=7, fill = NA))
-greenness_data$Greenness_Index_rolling_med <- greenness_roll_mean$rolling_median
+greenness_roll_median<- summarise(greenness_data_by_plot, rolling_median=zoo::rollmedian(Greenness_Index, k=7, fill = NA))
+greenness_data$Greenness_Index_rolling_med <- greenness_roll_median$rolling_median
 
 #--------------------------------
 # For each plot normalize greenness to first value
