@@ -8,6 +8,7 @@
 
 # Author: Nathalie Chardon
 # Date created: 11 Nov 2022
+# Date updated: 15 Feb 2023 (PS)
 # Date updated: 15 Feb 2023 (NC) ###*** edit here if updating script
 
 
@@ -16,7 +17,7 @@
 library(tidyverse)
 library(lmerTest) #lmer from lme4 with added p-values
 library(AICcmodavg) #calculate AICc
-library(DHARMa)
+library(DHARMa) #model diagnostics
 
 rm(list=ls()) 
 
@@ -182,6 +183,15 @@ plot(simulationOutput)
 
 #DHARMa nonparametric disperision test using standard deviation of fitted vs simulated residuals
 testDispersion(mod)
+
+#DHARMa test for homoscedasticity
+testCategorical(simulationOutput, catPred = dat$dist) 
+#according to Leven's test the on and off trail groups have equal variance
+#there are significant within group deviations from uniformity
+##apparently significant results more normal with increasing sample size
+#is not enough of a problem to stop using the model
+
+
 
 ###*** TO DO: 
 # Check additional assumptions to check with hierarchical models
