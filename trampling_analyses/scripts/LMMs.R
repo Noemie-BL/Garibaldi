@@ -18,6 +18,7 @@ library(tidyverse)
 library(lmerTest) #lmer from lme4 with added p-values
 library(AICcmodavg) #calculate AICc
 library(DHARMa) #model diagnostics
+library(nlme) #allows heteroscedastic models
 
 rm(list=ls()) 
 
@@ -175,23 +176,57 @@ qqnorm(rr, main="normal qq-plot, residuals")
 qqline(rr)
 
 
-# model testing with DHARMa
+######## model testing with DHARMa #######
 
 #DHARMa test for over/underdispersion
 simulationOutput<- simulateResiduals(fittedModel = mod)
 plot(simulationOutput)
+#patterns visible in data (graph on right), so data is not homoscedastic
 
 #DHARMa nonparametric disperision test using standard deviation of fitted vs simulated residuals
 testDispersion(mod)
 
-#DHARMa test for homoscedasticity
+# test for homoscedasticity
 testCategorical(simulationOutput, catPred = dat$dist) 
-#according to Leven's test the on and off trail groups have equal variance
-#there are significant within group deviations from uniformity
-##apparently significant results more normal with increasing sample size
-#is not enough of a problem to stop using the model
+#according to Levene's test the on and off trail groups have equal variance
+#but there are significant within group deviations from uniformity (i.e. with on and iff trail populations)
 
 
+
+####### Trying a heteroscedastic model ############
+
+#lme4 does not allow heteroscedasticity in models, so need to use nlme
+#nlme requires data in a different form, all random effects are nested by default, we have mixture of crossed (species) and random
+#reStruct 
+dat$dummy <- factor(1)
+reStruct = list(dummy=pdBlocked(list(pdIdent(~location - 1),pdIdent( ~ trans.pair - 1),pdIdent(~ transect - 1),pdIdent( ~ species - 1))))
+
+# # Identifying the best model 
+
+#same as model "mod" using above, but in different package (nlme)
+model_homoscedastic = nlme::lme(mxdiam_mm ~ dist * altitude, data = dat, random = reStruct,method="ML")
+
+#add heteroscedastic structure for different residual variances by altitude
+model_heteroscedastic1 = nlme::lme(mxdiam_mm ~ dist * altitude, data = dat, weights = nlme::varPower(form = ~ altitude), random = reStruct, method="ML")
+
+#add heteroscedastic structure for different residual variances by disturbance
+model_heteroscedastic2 = nlme::lme(mxdiam_mm ~ dist * altitude, data = dat, weights = nlme::varIdent(form = ~dist), random = reStruct, method="ML")
+
+#add heteroscedastic structure for different residual variances by both dist and altitude
+model_heteroscedastic3 = nlme::lme(mxdiam_mm ~ dist * altitude, data = dat, weights = nlme::varComb(nlme::varIdent(form = ~dist), nlme::varPower(form = ~altitude)), random = reStruct, method="ML")
+
+#model_heteroscedastic1 and model_heteroscedastic3 have the lowest AIC
+#model_heteroscedastic1 is less complex so should be used
+AIC(model_homoscedastic)
+AIC(model_heteroscedastic1)
+AIC(model_heteroscedastic2)
+AIC(model_heteroscedastic3)
+
+#Final heteroscedastic model
+#Use REML as it will estimate standard errors better
+model_heteroscedastic1 = nlme::lme(mxdiam_mm ~ dist * altitude, data = dat, weights = nlme::varPower(form = ~ altitude), random = reStruct, method="REML")
+
+plot(model_heteroscedastic1) 
 
 ###*** TO DO: 
 # Check additional assumptions to check with hierarchical models
