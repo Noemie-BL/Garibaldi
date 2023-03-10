@@ -1,20 +1,16 @@
-###*** Collaborators: this indicates where to make changes/edits
-
 # Aims:
 # 1. Set up data
 # 2. Choose appropriate model structure with AICc
 # 3. Fit LMMs to test effects of trampling and elevation on plant responses
 # 4. Check model residuals & goodness of fit
 
-# Author: Nathalie Chardon
+# Authors: Nathalie Chardon & Philippa Stone
 # Date created: 11 Nov 2022
-# Date updated: 15 Feb 2023 (PS)
-# Date updated: 9 March 2023 (PS)
-# Date updated: 15 Feb 2023 (NC) ###*** edit here if updating script
+# Date updated: 10 March 2023 (NC)
 
 
 # # LIBRARIES # # 
-# install.packages('tidyverse', lmerTest', 'AICcmodavg', 'MuMIn') ###*** if not installed
+# install.packages('tidyverse', lmerTest', 'AICcmodavg', 'MuMIn') 
 library(tidyverse)
 library(lmerTest) #lmer from lme4 with added p-values
 library(AICcmodavg) #calculate AICc
@@ -23,16 +19,13 @@ library(nlme) #allows heteroscedastic models
 
 rm(list=ls()) 
 
-# # WORKING DIRECTORIES # #
-comp_dat <- '~/Desktop/Code/Garibaldi/trampling_analyses/compiled_data/' #WD for NC
-
 
 # # INPUT FILES # #
-setwd(comp_dat)
-load('quad.RData') #gps & transect data matched to quad data (merge_fielddata.R)
+load('trampling_analyses/compiled_data/quad.RData') #gps & transect data matched to quad data (merge_fielddata.R)
 
 
 # # OUTPUT FILES # #
+load('trampling_analyses/compiled_data/quad.RData') #updated with reproductive metric & plant area (LMMs.R)
 
 
 
@@ -74,9 +67,33 @@ dat[ff] <- lapply(dat[ff], as.factor)
 str(dat) #check data structure
 
 
-###*** TO DO:
-# Calculate reproductive metric combining buds, flws, frts (look into different ways of doing)
-# Standardize reproductive metric by diameter (i.e. repro counts/diameter) - see repro.R
+# Calculate plant area for reproductive output
+dat$plantArea_cm2 <- (dat$mxdiam_mm * dat$height_mm)/100
+
+# Calculate reproductive metric combining buds, flws, frts and dividing by plant area
+# standardizing reproductive metric by diameter not needed - see repro.R
+dat$repro <- NA #initialize column
+for (i in 1:nrow(dat)) { #loop through each row of DF
+  
+  dat$repro[i] <- sum(c(dat$buds[i], dat$flws[i], dat$frts[i]), na.rm = T) / dat$plantArea_cm2[i]
+}
+summary(dat$repro)
+hist(dat$repro, breaks = 50)
+
+# Calculate relative reproduction
+mm <- dat %>% #create DF with max value per species
+  group_by(species) %>% 
+  summarise(max = max(repro, na.rm = T)) #NA listed in plots not seeded
+
+dat <- left_join(dat, mm) #combine DFs
+dat$rel_repro <- dat$repro/dat$max
+summary(dat$rel_repro)
+hist(dat$rel_repro, breaks = 50)
+
+
+# Save updated DF
+quad <- dat
+save(quad, file = 'trampling_analyses/compiled_data/quad.RData')
 
 
 # Check for correlation in predictor variables
