@@ -3,7 +3,7 @@
 
 # Authors: Nathalie Chardon, Cassandra Elphinstone, Philippa Stone
 # Date created: 15 Feb 2023
-# Date updated: 15 Feb 2023 (PS) added figures
+# Date updated: 10 March 2023 (PS)
 # Date updated: 15 Feb 2023 (NC) ###*** edit here if updating script
 
 
@@ -52,9 +52,6 @@ dat[ff] <- lapply(dat[ff], as.factor)
 dat <- subset(dat, dat$species!= "carspp")
 
 # adding new columns for plant area, buds/area, flowers/area,fruits/area, total repro struct, and total repro struct/area
-
-plantArea_cm2 <-  (dat$mxdiam_mm * dat$height_mm)/100 # I changed it into cm2 here because I found it easier to understand, but might be better to switch it to mm2 or m2?
-dat <- cbind(dat, plantArea_cm2)
 
 flwsByArea <- dat$flws / dat$plantArea_cm2
 frtsByArea <- dat$frts / dat$plantArea_cm2
