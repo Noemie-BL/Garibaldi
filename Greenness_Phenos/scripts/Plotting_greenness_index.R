@@ -28,7 +28,7 @@ library(psych)
 
 #------------------------------
 # first change path to where you want the figures output to
-setwd("~/GitHub/Garibaldi/Greenness_Phenos/")
+setwd("~/GitHub/Garibaldi/Greenness_Phenos/") # CE directory
 
 #------------------------------
 # import the data - ideally this is the only part of the script that changes per dataset
@@ -82,12 +82,12 @@ greenness_data_by_plot <- group_by(greenness_data, Plot=Plot)
 greenness_roll_mean <- summarise(greenness_data_by_plot, rolling_mean=zoo::rollmean(Greenness_Index, k=7, fill = NA))
 greenness_data$Greenness_Index_rolling <- greenness_roll_mean$rolling_mean
 
-# Calculate rolling median over 5 days
+# Calculate rolling median over 7 days
 greenness_roll_median<- summarise(greenness_data_by_plot, rolling_median=zoo::rollmedian(Greenness_Index, k=7, fill = NA))
 greenness_data$Greenness_Index_rolling_med <- greenness_roll_median$rolling_median
 
 #--------------------------------
-# For each plot normalize greenness to first value
+# For each plot normalize greenness to mean value
 
 greenness_normalize <- function(Greenness){  
   Greenness_norm =  Greenness - mean(Greenness,na.rm=TRUE)
