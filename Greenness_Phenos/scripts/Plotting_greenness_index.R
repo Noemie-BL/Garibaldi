@@ -28,7 +28,7 @@ library(psych)
 
 #------------------------------
 # first change path to where you want the figures output to
-setwd("~/GitHub/Garibaldi/Greenness_Phenos/") # CE directory
+#setwd("~/GitHub/Garibaldi/Greenness_Phenos/") # CE directory
 
 #------------------------------
 # import the data - ideally this is the only part of the script that changes per dataset
