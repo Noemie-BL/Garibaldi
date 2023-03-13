@@ -8,6 +8,7 @@
 
 
 # # LIBRARIES # # 
+library(lmerTest)
 library(ggplot2)
 library(ggtext)
 library(scales)
@@ -218,7 +219,7 @@ ggplot(dat, aes(x= plantArea_cm2, y= totalReproStruct, color = dist)) +
 
 ####################################################################################################
 
-
-
+#fitting model for reproductinve output
+mod <- lmer(repro ~ dist * plantArea_cm2 + (1|trans.pair) + (1|species), data = dat, REML = T)
 
 
