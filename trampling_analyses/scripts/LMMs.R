@@ -6,7 +6,7 @@
 
 # Authors: Nathalie Chardon & Philippa Stone
 # Date created: 11 Nov 2022
-# Date updated: 10 March 2023 (NC)
+# Date updated: 13 March 2023 (NC)
 
 
 # # LIBRARIES # # 
@@ -59,6 +59,9 @@ for (i in 1:nrow(dat)) { #loop through each data row
   }
 }
 
+# Remove P. grandiflora because only sampled at 1 site
+dat <- dat %>% 
+  filter(!species == 'phygla')
 
 # Convert categorical predictor variables to factor
 ff <- c('transect', 'species', 'dist', 'trans.pair')
