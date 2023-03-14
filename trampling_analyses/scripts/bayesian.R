@@ -110,7 +110,7 @@ powerscale_sensitivity(mod) #look at 'diagnosis' column to see if prior isn't ap
 summary(mod) 
 
 ## PROBLEM: low ESS for dist and dist*altitude
-## SOLUTION: drop interaction term? change model fitting parameters? ok to leave as is and mention parameter uncertainty?
+## SOLUTION: increase sampling frequency, increase chain length (https://beast.community/ess_tutorial)
 
 plot(mod) #model convergence (L: does distribution mean match estimate? R: did all values get explored?) 
 
