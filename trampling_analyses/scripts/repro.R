@@ -3,8 +3,7 @@
 
 # Authors: Nathalie Chardon, Cassandra Elphinstone, Philippa Stone
 # Date created: 15 Feb 2023
-# Date updated: 10 March 2023 (PS)
-# Date updated: 15 Feb 2023 (NC) ###*** edit here if updating script
+# Date updated: 17 March 2023 (PS)
 
 
 # # LIBRARIES # # 
@@ -40,6 +39,7 @@ mytheme <-   theme_classic() +
                                   hjust = 0.5), #align title to center
         legend.title = element_text(size = 24), legend.text = element_text(size = 22)) 
 
+theme_set(mytheme)
 
 ####################################################################################################
 
@@ -104,6 +104,7 @@ ggplot(dat, aes(x= plantArea_cm2, y= budsByArea, color = dist)) +
   scale_color_discrete(labels=c('Undisturbed', 'Disturbed'), name = "Disturbance") + #legend labels and title
   theme(axis.title.x = element_markdown(), axis.title.y = element_markdown()) #use markdown theme for axes labels
 
+
 # Plot size vs number of flowers/(height * diameter) by disturbed/undisturbed
 
 ggplot(dat, aes(x= plantArea_cm2, y= flwsByArea, color = dist)) +
@@ -130,7 +131,7 @@ ggplot(dat, aes(x= plantArea_cm2, y= frtsByArea, color = dist)) +
 
 # Plot size vs number of buds, flowers, and fruits/(height * diameter) by disturbed/undisturbed
 
-ggplot(dat, aes(x= plantArea_cm2, y= totalReproStructByArea, color = dist)) +
+totalReproPlotArea <- ggplot(dat, aes(x= plantArea_cm2, y= totalReproStructByArea, color = dist)) +
   geom_point() +
   stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
   coord_trans(y = "log1p") + #log10(x + 1) y axis 
@@ -140,9 +141,11 @@ ggplot(dat, aes(x= plantArea_cm2, y= totalReproStructByArea, color = dist)) +
   scale_color_discrete(labels=c('Undisturbed', 'Disturbed'), name = "Disturbance") + #legend labels and title
   theme(axis.title.x = element_markdown(), axis.title.y = element_markdown()) #use markdown theme for axes labels
 
+ggsave(filename = "~/Documents/UBC/Projects/Garibaldi/Garibaldi/trampling_analyses/figures/publication/totalReproPlotArea", plot = totalReproPlotArea, device = "pdf", dpi = 600, width = 14, height = 8, units = "in")
+
 # Plot size vs number of buds, flowers, and fruits by disturbed/undisturbed
 
-ggplot(dat, aes(x= plantArea_cm2, y= totalReproStruct, color = dist)) +
+totalReproPlot <- ggplot(dat, aes(x= plantArea_cm2, y= totalReproStruct, color = dist)) +
   geom_point() +
   stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
   scale_y_continuous(labels = label_comma()) + #remove scientific notation
@@ -150,6 +153,8 @@ ggplot(dat, aes(x= plantArea_cm2, y= totalReproStruct, color = dist)) +
   labs(x = "Plant area (cm^2)", y = "Number of reproductive structures") +
   scale_color_discrete(labels=c('Undisturbed', 'Disturbed'), name = "Disturbance") + #legend labels and title
   theme(axis.title.x = element_markdown(), axis.title.y = element_markdown()) #use markdown theme for axes labels
+
+ggsave(filename = "~/Documents/UBC/Projects/Garibaldi/Garibaldi/trampling_analyses/figures/publication/totalReproPlot", plot = totalReproPlot, device = "pdf", dpi = 600, width = 14, height = 8, units = "in")
 
 
 # # ALL SPECIES PLOTTED SEPARATELY
@@ -198,7 +203,7 @@ ggplot(dat, aes(x= plantArea_cm2, y= frtsByArea, color = dist)) +
 
 # Plot size vs number of buds, flowers, and fruits/(height * diameter) by disturbed/undisturbed
 
-ggplot(dat, aes(x= plantArea_cm2, y= totalReproStructByArea, color = dist)) +
+totalReproPlotAreaBySpecies <- ggplot(dat, aes(x= plantArea_cm2, y= totalReproStructByArea, color = dist)) +
   geom_point() +
   stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
   facet_wrap(.~ species, labeller = as_labeller(species_names), scales = "free") + #separate by species and rename with full species names
@@ -209,10 +214,11 @@ ggplot(dat, aes(x= plantArea_cm2, y= totalReproStructByArea, color = dist)) +
   scale_color_discrete(labels=c('Undisturbed', 'Disturbed'), name = "Disturbance") + #legend labels and title
   theme(axis.title.x = element_markdown(), axis.title.y = element_markdown()) #use markdown theme for axes labels
 
+ggsave(filename = "~/Documents/UBC/Projects/Garibaldi/Garibaldi/trampling_analyses/figures/publication/totalReproPlotAreaBySpecies", plot = totalReproPlotAreaBySpecies, device = "pdf", dpi = 600, width = 14, height = 8, units = "in")
 
 # Plot size vs number of buds, flowers, and fruits by disturbed/undisturbed
 
-ggplot(dat, aes(x= plantArea_cm2, y= totalReproStruct, color = dist)) +
+totalReproPlotBySpecies <- ggplot(dat, aes(x= plantArea_cm2, y= totalReproStruct, color = dist)) +
   geom_point() +
   stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
   facet_wrap(.~ species, labeller = as_labeller(species_names), scales = "free") + #separate by species and rename with full species names
@@ -222,6 +228,7 @@ ggplot(dat, aes(x= plantArea_cm2, y= totalReproStruct, color = dist)) +
   scale_color_discrete(labels=c('Undisturbed', 'Disturbed'), name = "Disturbance") + #legend labels and title
   theme(axis.title.x = element_markdown(), axis.title.y = element_markdown()) #use markdown theme for axes labels
 
+ggsave(filename = "~/Documents/UBC/Projects/Garibaldi/Garibaldi/trampling_analyses/figures/publication/totalReproPlotBySpecies", plot = totalReproPlotBySpecies, device = "pdf", dpi = 600, width = 14, height = 8, units = "in")
 
 ####################################################################################################
 
