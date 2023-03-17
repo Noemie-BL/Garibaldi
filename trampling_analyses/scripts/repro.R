@@ -30,6 +30,16 @@ load('quad.RData') #gps & transect data matched to quad data (merge_fielddata.R)
 
 
 
+# # PLOT THEME # #
+mytheme <-   theme_classic() +
+  theme(axis.text.x = element_text(colour = 'black', size = 25), #x axis text size
+        axis.text.y = element_text(colour = 'black', size = 25), #y axis text size
+        axis.title.x = element_text(size = 28), #x axis label size
+        axis.title.y = element_text(size = 28), #x axis label size
+        plot.title = element_text(size = 30, #title size
+                                  hjust = 0.5), #align title to center
+        legend.title = element_text(size = 24), legend.text = element_text(size = 22)) 
+
 
 ####################################################################################################
 
