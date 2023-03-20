@@ -18,7 +18,8 @@ rm(list=ls())
 
 # # WORKING DIRECTORIES # #
 #comp_dat <- '~/Desktop/Code/Garibaldi/trampling_analyses/compiled_data/' #WD for NC
-comp_dat <- 'C:/Users/Owner/Documents/GitHub/Garibaldi/trampling_analyses/compiled_data/' #WD for CE
+#comp_dat <- 'C:/Users/Owner/Documents/GitHub/Garibaldi/trampling_analyses/compiled_data/' #WD for CE
+comp_dat <- '~/Documents/UBC/Projects/Garibaldi/Garibaldi/trampling_analyses/compiled_data/' #WD for PS
 
 # # INPUT FILES # #
 setwd(comp_dat)
@@ -141,7 +142,7 @@ totalReproPlotArea <- ggplot(dat, aes(x= plantArea_cm2, y= totalReproStructByAre
   scale_color_discrete(labels=c('Undisturbed', 'Disturbed'), name = "Disturbance") + #legend labels and title
   theme(axis.title.x = element_markdown(), axis.title.y = element_markdown()) #use markdown theme for axes labels
 
-ggsave(filename = "~/Documents/UBC/Projects/Garibaldi/Garibaldi/trampling_analyses/figures/publication/totalReproPlotArea", plot = totalReproPlotArea, device = "pdf", dpi = 600, width = 14, height = 8, units = "in")
+ggsave(filename = "../figures/publication/totalReproPlotArea", plot = totalReproPlotArea, device = "pdf", dpi = 600, width = 14, height = 8, units = "in")
 
 # Plot size vs number of buds, flowers, and fruits by disturbed/undisturbed
 
@@ -154,7 +155,7 @@ totalReproPlot <- ggplot(dat, aes(x= plantArea_cm2, y= totalReproStruct, color =
   scale_color_discrete(labels=c('Undisturbed', 'Disturbed'), name = "Disturbance") + #legend labels and title
   theme(axis.title.x = element_markdown(), axis.title.y = element_markdown()) #use markdown theme for axes labels
 
-ggsave(filename = "~/Documents/UBC/Projects/Garibaldi/Garibaldi/trampling_analyses/figures/publication/totalReproPlot", plot = totalReproPlot, device = "pdf", dpi = 600, width = 14, height = 8, units = "in")
+ggsave(filename = "../figures/publication/totalReproPlot", plot = totalReproPlot, device = "pdf", dpi = 600, width = 14, height = 8, units = "in")
 
 
 # # ALL SPECIES PLOTTED SEPARATELY
@@ -214,7 +215,7 @@ totalReproPlotAreaBySpecies <- ggplot(dat, aes(x= plantArea_cm2, y= totalReproSt
   scale_color_discrete(labels=c('Undisturbed', 'Disturbed'), name = "Disturbance") + #legend labels and title
   theme(axis.title.x = element_markdown(), axis.title.y = element_markdown()) #use markdown theme for axes labels
 
-ggsave(filename = "~/Documents/UBC/Projects/Garibaldi/Garibaldi/trampling_analyses/figures/publication/totalReproPlotAreaBySpecies", plot = totalReproPlotAreaBySpecies, device = "pdf", dpi = 600, width = 14, height = 8, units = "in")
+ggsave(filename = "../figures/publication/totalReproPlotAreaBySpecies", plot = totalReproPlotAreaBySpecies, device = "pdf", dpi = 600, width = 14, height = 8, units = "in")
 
 # Plot size vs number of buds, flowers, and fruits by disturbed/undisturbed
 
@@ -228,7 +229,7 @@ totalReproPlotBySpecies <- ggplot(dat, aes(x= plantArea_cm2, y= totalReproStruct
   scale_color_discrete(labels=c('Undisturbed', 'Disturbed'), name = "Disturbance") + #legend labels and title
   theme(axis.title.x = element_markdown(), axis.title.y = element_markdown()) #use markdown theme for axes labels
 
-ggsave(filename = "~/Documents/UBC/Projects/Garibaldi/Garibaldi/trampling_analyses/figures/publication/totalReproPlotBySpecies", plot = totalReproPlotBySpecies, device = "pdf", dpi = 600, width = 14, height = 8, units = "in")
+ggsave(filename = "../figures/publication/totalReproPlotBySpecies", plot = totalReproPlotBySpecies, device = "pdf", dpi = 600, width = 14, height = 8, units = "in")
 
 ####################################################################################################
 
