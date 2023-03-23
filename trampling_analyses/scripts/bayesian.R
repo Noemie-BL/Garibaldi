@@ -5,7 +5,7 @@
 
 # Author: Nathalie Chardon
 # Date created: 13 Mar 2023
-# Date updated: 13 Mar 2023 (NC)
+# Date updated: 23 Mar 2023 (PS)
 
 # # LIBRARIES # #
 library(rjags)
@@ -22,7 +22,11 @@ library(distributional)
 
 rm(list=ls()) 
 
+# # WORKING DIRECTORIES # #
+garibaldiWD <- '~/Documents/UBC/Projects/Garibaldi/Garibaldi/' #WD for PS
+
 # # INPUT FILES # #
+setwd(garibaldiWD)
 load('trampling_analyses/compiled_data/quad.RData') #updated with reproductive metric & plant area (LMMs.R)
 
 
