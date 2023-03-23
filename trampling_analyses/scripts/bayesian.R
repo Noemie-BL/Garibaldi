@@ -18,6 +18,7 @@ library(priorsense) # remotes::install_github("n-kall/priorsense")
 library(bayesplot)
 library(tidyverse)
 library(loo)
+library(distributional)
 
 rm(list=ls()) 
 
