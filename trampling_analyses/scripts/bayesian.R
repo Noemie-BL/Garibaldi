@@ -154,4 +154,37 @@ ppc_loo_pit_overlay(dat$height_mm,
 # # Conclusion: low ESS for some parameters and some model fit issues
 
 
+####### PLOTS ########
 
+mytheme <-   theme_classic() +
+  theme(axis.text.x = element_text(colour = 'black', size = 25), #x axis text size
+        axis.text.y = element_text(colour = 'black', size = 25), #y axis text size
+        axis.title.x = element_text(size = 28), #x axis label size
+        axis.title.y = element_text(size = 28), #x axis label size
+        plot.title = element_text(size = 30, #title size
+                                  hjust = 0.5), #align title to center
+        legend.title = element_text(size = 24), legend.text = element_text(size = 22)) 
+
+theme_set(mytheme)
+
+(modelPlot <- dat %>%
+    add_predicted_draws(mod) %>%  # adding the posterior distribution
+    ggplot(aes(x = altitude, y = height_mm)) +  
+    stat_lineribbon(aes(y = .prediction), .width = c(.95, .80, .50),  # regression line and CI
+                    alpha = 0.5, colour = "black") +
+    geom_point(data = dat) +   # raw data
+    scale_fill_brewer(palette = "Greys") +
+    ylab("Plant height (mm)\n") +  # latin name for red knot
+    xlab("\nElevation (m)"))
+
+
+
+(modelPlotDist <- dat %>%
+    group_by(dist) %>%
+    add_predicted_draws(mod) %>%
+    ggplot(aes(x = altitude, y = height_mm, color = dist, fill = dist)) +
+    stat_lineribbon(aes(y = .prediction), .width = c(.95), alpha = 0.33) +
+    geom_point(data = dat) +
+    ylab("Plant height (mm)\n") +
+    xlab("\nElevation (m)") +
+    theme(legend.title = element_blank()))
