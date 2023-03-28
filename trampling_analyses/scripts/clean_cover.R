@@ -117,6 +117,9 @@ outs.id$trans_quad #these are the transect-quad photos that need to be checked
 ## NEED TO CHECK THESE OUTLIERS: DO THESE PHOTOS SHOW SUCH HIGH PLANT PERCENT COVER?
 ## (Carly***)
 
+## ALSO CHECK PHOTOS WITH MOSS OR LOGS IN THEM TO SEE WHERE THESE PERCENT COVER VALUES LIE IN 
+## RELATION WITH GENERAL DISTRIBUTION.
+
 
 ## If you detect outliers:
 
