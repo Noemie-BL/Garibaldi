@@ -3,7 +3,7 @@
 
 # Authors: Nathalie Chardon, Cassandra Elphinstone, Philippa Stone
 # Date created: 15 Feb 2023
-# Date updated: 17 March 2023 (PS)
+# Date updated: 28 March 2023 (NC)
 
 
 # # LIBRARIES # # 
@@ -12,18 +12,15 @@ library(ggplot2)
 library(ggtext)
 library(scales)
 library(tidyverse)
+library(brms)
+library(lmerTest) #lmer from lme4 with added p-values
+
 
 rm(list=ls()) 
 
 
-# # WORKING DIRECTORIES # #
-#comp_dat <- '~/Desktop/Code/Garibaldi/trampling_analyses/compiled_data/' #WD for NC
-#comp_dat <- 'C:/Users/Owner/Documents/GitHub/Garibaldi/trampling_analyses/compiled_data/' #WD for CE
-comp_dat <- '~/Documents/UBC/Projects/Garibaldi/Garibaldi/trampling_analyses/compiled_data/' #WD for PS
-
 # # INPUT FILES # #
-setwd(comp_dat)
-load('quad.RData') #gps & transect data matched to quad data (merge_fielddata.R)
+load('trampling_analyses/compiled_data/quad.RData') #gps & transect data matched to quad data (merge_fielddata.R)
 
 
 # # OUTPUT FILES # #
@@ -42,6 +39,9 @@ mytheme <-   theme_classic() +
 
 theme_set(mytheme)
 
+
+
+
 ####################################################################################################
 
 # # DATA # # 
@@ -49,8 +49,7 @@ theme_set(mytheme)
 ####################################################################################################
 
 # Load quadrat-level data (see merge_fielddata.R for variable descriptions)
-setwd(comp_dat)
-load('quad.RData') #gps & transect data matched to quad data (merge_fielddata.R)
+load('trampling_analyses/compiled_data/quad.RData') #gps & transect data matched to quad data (merge_fielddata.R)
 
 # Set generic dataframe name
 dat <- quad 
@@ -84,6 +83,9 @@ summary(dat) #check that no infinite values exist
 
 # full species names
 species_names <- c('carspp'= "Carex spp.", 'casmer' = "Cassiope mertensiana", 'phyemp' = "Phyllodoce empetriformis", 'phygla' = "Phyllodoce glanduliflora", 'vacova' = "Vaccinium ovalifolium")
+
+
+
 
 ####################################################################################################
 
@@ -142,7 +144,7 @@ totalReproPlotArea <- ggplot(dat, aes(x= plantArea_cm2, y= totalReproStructByAre
   scale_color_discrete(labels=c('Undisturbed', 'Disturbed'), name = "Disturbance") + #legend labels and title
   theme(axis.title.x = element_markdown(), axis.title.y = element_markdown()) #use markdown theme for axes labels
 
-ggsave(filename = "../figures/publication/totalReproPlotArea", plot = totalReproPlotArea, device = "pdf", dpi = 600, width = 14, height = 8, units = "in")
+ggsave(filename = "trampling_analyses/figures/publication/totalReproPlotArea", plot = totalReproPlotArea, device = "pdf", dpi = 600, width = 14, height = 8, units = "in")
 
 # Plot size vs number of buds, flowers, and fruits by disturbed/undisturbed
 
@@ -155,7 +157,7 @@ totalReproPlot <- ggplot(dat, aes(x= plantArea_cm2, y= totalReproStruct, color =
   scale_color_discrete(labels=c('Undisturbed', 'Disturbed'), name = "Disturbance") + #legend labels and title
   theme(axis.title.x = element_markdown(), axis.title.y = element_markdown()) #use markdown theme for axes labels
 
-ggsave(filename = "../figures/publication/totalReproPlot", plot = totalReproPlot, device = "pdf", dpi = 600, width = 14, height = 8, units = "in")
+ggsave(filename = "trampling_analyses/figures/publication/totalReproPlot", plot = totalReproPlot, device = "pdf", dpi = 600, width = 14, height = 8, units = "in")
 
 
 # # ALL SPECIES PLOTTED SEPARATELY
@@ -229,15 +231,72 @@ totalReproPlotBySpecies <- ggplot(dat, aes(x= plantArea_cm2, y= totalReproStruct
   scale_color_discrete(labels=c('Undisturbed', 'Disturbed'), name = "Disturbance") + #legend labels and title
   theme(axis.title.x = element_markdown(), axis.title.y = element_markdown()) #use markdown theme for axes labels
 
-ggsave(filename = "../figures/publication/totalReproPlotBySpecies", plot = totalReproPlotBySpecies, device = "pdf", dpi = 600, width = 14, height = 8, units = "in")
+ggsave(filename = "trampling_analyses/figures/publication/totalReproPlotBySpecies", plot = totalReproPlotBySpecies, device = "pdf", dpi = 600, width = 14, height = 8, units = "in")
+
+
+
 
 ####################################################################################################
 
-# # EXPLORE DIFFERENT SLOPES OR EQUATION OF LINE DIFFERENCES BY SPECIES (Cassandra) # # 
+# # TEST FOR RELATIONSHIP BETWEEN PLANT AREA AND REPRO STRUCTURES (Nathalie) # # 
+# package: brms
+# Family: Gamma
+# Fixed effects: plantArea_cm2 + dist
+# Random effects: (1|trans.pair) + (plantArea_cm2 + dist|species)
 
 ####################################################################################################
 
-#fitting model for reproductinve output
-mod <- lmer(repro ~ dist * plantArea_cm2 + (1|trans.pair) + (1|species), data = dat, REML = T)
+# # Data
+str(dat) #check that categorical explanatory variables are factors, others numeric
+
+hist(dat$totalReproStructByArea, breaks = 100) #response variable
 
 
+# Skew function (from: https://towardsdatascience.com/evaluating-bayesian-mixed-models-in-r-python-27d344a03016_)
+skew <- function(y){ # Fisher-Pearson Skew function based on NIST definition
+  n <- length(y)
+  dif <- y - mean(y)
+  skew_stat <- (sqrt(n-1)/(n-2))*n *(sum(dif^3)/(sum(dif^2)^1.5))
+  return(skew_stat)
+}
+
+# Set 0 --> 0.0001 for Gamma distribution models
+dat <- dat %>%
+  mutate(totalReproStructByArea = if_else(totalReproStructByArea == 0, 0.0001, totalReproStructByArea))
+
+# # Fit Model 
+repro_size <- brms::brm(totalReproStructByArea ~ plantArea_cm2 + dist + 
+                          (1|trans.pair) + (1|species),
+                        
+                       data = dat, family = gaussian(), 
+                       
+                       # fitting information
+                       chains = 3, iter = 3000, warmup = 1000, cores = 4, #for computers with 4 cores
+                       file = 'trampling_analyses/outputs/repro_size.rds', file_refit = 'on_change')
+
+mod <- repro_size #generic model name
+
+
+# # Model output
+
+# Check posterior
+summary(mod)
+plot(mod)
+plot(conditional_effects(mod))[[1]] + 
+  geom_point(aes(plantArea_cm2, totalReproStructByArea), data = dat, inherit.aes = FALSE)
+
+# Check prior
+prior_summary(mod) 
+ps <- powerscale_sensitivity(mod)
+unique(ps$sensitivity$diagnosis)
+
+# Model fit
+pp_check(mod, ndraws = 100)
+ppc_stat(y = dat$rel_rec, 
+         yrep = posterior_predict(mod, ndraws = 1000),
+         stat = "skew")
+model_loo <- loo(mod, save_psis = TRUE, cores=4) 
+w <- weights(model_loo$psis_object)
+ppc_loo_pit_overlay(dat$totalReproStructByArea, 
+                    posterior_predict(mod), 
+                    lw = w)
