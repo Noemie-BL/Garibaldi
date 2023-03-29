@@ -6,7 +6,8 @@
 
 # Authors: Nathalie Chardon & Philippa Stone
 # Date created: 11 Nov 2022
-# Date updated: 13 March 2023 (NC)
+# Date updated: 29 March 2023 (NC)
+# NOTE: this script is outdated, as we are using brms for our analyses (repro.R, bayesian.R)
 
 
 # # LIBRARIES # # 
@@ -74,7 +75,6 @@ str(dat) #check data structure
 dat$plantArea_cm2 <- (dat$mxdiam_mm * dat$height_mm)/100
 
 # Calculate reproductive metric combining buds, flws, frts and dividing by plant area
-# standardizing reproductive metric by diameter not needed - see repro.R
 dat$repro <- NA #initialize column
 for (i in 1:nrow(dat)) { #loop through each row of DF
   

@@ -1,11 +1,11 @@
 ## TRAMPLING ANALYSES
 
-What is the effect of human trampling on plant communities across an elevational gradient?
+What is the effect of human trampling on plant communities across an elevational gradient, and which species are more susceptible to trampling?
 
 ## Contributors: 
 Nathalie Chardon (nathalie.chardon@gmail.com), Carly Hilbert (chilbe02@student.ubc.ca), Philippa Stone (philippa.stone@botany.ubc.ca), Cassandra Elphinstone (cassandra.elphinstone@shaw.ca)
 
-Last edited: 15 Feb 2023
+Last edited: 29 Mar 2023
 
 #-----------------------------
 ## Data collection notes summer 2022 - Who, when, where, why and how the data were collected
@@ -20,7 +20,7 @@ Data entered by: Carly Hilbert
 
 Methods: In the summer of 2022, we established long-term transects near the major trails in the park (Taylor Meadows, Black Tusk, Panorama Ridge) to quantify the effects of trampling by recreational users. To address how trampling affects charismatic plant communities (blueberry, heather and sedge meadows) along elevational gradients, we chose sites at multiple elevations per trail. We established transects directly adjacent to the trail and at least a 5 m perpendicular distance away from the trail (control) to compare the effects of trampling on the same vegetation types. 
 
-Plant communities. We recorded landscape characteristics (slope, aspect, latitude, longitude, presence of trees) for each transect and used 0.5m x 1m quadrats to record height, maximum diameter, and bud/flower/fruit counts of our focal plant species (Vaccinium ovalifolium, Cassiope mertensiana, Phyllodoce empetriformis, Phyllodoce grandiflora, Carex sp.). Please see N. Chardon’s recent work on human trampling for greater detail on this sampling approach: 
+Plant communities. We recorded landscape characteristics (slope, aspect, latitude, longitude, presence of trees) for each transect and used 0.5m x 1m quadrats to record height, maximum diameter, and bud/flower/fruit counts of our focal plant species (Vaccinium ovalifolium, Cassiope mertensiana, Phyllodoce empetriformis, Phyllodoce grandiflora, Carex sp.). Because we only found Phyllodoce grandiflora at one site, we did not use this species in our analyses. Please see N. Chardon’s recent work on human trampling for greater detail on this sampling approach: 
 https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/1365-2664.13384
 https://onlinelibrary.wiley.com/doi/full/10.1002/ece3.4276
 
@@ -52,6 +52,8 @@ trans_ALL.RData: all transect field data, gps, and altitude; created on 15 Nov 2
 
 P_albicaulis_Garibaldi_Aug2022.csv: Pinus albicaulis locations for BC Rangers; emailed data to Kym Welstead (Kym.Welstead@gov.bc.ca) on 7 Dec 2022
 
+plant-percent-cover.csv: Estimated plant percent cover values for each quadrat (Allen Zhao: allen10to11@gmail.com); created on 27 March 2023; mid version because many transects missing and data needs to be checked
+
 
 #-----------------------------
 ## Analysis notes
@@ -67,12 +69,13 @@ LMMs.R: basic linear mixed models testing the effects of trampling and elevation
 
 figs.R: figures visualizing data; R; ggplot2, ggsignif, tidyr, dplyr
 
-repro.R: define and calculate a standardized reproductive metric
-
+repro.R: define and calculate a standardized reproductive metric, add to quads.RData, and test relationship between reproductive density and plant area by species; ggplot2, ggtext, scales, tidyverse, brms
 
 
 #-----------------------------
 ## Figures
 FOLDERNAME <folder containing some figures made by the scripts above>
 
-/BC_PARF/xxx.pdf ###*** placeholder for Carly's figures
+/publication/: figures for publication (Mar 2023)
+
+/BC_PARF/: Carly's figures for BC PARF (Dec 2022)

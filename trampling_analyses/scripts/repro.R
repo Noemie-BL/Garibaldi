@@ -7,13 +7,11 @@
 
 
 # # LIBRARIES # # 
-library(lmerTest)
 library(ggplot2)
 library(ggtext)
 library(scales)
 library(tidyverse)
-library(brms)
-library(lmerTest) #lmer from lme4 with added p-values
+library(lmerTest)
 
 
 rm(list=ls()) 
@@ -51,35 +49,29 @@ theme_set(mytheme)
 # Load quadrat-level data (see merge_fielddata.R for variable descriptions)
 load('trampling_analyses/compiled_data/quad.RData') #gps & transect data matched to quad data (merge_fielddata.R)
 
-# Set generic dataframe name
-dat <- quad 
-str(dat)
-
-# Convert categorical predictor variables to factor
-ff <- c('transect', 'species', 'dist')
-dat[ff] <- lapply(dat[ff], as.factor)
 
 # Remove Carex spp.
-dat <- subset(dat, dat$species!= "carspp")
+quad <- quad %>% 
+  filter(species != "carspp")
 
 # adding new columns for plant area, buds/area, flowers/area,fruits/area, total repro struct, and total repro struct/area
 
-flwsByArea <- dat$flws / dat$plantArea_cm2
-frtsByArea <- dat$frts / dat$plantArea_cm2
-budsByArea <- dat$buds / dat$plantArea_cm2
-dat <- cbind (dat, flwsByArea, frtsByArea, budsByArea)
+flwsByArea <- quad$flws / quad$plantArea_cm2
+frtsByArea <- quad$frts / quad$plantArea_cm2
+budsByArea <- quad$buds / quad$plantArea_cm2
+quad <- cbind (quad, flwsByArea, frtsByArea, budsByArea)
 
-totalReproStruct <- dat$flws + dat$frts + dat$buds
-dat <- cbind(dat, totalReproStruct)
+totalReproStruct <- quad$flws + quad$frts + quad$buds
+quad <- cbind(quad, totalReproStruct)
 
-totalReproStructByArea <- dat$totalReproStruct / dat$plantArea_cm2
-dat <- cbind(dat, totalReproStructByArea)
+totalReproStructByArea <- quad$totalReproStruct / quad$plantArea_cm2
+quad <- cbind(quad, totalReproStructByArea)
 
 # Convert Inf and -Inf values to NA
-dat <- dat %>% 
+quad <- quad %>% 
   mutate_if(is.numeric, ~ replace(., is.infinite(.), NA))
 
-summary(dat) #check that no infinite values exist
+summary(quad) #check that no infinite values exist
 
 # full species names
 species_names <- c('carspp'= "Carex spp.", 'casmer' = "Cassiope mertensiana", 'phyemp' = "Phyllodoce empetriformis", 'phygla' = "Phyllodoce glanduliflora", 'vacova' = "Vaccinium ovalifolium")
@@ -94,6 +86,8 @@ species_names <- c('carspp'= "Carex spp.", 'casmer' = "Cassiope mertensiana", 'p
 ####################################################################################################
 
 # # ALL SPECIES AGGREGATED
+
+dat <- quad #generic dataframe
 
 # Plot size vs number of buds/(height * diameter) by disturbed/undisturbed
 
@@ -238,19 +232,15 @@ ggsave(filename = "trampling_analyses/figures/publication/totalReproPlotBySpecie
 
 ####################################################################################################
 
-# # TEST FOR RELATIONSHIP BETWEEN PLANT AREA AND REPRO STRUCTURES (Nathalie) # # 
-# package: brms
-# Family: Gamma
+# # TEST FOR RELATIONSHIP BETWEEN PLANT AREA AND REPRO STRUCTURES BY SPECIES (Nathalie) # # 
+# package: lmerTest
 # Fixed effects: plantArea_cm2 + dist
-# Random effects: (1|trans.pair) + (plantArea_cm2 + dist|species)
+# Random effects: (1|trans.pair)
 
 ####################################################################################################
 
 # # Data
-str(dat) #check that categorical explanatory variables are factors, others numeric
-
-hist(dat$totalReproStructByArea, breaks = 100) #response variable
-
+str(quad) #check that categorical explanatory variables are factors, others numeric
 
 # Skew function (from: https://towardsdatascience.com/evaluating-bayesian-mixed-models-in-r-python-27d344a03016_)
 skew <- function(y){ # Fisher-Pearson Skew function based on NIST definition
@@ -260,43 +250,47 @@ skew <- function(y){ # Fisher-Pearson Skew function based on NIST definition
   return(skew_stat)
 }
 
-# Set 0 --> 0.0001 for Gamma distribution models
-dat <- dat %>%
-  mutate(totalReproStructByArea = if_else(totalReproStructByArea == 0, 0.0001, totalReproStructByArea))
+## PHYEMP ##
+
+# Filter by species 
+dat <- quad %>%
+  filter(species == 'phyemp')
+
+hist(dat$totalReproStructByArea, breaks = 100)
 
 # # Fit Model 
-repro_size <- brms::brm(totalReproStructByArea ~ plantArea_cm2 + dist + 
-                          (1|trans.pair) + (1|species),
-                        
-                       data = dat, family = gaussian(), 
-                       
-                       # fitting information
-                       chains = 3, iter = 3000, warmup = 1000, cores = 4, #for computers with 4 cores
-                       file = 'trampling_analyses/outputs/repro_size.rds', file_refit = 'on_change')
+mod <- lmer(totalReproStructByArea ~ plantArea_cm2 + dist + (1|trans.pair), data = dat)
 
-mod <- repro_size #generic model name
-
-
-# # Model output
-
-# Check posterior
 summary(mod)
-plot(mod)
-plot(conditional_effects(mod))[[1]] + 
-  geom_point(aes(plantArea_cm2, totalReproStructByArea), data = dat, inherit.aes = FALSE)
 
-# Check prior
-prior_summary(mod) 
-ps <- powerscale_sensitivity(mod)
-unique(ps$sensitivity$diagnosis)
 
-# Model fit
-pp_check(mod, ndraws = 100)
-ppc_stat(y = dat$rel_rec, 
-         yrep = posterior_predict(mod, ndraws = 1000),
-         stat = "skew")
-model_loo <- loo(mod, save_psis = TRUE, cores=4) 
-w <- weights(model_loo$psis_object)
-ppc_loo_pit_overlay(dat$totalReproStructByArea, 
-                    posterior_predict(mod), 
-                    lw = w)
+## CASMER ##
+
+# Filter by species 
+dat <- quad %>%
+  filter(species == 'casmer')
+
+hist(dat$totalReproStructByArea, breaks = 100)
+
+# # Fit Model 
+mod <- lmer(totalReproStructByArea ~ plantArea_cm2 + dist + (1|trans.pair), data = dat)
+
+summary(mod)
+
+
+## VACOVA ##
+
+# Filter by species 
+dat <- quad %>%
+  filter(species == 'vacova')
+
+hist(dat$totalReproStructByArea, breaks = 100)
+
+# # Fit Model 
+mod <- lmer(totalReproStructByArea ~ plantArea_cm2 + dist + (1|trans.pair), data = dat)
+
+summary(mod)
+
+
+
+

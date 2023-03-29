@@ -6,7 +6,9 @@
 
 # Author: Nathalie Chardon
 # Date created: 11 Nov 2022
-# Date updated: 15 Feb 2023
+# Date updated: 29 Mar 2023
+
+## NOTE: need to add percent cover of plants once processed by CH
 
 # # LIBRARIES # #
 library(tidyverse)
@@ -17,27 +19,21 @@ library(lattice)
 rm(list=ls()) 
 
 
-# # WORKING DIRECTORIES # #
-raw_dat <- '~/Desktop/Code/Garibaldi/trampling_analyses/raw_data/' #WD for NC
-comp_dat <- '~/Desktop/Code/Garibaldi/trampling_analyses/compiled_data/' #WD for NC
-
 
 # # INPUT FILES # #
-setwd(raw_dat)
-gps.raw <- read.table('GPS_with-elev.txt', header = T, fill = T) #lat, long, elev, ID for each transect
+gps.raw <- read.table('trampling_analyses/raw_data/GPS_with-elev.txt', header = T, fill = T) #lat, long, elev, ID for each transect
 
-trans.raw <- read.csv('Trampling-TRANSECTS_data.csv')
+trans.raw <- read.csv('trampling_analyses/raw_data/Trampling-TRANSECTS_data.csv')
 
-quad.raw <- read.csv('Trampling-QUADS_data.csv')
+quad.raw <- read.csv('trampling_analyses/raw_data/Trampling-QUADS_data.csv')
 
 
 # # OUTPUT FILES # #
-setwd(comp_dat)
-load('quad.RData') #gps & transect data matched to quad data (merge_fielddata.R)
+load('trampling_analyses/compiled_data/quad.RData') #gps & transect data matched to quad data (merge_fielddata.R)
 
-load('trans_ALL.RData') #all transect field data, gps, and altitude
+load('trampling_analyses/compiled_data/trans_ALL.RData') #all transect field data, gps, and altitude
 
-pinalb <- read.csv('P_albicaulis_Garibaldi_Aug2022.csv') #Pinus albicaulis locations for BC Rangers
+pinalb <- read.csv('trampling_analyses/compiled_data/P_albicaulis_Garibaldi_Aug2022.csv') #Pinus albicaulis locations for BC Rangers
 
 
 
@@ -578,6 +574,7 @@ quad$height_adj <- ifelse(quad$height_adj <0, 0, quad$height_adj)
 
 
 
+
 ####################################################################################################
 
 # # SAVE DATA # # 
@@ -593,7 +590,6 @@ quad <- quad %>%
 # Rename height column
 
 quad <- rename(quad, height_mm = height_adj)
-
 
 # Save
 

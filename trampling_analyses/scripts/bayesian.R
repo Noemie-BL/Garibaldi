@@ -1,11 +1,11 @@
 # Aims:
-# 1. Analyses in Bayesian framework to model disturbance effects on plant height, diameter, and repro
+# 1. Analyses in Bayesian framework to model disturbance effects on plant height, diameter, repro, and plant cover
 # 2. Visualize model fit
 # 3. Plot results
 
 # Author: Nathalie Chardon
 # Date created: 13 Mar 2023
-# Date updated: 23 Mar 2023 (PS)
+# Date updated: 29 Mar 2023 (NC)
 
 # # LIBRARIES # #
 library(rjags)
@@ -22,11 +22,8 @@ library(distributional)
 
 rm(list=ls()) 
 
-# # WORKING DIRECTORIES # #
-garibaldiWD <- '~/Documents/UBC/Projects/Garibaldi/Garibaldi/' #WD for PS
 
 # # INPUT FILES # #
-setwd(garibaldiWD)
 load('trampling_analyses/compiled_data/quad.RData') #updated with reproductive metric & plant area (LMMs.R)
 
 
@@ -64,23 +61,24 @@ skew <- function(y){ # Fisher-Pearson Skew function based on NIST definition
 
 ####################################################################################################
 
-# # HEIGHT # #
+# # PHYEMP # #
 # Family: negative binomial
 # Fixed effects: dist * altitude
-# Random effects: (1|trans.pair) + (1|species)
+# Random effects: (1|trans.pair)
 
 ####################################################################################################
 
 # # Data 
 dat <- quad %>% #rename DF
-  filter_at(vars(height_mm, dist, altitude), all_vars(!is.na(.))) #remove NAs in variables used in model
+  filter_at(vars(height_mm, dist, altitude), all_vars(!is.na(.))) %>% #remove NAs in variables used in model
+  filter(species == 'phyemp')
 
 
-# # Model 
-height_nb <- brms::brm(height_mm ~ dist * altitude + (1|trans.pair) + (1|species),
+# # Model for HEIGHT
+height_nb <- brms::brm(height_mm ~ dist * altitude + (1|trans.pair),
                        data = dat, family = negbinomial(link = "log", link_shape = "log"), 
                        # fitting information
-                       chains = 3, iter = 3000, warmup = 1000, cores = 4, #for computers with 4 cores
+                       chains = 3, iter = 5000, warmup = 1000, cores = 4, #for computers with 4 cores
                        file = 'trampling_analyses/outputs/height_nb.rds', file_refit = 'on_change')
 mod <- height_nb #generic model name
 
@@ -106,16 +104,14 @@ prior_summary(mod) #can define priors in brm(priors = ...)
 
 
 # Do priors overwhelm likelihood?  
-powerscale_sensitivity(mod) #look at 'diagnosis' column to see if prior isn't appropriate
+ps <- powerscale_sensitivity(mod) #look at 'diagnosis' column to see if prior isn't appropriate
+unique(ps$sensitivity$diagnosis)
 
 
 # # Model Fit
 
 # sample size (Bulk_ESS & Tail_ESS) should > 1000 & rhat < 1.1
 summary(mod) 
-
-## PROBLEM: low ESS for dist and dist*altitude
-## SOLUTION: increase sampling frequency, increase chain length (https://beast.community/ess_tutorial)
 
 plot(mod) #model convergence (L: does distribution mean match estimate? R: did all values get explored?) 
 
@@ -125,16 +121,10 @@ pp_check(mod, ndraws = 100) #posterior predictive checks - are predicted values 
 # Pairs plots to diagnose sampling problems (should show Gaussian blobs)
 pairs(mod)
 
-## PROBLEM: not all pairs show Gaussian blobs, means model isn't 'well-behaved'
-## SOLUTION: leave as is and report in results
-
 # Skewness: observed (black line) and simulated (grey distribution) SKEW metric (1000 simulated datasets)
 ppc_stat(y = dat$height_mm, 
          yrep = posterior_predict(mod, ndraws = 1000),
          stat = "skew")
-
-## PROBLEM: skew of data not modeled well
-## SOLUTION: report in results
 
 # Leave-one-out Crossvalidation (LOO) for marginal (pointwise) posterior predictive checks
 model_loo <- loo(mod, save_psis = TRUE, cores=4) #higher elpd => better fit 
@@ -151,8 +141,47 @@ ppc_loo_pit_overlay(dat$height_mm,
                     lw = w)
 
 
-# # Conclusion: low ESS for some parameters and some model fit issues
+# # Conclusion: 
+## - major model fit issues (divergent transitions, low BF, large R-hat, low ESS) with 
+## species as a random slope
+## - for individual species models: data modeled much better, and good model fit! => use this approach
 
+
+## Model for DIAMETER
+
+dat <- quad %>% #rename DF
+  filter_at(vars(mxdiam_mm, dist, altitude), all_vars(!is.na(.))) %>% #remove NAs in variables used in model
+  filter(species == 'phyemp')
+
+diam_nb <- brms::brm(mxdiam_mm ~ dist * altitude + (1|trans.pair),
+                       data = dat, family = negbinomial(link = "log", link_shape = "log"), 
+                       # fitting information
+                       chains = 3, iter = 5000, warmup = 1000, cores = 4, #for computers with 4 cores
+                       file = 'trampling_analyses/outputs/diam_nb.rds', file_refit = 'on_change')
+mod <- diam_nb #generic model name
+
+summary(mod) 
+plot(conditional_effects(mod), ask = FALSE) #fitted parameters and their CI
+
+prior_summary(mod) #can define priors in brm(priors = ...)
+ps <- powerscale_sensitivity(mod) #look at 'diagnosis' column to see if prior isn't appropriate
+unique(ps$sensitivity$diagnosis)
+
+plot(mod) #model convergence (L: does distribution mean match estimate? R: did all values get explored?) 
+pp_check(mod, ndraws = 100) #posterior predictive checks - are predicted values similar to posterior distribution?
+pairs(mod)
+
+ppc_stat(y = dat$mxdiam_mm, 
+         yrep = posterior_predict(mod, ndraws = 1000),
+         stat = "skew")
+model_loo <- loo(mod, save_psis = TRUE, cores=4) #higher elpd => better fit 
+w <- weights(model_loo$psis_object)
+ppc_loo_pit_overlay(dat$mxdiam_mm, 
+                    posterior_predict(mod), 
+                    lw = w)
+
+# # Conclusion: 
+# very good model fit!
 
 ####### PLOTS ########
 
@@ -188,3 +217,66 @@ theme_set(mytheme)
     ylab("Plant height (mm)\n") +
     xlab("\nElevation (m)") +
     theme(legend.title = element_blank()))
+
+
+
+
+####################################################################################################
+
+# # DIAMETER BY SPECIES # #
+# Family: negative binomial
+# Fixed effects: dist * altitude
+# Random effects: (1|trans.pair) + (dist * altitude|species)
+
+####################################################################################################
+
+# # Data 
+dat <- quad %>% #rename DF
+  filter_at(vars(mxdiam_mm, dist, altitude), all_vars(!is.na(.))) #remove NAs in variables used in model
+
+
+# # Model 
+diam_nb <- brms::brm(mxdiam_mm ~ dist * altitude + (1|trans.pair) + (dist * altitude|species),
+                       data = dat, family = negbinomial(link = "log", link_shape = "log"), 
+                       # fitting information
+                       chains = 3, iter = 3000, warmup = 1000, cores = 4, #for computers with 4 cores
+                       file = 'trampling_analyses/outputs/diam_nb.rds', file_refit = 'on_change')
+mod <- diam_nb #generic model name
+
+
+
+
+####################################################################################################
+
+# # REPRODUCTIVE DENSITY BY SPECIES # #
+# Family: negative binomial
+# Fixed effects: dist * altitude
+# Random effects: (1|trans.pair) + (dist * altitude|species)
+
+####################################################################################################
+
+# # Data 
+dat <- quad %>% #rename DF
+  filter_at(vars(repro, dist, altitude), all_vars(!is.na(.))) #remove NAs in variables used in model
+
+
+# # Model 
+repro_nb <- brms::brm(repro ~ dist * altitude + (1|trans.pair) + (dist * altitude|species),
+                     data = dat, family = negbinomial(link = "log", link_shape = "log"), 
+                     # fitting information
+                     chains = 3, iter = 3000, warmup = 1000, cores = 4, #for computers with 4 cores
+                     file = 'trampling_analyses/outputs/repro_nb.rds', file_refit = 'on_change')
+mod <- repro_nb #generic model name
+
+
+
+
+####################################################################################################
+
+# # PLANT DENSITY # #
+# Family: negative binomial
+# Fixed effects: dist * altitude
+# Random effects: (1|trans.pair)
+
+####################################################################################################
+
