@@ -47,7 +47,15 @@ load('trampling_analyses/compiled_data/quad.RData') #updated with reproductive m
 
 str(quad) #check that categorical explanatory variables are factors, others numeric
 
+# Transform 0s and 1s for Beta distribution repro models
+quad <- quad %>% 
+  mutate(rel_repro = if_else(rel_repro == 0, 0.0001, rel_repro)) %>% 
+  mutate(rel_repro = if_else(rel_repro == 1, 0.9999, rel_repro)) 
 
+
+summary(quad) #check that no infinite values exist
+
+  
 # Skew function (from: https://towardsdatascience.com/evaluating-bayesian-mixed-models-in-r-python-27d344a03016_)
 skew <- function(y){ # Fisher-Pearson Skew function based on NIST definition
   n <- length(y)
@@ -159,6 +167,54 @@ diam_nb <- brms::brm(mxdiam_mm ~ dist * altitude + (1|trans.pair),
                        chains = 3, iter = 5000, warmup = 1000, cores = 4, #for computers with 4 cores
                        file = 'trampling_analyses/outputs/diam_nb.rds', file_refit = 'on_change')
 mod <- diam_nb #generic model name
+
+summary(mod) 
+plot(conditional_effects(mod), ask = FALSE) #fitted parameters and their CI
+
+prior_summary(mod) #can define priors in brm(priors = ...)
+ps <- powerscale_sensitivity(mod) #look at 'diagnosis' column to see if prior isn't appropriate
+unique(ps$sensitivity$diagnosis)
+
+plot(mod) #model convergence (L: does distribution mean match estimate? R: did all values get explored?) 
+pp_check(mod, ndraws = 100) #posterior predictive checks - are predicted values similar to posterior distribution?
+pairs(mod)
+
+ppc_stat(y = dat$mxdiam_mm, 
+         yrep = posterior_predict(mod, ndraws = 1000),
+         stat = "skew")
+model_loo <- loo(mod, save_psis = TRUE, cores=4) #higher elpd => better fit 
+w <- weights(model_loo$psis_object)
+ppc_loo_pit_overlay(dat$mxdiam_mm, 
+                    posterior_predict(mod), 
+                    lw = w)
+
+# # Conclusion: 
+# very good model fit!
+
+
+## Model for REPRO
+
+dat <- quad %>% #rename DF
+  filter_at(vars(rel_repro, dist, altitude), all_vars(!is.na(.))) %>% #remove NAs in variables used in model
+  filter(species == 'phyemp')
+
+diam_nb <- brms::brm(rel_repro ~ dist * altitude + (1|trans.pair),
+                     data = dat, family = Beta(link = "logit", link_phi = "log"), 
+                     # fitting information
+                     chains = 3, iter = 5000, warmup = 1000, cores = 4, #for computers with 4 cores
+                     file = 'trampling_analyses/outputs/repro_nb.rds', file_refit = 'on_change')
+mod <- diam_nb #generic model name
+
+## PROBLEM: Stan model XXX does not contain samples
+## DIAGNOSIS: 
+## SOLUTION: set more informative priors to constrain interval of initial values?
+
+## STOP 30 MARCH 2023
+
+hist(dat$altitude, breaks = 50)
+hist(dat$rel_repro, breaks = 50)
+table(dat$rel_repro > 0.0001) #should be enough non-zero values
+
 
 summary(mod) 
 plot(conditional_effects(mod), ask = FALSE) #fitted parameters and their CI

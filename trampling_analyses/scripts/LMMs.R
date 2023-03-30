@@ -83,15 +83,22 @@ for (i in 1:nrow(dat)) { #loop through each row of DF
 summary(dat$repro)
 hist(dat$repro, breaks = 50)
 
+dat <- dat %>% 
+  mutate_if(is.numeric, ~ replace(., is.infinite(.), NA)) #Inf to NAs
+  
+
 # Calculate relative reproduction
 mm <- dat %>% #create DF with max value per species
   group_by(species) %>% 
   summarise(max = max(repro, na.rm = T)) #NA listed in plots not seeded
 
-dat <- left_join(dat, mm) #combine DFs
+dat <- left_join(dat, mm, by = 'species') #combine DFs
 dat$rel_repro <- dat$repro/dat$max
 summary(dat$rel_repro)
 hist(dat$rel_repro, breaks = 50)
+
+dat <- dat %>% 
+  select(-c(max)) #remove max column
 
 
 # Save updated DF
