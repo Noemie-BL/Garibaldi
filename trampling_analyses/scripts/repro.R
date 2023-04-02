@@ -12,10 +12,17 @@ library(ggtext)
 library(scales)
 library(tidyverse)
 library(lmerTest)
+library(egg) #for labelling plot facets
 
 
 rm(list=ls()) 
 
+# # WORKING DIRECTORIES # #
+#comp_dat <- '~/Desktop/Code/Garibaldi/trampling_analyses/compiled_data/' #WD for NC
+#comp_dat <- 'C:/Users/Owner/Documents/GitHub/Garibaldi/trampling_analyses/compiled_data/' #WD for CE
+comp_dat <- '~/Documents/UBC/Projects/Garibaldi/Garibaldi/trampling_analyses/compiled_data/' #WD for PS
+
+setwd(comp_dat)
 
 # # INPUT FILES # #
 load('trampling_analyses/compiled_data/quad.RData') #gps & transect data matched to quad data (merge_fielddata.R)
@@ -26,14 +33,22 @@ load('trampling_analyses/compiled_data/quad.RData') #gps & transect data matched
 
 
 # # PLOT THEME # #
-mytheme <-   theme_classic() +
+mytheme <- theme_classic() +
   theme(axis.text.x = element_text(colour = 'black', size = 25), #x axis text size
         axis.text.y = element_text(colour = 'black', size = 25), #y axis text size
         axis.title.x = element_text(size = 28), #x axis label size
         axis.title.y = element_text(size = 28), #x axis label size
         plot.title = element_text(size = 30, #title size
                                   hjust = 0.5), #align title to center
-        legend.title = element_text(size = 24), legend.text = element_text(size = 22)) 
+        legend.title = element_text(size = 24), legend.text = element_text(size = 22),
+        panel.grid.major = element_blank(), #remove major gridlines
+        panel.grid.minor = element_blank(), #remove minor gridlines
+        panel.background = element_blank(), #remove panel background
+        axis.line = element_line(colour = "black"), #set axis line color
+        legend.key.size = unit(2, "line"), #increase size of legend key
+        legend.spacing.y = unit(0.5, "cm"), #increase vertical spacing between legend items
+        strip.background = element_rect(fill = "white"), #set background color for facet labels
+        strip.text.x = element_text(face = "italic", size = 20)) #set size for x-axis facet labels
 
 theme_set(mytheme)
 
@@ -128,30 +143,36 @@ ggplot(dat, aes(x= plantArea_cm2, y= frtsByArea, color = dist)) +
 
 # Plot size vs number of buds, flowers, and fruits/(height * diameter) by disturbed/undisturbed
 
-totalReproPlotArea <- ggplot(dat, aes(x= plantArea_cm2, y= totalReproStructByArea, color = dist)) +
+totalReproPlotArea <- ggplot(dat, aes(x = plantArea_cm2, y = totalReproStructByArea, color = dist)) +
   geom_point() +
-  stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
-  coord_trans(y = "log1p") + #log10(x + 1) y axis 
-  scale_y_continuous(labels = label_comma()) + #remove scientific notation
-  scale_x_continuous(labels = label_comma()) + #remove scientific notation
-  labs(x = "Plant area (cm^2)", y = "Number of reproductive structures / cm^2") +
-  scale_color_discrete(labels=c('Undisturbed', 'Disturbed'), name = "Disturbance") + #legend labels and title
-  theme(axis.title.x = element_markdown(), axis.title.y = element_markdown()) #use markdown theme for axes labels
+  stat_smooth(aes(fill = dist), method = "lm", formula = y ~ x, geom = "ribbon", alpha = 0.3, size = 0) +
+  stat_smooth(aes(color = dist), method = "lm", formula = y ~ x, geom = "line", size=1) +
+  scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
+  scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
+  coord_trans(y = "log1p") +
+ # scale_y_continuous(labels = label_comma()) +
+ # scale_x_continuous(labels = label_comma()) +
+  labs(x = expression(paste("Plant size [", cm^2, "]")),
+       y = expression(paste("Density of reproductive structures [counts/", cm^2, "]"))) +
+  mytheme
 
-ggsave(filename = "trampling_analyses/figures/publication/totalReproPlotArea", plot = totalReproPlotArea, device = "pdf", dpi = 600, width = 14, height = 8, units = "in")
+ggsave(filename = "../figures/publication/totalReproPlotArea", plot = totalReproPlotArea, device = "pdf", dpi = 600, width = 20, height = 10, units = "in")
 
 # Plot size vs number of buds, flowers, and fruits by disturbed/undisturbed
 
-totalReproPlot <- ggplot(dat, aes(x= plantArea_cm2, y= totalReproStruct, color = dist)) +
+totalReproPlot <- ggplot(dat, aes(x = plantArea_cm2, y = totalReproStruct, color = dist)) +
   geom_point() +
-  stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
-  scale_y_continuous(labels = label_comma()) + #remove scientific notation
-  scale_x_continuous(labels = label_comma()) + #remove scientific notation
-  labs(x = "Plant area (cm^2)", y = "Number of reproductive structures") +
-  scale_color_discrete(labels=c('Undisturbed', 'Disturbed'), name = "Disturbance") + #legend labels and title
-  theme(axis.title.x = element_markdown(), axis.title.y = element_markdown()) #use markdown theme for axes labels
+  stat_smooth(aes(fill = dist), method = "lm", formula = y ~ x, geom = "ribbon", alpha = 0.3, size = 0) +
+  stat_smooth(aes(color = dist), method = "lm", formula = y ~ x, geom = "line", size=1) +
+  scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
+  scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
+  # scale_y_continuous(labels = label_comma()) +
+  # scale_x_continuous(labels = label_comma()) +
+  labs(x = expression(paste("Plant size [", cm^2, "]")),
+       y = expression(paste("Number of reproductive structures"))) +
+  mytheme
 
-ggsave(filename = "trampling_analyses/figures/publication/totalReproPlot", plot = totalReproPlot, device = "pdf", dpi = 600, width = 14, height = 8, units = "in")
+ggsave(filename = "../figures/publication/totalReproPlot", plot = totalReproPlot, device = "pdf", dpi = 600, width = 20, height = 10, units = "in")
 
 
 # # ALL SPECIES PLOTTED SEPARATELY
@@ -202,30 +223,36 @@ ggplot(dat, aes(x= plantArea_cm2, y= frtsByArea, color = dist)) +
 
 totalReproPlotAreaBySpecies <- ggplot(dat, aes(x= plantArea_cm2, y= totalReproStructByArea, color = dist)) +
   geom_point() +
-  stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
-  facet_wrap(.~ species, labeller = as_labeller(species_names), scales = "free") + #separate by species and rename with full species names
+  stat_smooth(aes(fill = dist), method = "lm", formula = y ~ x, geom = "ribbon", alpha = 0.3, size = 0) +
+  stat_smooth(aes(color = dist), method = "lm", formula = y ~ x, geom = "line", size=1) +
+  scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
+  scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
+  facet_wrap(.~ species, labeller = as_labeller(species_names), scales = "free", ncol = 3) + #separate by species and rename with full species names
   coord_trans(y = "log1p") + #log10 y axis 
-  scale_y_continuous(labels = label_comma()) + #remove scientific notation
-  scale_x_continuous(labels = label_comma()) + #remove scientific notation
-  labs(x = "Plant area (cm^2)", y = "Number of reproductive structures / cm^2") +
-  scale_color_discrete(labels=c('Undisturbed', 'Disturbed'), name = "Disturbance") + #legend labels and title
-  theme(axis.title.x = element_markdown(), axis.title.y = element_markdown()) #use markdown theme for axes labels
+  labs(x = expression(paste("Plant size [", cm^2, "]")),
+       y = expression(paste("Density of reproductive structures [counts/", cm^2, "]"))) +
+  mytheme
 
-ggsave(filename = "../figures/publication/totalReproPlotAreaBySpecies", plot = totalReproPlotAreaBySpecies, device = "pdf", dpi = 600, width = 14, height = 8, units = "in")
+totalReproPlotAreaBySpecies <- tag_facet(totalReproPlotAreaBySpecies)
+
+ggsave(filename = "../figures/publication/totalReproPlotAreaBySpecies", plot = totalReproPlotAreaBySpecies, device = "pdf", dpi = 600, width = 20, height = 10, units = "in")
 
 # Plot size vs number of buds, flowers, and fruits by disturbed/undisturbed
 
 totalReproPlotBySpecies <- ggplot(dat, aes(x= plantArea_cm2, y= totalReproStruct, color = dist)) +
   geom_point() +
-  stat_smooth(method = "lm", formula = y ~ x, geom = "smooth") +
-  facet_wrap(.~ species, labeller = as_labeller(species_names), scales = "free") + #separate by species and rename with full species names
-  scale_y_continuous(labels = label_comma()) + #remove scientific notation
-  scale_x_continuous(labels = label_comma()) + #remove scientific notation
-  labs(x = "Plant area (cm^2)", y = "Number of reproductive structures") +
-  scale_color_discrete(labels=c('Undisturbed', 'Disturbed'), name = "Disturbance") + #legend labels and title
-  theme(axis.title.x = element_markdown(), axis.title.y = element_markdown()) #use markdown theme for axes labels
+  stat_smooth(aes(fill = dist), method = "lm", formula = y ~ x, geom = "ribbon", alpha = 0.3, size = 0) +
+  stat_smooth(aes(color = dist), method = "lm", formula = y ~ x, geom = "line", size=1) +
+  scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
+  scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
+  facet_wrap(.~ species, labeller = as_labeller(species_names), scales = "free", ncol = 3) + #separate by species and rename with full species names
+  labs(x = expression(paste("Plant size [", cm^2, "]")),
+       y = expression(paste("Number of reproductive structures"))) +
+  mytheme
 
-ggsave(filename = "trampling_analyses/figures/publication/totalReproPlotBySpecies", plot = totalReproPlotBySpecies, device = "pdf", dpi = 600, width = 14, height = 8, units = "in")
+totalReproPlotBySpecies <- tag_facet(totalReproPlotBySpecies)
+
+ggsave(filename = "../figures/publication/totalReproPlotBySpecies", plot = totalReproPlotBySpecies, device = "pdf", dpi = 600, width = 20, height = 10, units = "in")
 
 
 
