@@ -5,7 +5,7 @@
 
 # Author: Nathalie Chardon
 # Date created: 13 Mar 2023
-# Date updated: 29 Mar 2023 (NC)
+# Date updated: 4 Apr 2023 (NC)
 
 # # LIBRARIES # #
 library(rjags)
@@ -70,19 +70,18 @@ skew <- function(y){ # Fisher-Pearson Skew function based on NIST definition
 ####################################################################################################
 
 # # PHYEMP # #
-# Family: negative binomial
+# Family: negative binomial (height & diameter), Beta (rel_repro)
 # Fixed effects: dist * altitude
 # Random effects: (1|trans.pair)
 
 ####################################################################################################
 
-# # Data 
+# # Model for HEIGHT
+
 dat <- quad %>% #rename DF
   filter_at(vars(height_mm, dist, altitude), all_vars(!is.na(.))) %>% #remove NAs in variables used in model
   filter(species == 'phyemp')
 
-
-# # Model for HEIGHT
 height_nb <- brms::brm(height_mm ~ dist * altitude + (1|trans.pair),
                        data = dat, family = negbinomial(link = "log", link_shape = "log"), 
                        # fitting information
@@ -198,23 +197,51 @@ dat <- quad %>% #rename DF
   filter_at(vars(rel_repro, dist, altitude), all_vars(!is.na(.))) %>% #remove NAs in variables used in model
   filter(species == 'phyemp')
 
-diam_nb <- brms::brm(rel_repro ~ dist * altitude + (1|trans.pair),
+# Compare beta and ZI beta models
+repro_beta <- brms::brm(rel_repro ~ dist * altitude + (1|trans.pair),
                      data = dat, family = Beta(link = "logit", link_phi = "log"), 
+                     init = '0',
+                     
                      # fitting information
                      chains = 3, iter = 5000, warmup = 1000, cores = 4, #for computers with 4 cores
-                     file = 'trampling_analyses/outputs/repro_nb.rds', file_refit = 'on_change')
-mod <- diam_nb #generic model name
+                     file = 'trampling_analyses/outputs/repro_beta2.rds', file_refit = 'on_change')
+
+repro_zibeta <- brms::brm(rel_repro ~ dist * altitude + (1|trans.pair),
+                        data = dat, family = zero_inflated_beta(link = "logit", link_phi = "log", link_zi = "logit"), 
+                        init = '0',
+                        
+                        # fitting information
+                        chains = 3, iter = 5000, warmup = 1000, cores = 4, #for computers with 4 cores
+                        file = 'trampling_analyses/outputs/repro_zerobeta.rds', file_refit = 'on_change')
 
 ## PROBLEM: Stan model XXX does not contain samples
-## DIAGNOSIS: 
-## SOLUTION: set more informative priors to constrain interval of initial values?
+## DIAGNOSIS: Possible older brms version; Searching for initial values outside of possible interval 
+## and should set init = '0' for Beta models (https://discourse.mc-stan.org/t/initialization-error-try-specifying-initial-values-reducing-ranges-of-constrained-values-or-reparameterizing-the-model/4401)
+## SOLUTION: Update brms and devtools; Set init = '0' 
 
-## STOP 30 MARCH 2023
+pp_check(repro_beta, ndraws = 100) #slightly better
+pp_check(repro_zibeta, ndraws = 100)
 
-hist(dat$altitude, breaks = 50)
-hist(dat$rel_repro, breaks = 50)
-table(dat$rel_repro > 0.0001) #should be enough non-zero values
+pairs(repro_beta)
+pairs(repro_zibeta)
 
+ppc_stat(y = dat$rel_repro, yrep = posterior_predict(repro_beta, ndraws = 1000), stat = "skew")
+ppc_stat(y = dat$rel_repro, yrep = posterior_predict(repro_zibeta, ndraws = 1000), stat = "skew")
+
+beta_loo <- loo(repro_beta, save_psis = TRUE, cores=4)
+w <- weights(beta_loo$psis_object)
+ppc_loo_pit_overlay(dat$rel_repro, posterior_predict(repro_beta), lw = w)
+
+zibeta_loo <- loo(repro_zibeta, save_psis = TRUE, cores=4)
+w <- weights(zibeta_loo$psis_object)
+ppc_loo_pit_overlay(dat$rel_repro, posterior_predict(repro_zibeta), lw = w)
+
+loo_compare(beta_loo, zibeta_loo)
+
+# # Conclusion: pp_check, skew, and PIT are almost identical and poor for both models, better elpd for Beta
+# # => use Beta because better elpd & fits faster
+
+mod <- repro_beta
 
 summary(mod) 
 plot(conditional_effects(mod), ask = FALSE) #fitted parameters and their CI
@@ -227,17 +254,13 @@ plot(mod) #model convergence (L: does distribution mean match estimate? R: did a
 pp_check(mod, ndraws = 100) #posterior predictive checks - are predicted values similar to posterior distribution?
 pairs(mod)
 
-ppc_stat(y = dat$mxdiam_mm, 
-         yrep = posterior_predict(mod, ndraws = 1000),
-         stat = "skew")
+ppc_stat(y = dat$rel_repro, 
+         yrep = posterior_predict(mod, ndraws = 1000), stat = "skew")
 model_loo <- loo(mod, save_psis = TRUE, cores=4) #higher elpd => better fit 
 w <- weights(model_loo$psis_object)
-ppc_loo_pit_overlay(dat$mxdiam_mm, 
-                    posterior_predict(mod), 
-                    lw = w)
+ppc_loo_pit_overlay(dat$rel_repro, 
+                    posterior_predict(mod), lw = w)
 
-# # Conclusion: 
-# very good model fit!
 
 ####### PLOTS ########
 
@@ -279,60 +302,148 @@ theme_set(mytheme)
 
 ####################################################################################################
 
-# # DIAMETER BY SPECIES # #
-# Family: negative binomial
-# Fixed effects: dist * altitude
-# Random effects: (1|trans.pair) + (dist * altitude|species)
-
-####################################################################################################
-
-# # Data 
-dat <- quad %>% #rename DF
-  filter_at(vars(mxdiam_mm, dist, altitude), all_vars(!is.na(.))) #remove NAs in variables used in model
-
-
-# # Model 
-diam_nb <- brms::brm(mxdiam_mm ~ dist * altitude + (1|trans.pair) + (dist * altitude|species),
-                       data = dat, family = negbinomial(link = "log", link_shape = "log"), 
-                       # fitting information
-                       chains = 3, iter = 3000, warmup = 1000, cores = 4, #for computers with 4 cores
-                       file = 'trampling_analyses/outputs/diam_nb.rds', file_refit = 'on_change')
-mod <- diam_nb #generic model name
-
-
-
-
-####################################################################################################
-
-# # REPRODUCTIVE DENSITY BY SPECIES # #
-# Family: negative binomial
-# Fixed effects: dist * altitude
-# Random effects: (1|trans.pair) + (dist * altitude|species)
-
-####################################################################################################
-
-# # Data 
-dat <- quad %>% #rename DF
-  filter_at(vars(repro, dist, altitude), all_vars(!is.na(.))) #remove NAs in variables used in model
-
-
-# # Model 
-repro_nb <- brms::brm(repro ~ dist * altitude + (1|trans.pair) + (dist * altitude|species),
-                     data = dat, family = negbinomial(link = "log", link_shape = "log"), 
-                     # fitting information
-                     chains = 3, iter = 3000, warmup = 1000, cores = 4, #for computers with 4 cores
-                     file = 'trampling_analyses/outputs/repro_nb.rds', file_refit = 'on_change')
-mod <- repro_nb #generic model name
-
-
-
-
-####################################################################################################
-
-# # PLANT DENSITY # #
-# Family: negative binomial
+# # CASMER # #
+# Family: negative binomial (height & diameter), Beta (rel_repro)
 # Fixed effects: dist * altitude
 # Random effects: (1|trans.pair)
 
 ####################################################################################################
 
+# # Model for HEIGHT
+
+dat <- quad %>% #rename DF
+  filter_at(vars(height_mm, dist, altitude), all_vars(!is.na(.))) %>% 
+  filter(species == 'casmer') ###*** change here
+
+height_nb <- brms::brm(height_mm ~ dist * altitude + (1|trans.pair), data = dat, 
+                       family = negbinomial(link = "log", link_shape = "log"), 
+                       chains = 3, iter = 5000, warmup = 1000, cores = 4, 
+                       file = 'trampling_analyses/outputs/height_nb_casmer.rds', ###*** change here
+                       file_refit = 'on_change')
+mod <- height_nb #generic model name
+
+# Model results
+summary(mod) 
+plot(conditional_effects(mod), ask = FALSE) 
+
+# Model fit
+prior_summary(mod)
+ps <- powerscale_sensitivity(mod) 
+unique(ps$sensitivity$diagnosis)
+
+plot(mod)  
+pp_check(mod, ndraws = 100) 
+pairs(mod)
+
+ppc_stat(y = dat$height_mm, ###*** change here
+         yrep = posterior_predict(mod, ndraws = 1000), stat = "skew")
+model_loo <- loo(mod, save_psis = TRUE, cores=4) 
+w <- weights(model_loo$psis_object)
+ppc_loo_pit_overlay(dat$height_mm, ###*** change here
+                    posterior_predict(mod), lw = w)
+
+# # Conclusion: Very good fit; ignored because not a fit, but efficiency, issue:
+# # 265 transitions after warmup that exceeded the maximum treedepth
+
+
+
+## Model for DIAMETER
+
+dat <- quad %>% #rename DF
+  filter_at(vars(mxdiam_mm, dist, altitude), all_vars(!is.na(.))) %>% 
+  filter(species == 'casmer') ###*** change here
+
+diam_nb <- brms::brm(mxdiam_mm ~ dist * altitude + (1|trans.pair), data = dat, 
+                     family = negbinomial(link = "log", link_shape = "log"), 
+                     chains = 3, iter = 5000, warmup = 1000, cores = 4, 
+                     file = 'trampling_analyses/outputs/diam_nb_casmer.rds', ###*** change here
+                     file_refit = 'on_change')
+mod <- diam_nb #generic model name
+
+# Model results
+summary(mod) 
+plot(conditional_effects(mod), ask = FALSE) 
+
+# Model fit
+prior_summary(mod)
+ps <- powerscale_sensitivity(mod) 
+unique(ps$sensitivity$diagnosis)
+
+plot(mod)  
+pp_check(mod, ndraws = 100) 
+pairs(mod)
+
+ppc_stat(y = dat$mxdiam_mm, ###*** change here
+         yrep = posterior_predict(mod, ndraws = 1000), stat = "skew")
+model_loo <- loo(mod, save_psis = TRUE, cores=4) 
+w <- weights(model_loo$psis_object)
+ppc_loo_pit_overlay(dat$mxdiam_mm, ###*** change here
+                    posterior_predict(mod), lw = w)
+
+# # Conclusion: skew not modeled well, otherwise good
+# # ignored: 1815 transitions after warmup that exceeded the maximum treedepth
+
+
+
+## STOP 4 APRIL 2023
+
+
+
+## Model for REPRO
+
+dat <- quad %>% #rename DF
+  filter_at(vars(rel_repro, dist, altitude), all_vars(!is.na(.))) %>% 
+  filter(species == 'casmer') ###*** change here
+
+repro_beta <- brms::brm(rel_repro ~ dist * altitude + (1|trans.pair), data = dat, 
+                        family = Beta(link = "logit", link_phi = "log"), init = '0',
+                        chains = 3, iter = 5000, warmup = 1000, cores = 4, 
+                        file = 'trampling_analyses/outputs/repro_beta_casmer.rds', ###*** change here
+                        file_refit = 'on_change')
+mod <- repro_beta
+
+# Model results
+summary(mod) 
+plot(conditional_effects(mod), ask = FALSE) 
+
+# Model fit
+prior_summary(mod)
+ps <- powerscale_sensitivity(mod) 
+unique(ps$sensitivity$diagnosis)
+
+plot(mod)  
+pp_check(mod, ndraws = 100) 
+pairs(mod)
+
+ppc_stat(y = dat$rel_repro, ###*** change here
+         yrep = posterior_predict(mod, ndraws = 1000), stat = "skew")
+model_loo <- loo(mod, save_psis = TRUE, cores=4) 
+w <- weights(model_loo$psis_object)
+ppc_loo_pit_overlay(dat$rel_repro, ###*** change here
+                    posterior_predict(mod), lw = w)
+
+# # Conclusion: 
+
+
+
+
+####################################################################################################
+
+# # VACOVA # #
+# Family: negative binomial (height & diameter), Beta (rel_repro)
+# Fixed effects: dist * altitude
+# Random effects: (1|trans.pair)
+
+####################################################################################################
+
+
+
+
+####################################################################################################
+
+# # CARSPP # #
+# Family: negative binomial (height & diameter) - no repro model because no repro data
+# Fixed effects: dist * altitude
+# Random effects: (1|trans.pair)
+
+####################################################################################################
