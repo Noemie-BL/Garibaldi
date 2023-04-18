@@ -13,12 +13,11 @@ library(R2jags)
 library(ggplot2)
 library(brms)
 library(tidybayes)
-library(emmeans)
 library(priorsense) # remotes::install_github("n-kall/priorsense")
 library(bayesplot)
 library(tidyverse)
 library(loo)
-library(distributional)
+
 
 rm(list=ls()) 
 
@@ -163,7 +162,7 @@ dat <- quad %>% #rename DF
 diam_nb <- brms::brm(mxdiam_mm ~ dist * altitude + (1|trans.pair),
                        data = dat, family = negbinomial(link = "log", link_shape = "log"), 
                        # fitting information
-                       chains = 3, iter = 5000, warmup = 1000, cores = 4, #for computers with 4 cores
+                       chains = 3, iter = 8000, warmup = 1000, cores = 4, #for computers with 4 cores
                        file = 'trampling_analyses/outputs/diam_nb.rds', file_refit = 'on_change')
 mod <- diam_nb #generic model name
 
@@ -385,10 +384,6 @@ ppc_loo_pit_overlay(dat$mxdiam_mm, ###*** change here
 
 
 
-## STOP 4 APRIL 2023
-
-
-
 ## Model for REPRO
 
 dat <- quad %>% #rename DF
@@ -422,7 +417,7 @@ w <- weights(model_loo$psis_object)
 ppc_loo_pit_overlay(dat$rel_repro, ###*** change here
                     posterior_predict(mod), lw = w)
 
-# # Conclusion: 
+# # Conclusion: skew not well modeled, 1 observation with pareto K > 0.7
 
 
 
@@ -436,6 +431,113 @@ ppc_loo_pit_overlay(dat$rel_repro, ###*** change here
 
 ####################################################################################################
 
+# # Model for HEIGHT
+
+dat <- quad %>% #rename DF
+  filter_at(vars(height_mm, dist, altitude), all_vars(!is.na(.))) %>% 
+  filter(species == 'vacova') ###*** change here
+
+height_nb <- brms::brm(height_mm ~ dist * altitude + (1|trans.pair), data = dat, 
+                       family = negbinomial(link = "log", link_shape = "log"), 
+                       chains = 3, iter = 5000, warmup = 1000, cores = 4, 
+                       file = 'trampling_analyses/outputs/height_nb_vacova.rds', ###*** change here
+                       file_refit = 'on_change')
+mod <- height_nb #generic model name
+
+# Model results
+summary(mod) 
+plot(conditional_effects(mod), ask = FALSE) 
+
+# Model fit
+prior_summary(mod)
+ps <- powerscale_sensitivity(mod) 
+unique(ps$sensitivity$diagnosis)
+
+plot(mod)  
+pp_check(mod, ndraws = 100) 
+pairs(mod)
+
+ppc_stat(y = dat$height_mm, 
+         yrep = posterior_predict(mod, ndraws = 1000), stat = "skew")
+model_loo <- loo(mod, save_psis = TRUE, cores=4) 
+w <- weights(model_loo$psis_object)
+ppc_loo_pit_overlay(dat$height_mm, 
+                    posterior_predict(mod), lw = w)
+
+# # Conclusion: Good model fit! Skew not modeled well and 1 obs w pareto_k > 0.7
+
+
+
+## Model for DIAMETER
+
+dat <- quad %>% #rename DF
+  filter_at(vars(mxdiam_mm, dist, altitude), all_vars(!is.na(.))) %>% 
+  filter(species == 'vacova') ###*** change here
+
+diam_nb <- brms::brm(mxdiam_mm ~ dist * altitude + (1|trans.pair), data = dat, 
+                     family = negbinomial(link = "log", link_shape = "log"), 
+                     chains = 3, iter = 8000, warmup = 1000, cores = 4, 
+                     file = 'trampling_analyses/outputs/diam_nb_vacova.rds', ###*** change here
+                     file_refit = 'on_change')
+mod <- diam_nb #generic model name
+
+# Model results
+summary(mod) 
+plot(conditional_effects(mod), ask = FALSE) 
+
+# Model fit
+prior_summary(mod)
+ps <- powerscale_sensitivity(mod) 
+unique(ps$sensitivity$diagnosis)
+
+plot(mod)  
+pp_check(mod, ndraws = 100) 
+pairs(mod)
+
+ppc_stat(y = dat$mxdiam_mm, 
+         yrep = posterior_predict(mod, ndraws = 1000), stat = "skew")
+model_loo <- loo(mod, save_psis = TRUE, cores=4) 
+w <- weights(model_loo$psis_object)
+ppc_loo_pit_overlay(dat$mxdiam_mm, 
+                    posterior_predict(mod), lw = w)
+
+# # Conclusion: Increased iterations to increase ESS; model fit well except for skew
+
+
+## Model for REPRO
+
+dat <- quad %>% #rename DF
+  filter_at(vars(rel_repro, dist, altitude), all_vars(!is.na(.))) %>% 
+  filter(species == 'vacova') ###*** change here
+
+repro_beta <- brms::brm(rel_repro ~ dist * altitude + (1|trans.pair), data = dat, 
+                        family = Beta(link = "logit", link_phi = "log"), init = '0',
+                        chains = 3, iter = 5000, warmup = 1000, cores = 4, 
+                        file = 'trampling_analyses/outputs/repro_beta_vacova.rds', ###*** change here
+                        file_refit = 'on_change')
+mod <- repro_beta
+
+# Model results
+summary(mod) 
+plot(conditional_effects(mod), ask = FALSE) 
+
+# Model fit
+prior_summary(mod)
+ps <- powerscale_sensitivity(mod) 
+unique(ps$sensitivity$diagnosis)
+
+plot(mod)  
+pp_check(mod, ndraws = 100) 
+pairs(mod)
+
+ppc_stat(y = dat$rel_repro, 
+         yrep = posterior_predict(mod, ndraws = 1000), stat = "skew")
+model_loo <- loo(mod, save_psis = TRUE, cores=4) 
+w <- weights(model_loo$psis_object)
+ppc_loo_pit_overlay(dat$rel_repro, 
+                    posterior_predict(mod), lw = w)
+
+# # Conclusion: good model fit except for skew and dispersion
 
 
 
@@ -447,3 +549,75 @@ ppc_loo_pit_overlay(dat$rel_repro, ###*** change here
 # Random effects: (1|trans.pair)
 
 ####################################################################################################
+
+# # Model for HEIGHT
+
+dat <- quad %>% #rename DF
+  filter_at(vars(height_mm, dist, altitude), all_vars(!is.na(.))) %>% 
+  filter(species == 'carspp') ###*** change here
+
+height_nb <- brms::brm(height_mm ~ dist * altitude + (1|trans.pair), data = dat, 
+                       family = negbinomial(link = "log", link_shape = "log"), 
+                       chains = 3, iter = 5000, warmup = 1000, cores = 4, 
+                       file = 'trampling_analyses/outputs/height_nb_carspp.rds', ###*** change here
+                       file_refit = 'on_change')
+mod <- height_nb #generic model name
+
+# Model results
+summary(mod) 
+plot(conditional_effects(mod), ask = FALSE) 
+
+# Model fit
+prior_summary(mod)
+ps <- powerscale_sensitivity(mod) 
+unique(ps$sensitivity$diagnosis)
+
+plot(mod)  
+pp_check(mod, ndraws = 100) 
+pairs(mod)
+
+ppc_stat(y = dat$height_mm, 
+         yrep = posterior_predict(mod, ndraws = 1000), stat = "skew")
+model_loo <- loo(mod, save_psis = TRUE, cores=4) 
+w <- weights(model_loo$psis_object)
+ppc_loo_pit_overlay(dat$height_mm, 
+                    posterior_predict(mod), lw = w)
+
+# # Conclusion: good fit, 1 obs > 0.7 pareto k, skew good, dispersion moderate
+
+
+
+## Model for DIAMETER
+
+dat <- quad %>% #rename DF
+  filter_at(vars(mxdiam_mm, dist, altitude), all_vars(!is.na(.))) %>% 
+  filter(species == 'carspp') ###*** change here
+
+diam_nb <- brms::brm(mxdiam_mm ~ dist * altitude + (1|trans.pair), data = dat, 
+                     family = negbinomial(link = "log", link_shape = "log"), 
+                     chains = 3, iter = 8000, warmup = 1000, cores = 4, 
+                     file = 'trampling_analyses/outputs/diam_nb_carspp.rds', ###*** change here
+                     file_refit = 'on_change')
+mod <- diam_nb #generic model name
+
+# Model results
+summary(mod) 
+plot(conditional_effects(mod), ask = FALSE) 
+
+# Model fit
+prior_summary(mod)
+ps <- powerscale_sensitivity(mod) 
+unique(ps$sensitivity$diagnosis)
+
+plot(mod)  
+pp_check(mod, ndraws = 100) 
+pairs(mod)
+
+ppc_stat(y = dat$mxdiam_mm, 
+         yrep = posterior_predict(mod, ndraws = 1000), stat = "skew")
+model_loo <- loo(mod, save_psis = TRUE, cores=4) 
+w <- weights(model_loo$psis_object)
+ppc_loo_pit_overlay(dat$mxdiam_mm, 
+                    posterior_predict(mod), lw = w)
+
+# # Conclusion: weak likelihood in one prior, skew moderate, dispersion good
