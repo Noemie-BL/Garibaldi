@@ -274,19 +274,7 @@ mytheme <-   theme_classic() +
 
 theme_set(mytheme)
 
-(modelPlot <- dat %>%
-    add_predicted_draws(mod) %>%  # adding the posterior distribution
-    ggplot(aes(x = altitude, y = height_mm)) +  
-    stat_lineribbon(aes(y = .prediction), .width = c(.95, .80, .50),  # regression line and CI
-                    alpha = 0.5, colour = "black") +
-    geom_point(data = dat) +   # raw data
-    scale_fill_brewer(palette = "Greys") +
-    ylab("Plant height (mm)\n") +  # latin name for red knot
-    xlab("\nElevation (m)"))
-
-
-
-(modelPlotDist <- dat %>%
+(allSppHeightModPlot <- dat %>%
     group_by(dist) %>%
     add_predicted_draws(mod) %>%
     ggplot(aes(x = altitude, y = height_mm, color = dist, fill = dist)) +
@@ -294,6 +282,8 @@ theme_set(mytheme)
     geom_point(data = dat) +
     ylab("Plant height (mm)\n") +
     xlab("\nElevation (m)") +
+    scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
+    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     theme(legend.title = element_blank()))
 
 
@@ -420,7 +410,46 @@ ppc_loo_pit_overlay(dat$rel_repro, ###*** change here
 # # Conclusion: skew not well modeled, 1 observation with pareto K > 0.7
 
 
+####### CASMER PLOTS ########
 
+#height
+(CasmerHeightModPlot <- dat %>%
+   group_by(dist) %>%
+   add_predicted_draws(height_nb, allow_new_levels = TRUE) %>%
+   ggplot(aes(x = altitude, y = height_mm, color = dist, fill = dist)) +
+   stat_lineribbon(aes(y = .prediction), .width = c(.95), alpha = 0.33) +
+   geom_point(data = dat) +
+   ylab("Plant height (mm)\n") +
+   xlab("\nElevation (m)") +
+   scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
+   scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
+   theme(legend.title = element_blank()))
+
+#diameter
+(CasmerDiamModPlot <- dat %>%
+    group_by(dist) %>%
+    add_predicted_draws(diam_nb, allow_new_levels = TRUE) %>%
+    ggplot(aes(x = altitude, y = mxdiam_mm, color = dist, fill = dist)) +
+    stat_lineribbon(aes(y = .prediction), .width = c(.95), alpha = 0.33) +
+    geom_point(data = dat) +
+    ylab("Plant maximum diameter (mm)\n") +
+    xlab("\nElevation (m)") +
+    scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
+    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
+    theme(legend.title = element_blank()))
+
+#reproductive output
+(CasmerDiamModPlot <- dat %>%
+    group_by(dist) %>%
+    add_predicted_draws(repro_beta, allow_new_levels = TRUE) %>%
+    ggplot(aes(x = altitude, y = mxdiam_mm, color = dist, fill = dist)) +
+    stat_lineribbon(aes(y = .prediction, fill = dist), .width = c(.95), alpha = 0.33) + #### problem: probability distributions not showing up
+    geom_point(data = dat) +
+    labs(x = expression(paste("Elevation (m)")),
+         y = expression(paste("Density of reproductive structures (counts/", cm^2, ")"))) +
+    scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
+    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
+    theme(legend.title = element_blank()))
 
 ####################################################################################################
 
