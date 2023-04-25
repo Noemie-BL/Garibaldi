@@ -568,7 +568,7 @@ summary(quad$height_adj)
 
 
 
-# Force height to 0.1mm if less than or equal to 0mm
+# Forces height to 0.1mm if less than or equal to 0mm
 
 quad$height_adj <- ifelse(quad$height_adj <=0, 0.1, quad$height_adj)
 
