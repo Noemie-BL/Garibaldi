@@ -46,7 +46,7 @@ GPS_with-elev: lat, long, elev for each transect (see merge_fielddata.R for data
 ## Compiled data
 FILENAME <description of file contents, date modified, whether mid or final version>
 
-quad.RData: gps & transect data matched to quad data; created in merge_fielddata.R; modifed on 16 Nov 2022; final version; variables described in merge_fielddata.R 
+quad.RData: gps & transect data matched to quad data; created in merge_fielddata.R; modifed on 25 Apr 2023; final version; variables described in merge_fielddata.R 
 
 trans_ALL.RData: all transect field data, gps, and altitude; created on 15 Nov 2022; final version; variables described in merge_fielddata.R 
 
