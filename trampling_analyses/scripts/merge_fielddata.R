@@ -6,7 +6,7 @@
 
 # Author: Nathalie Chardon
 # Date created: 11 Nov 2022
-# Date updated: 29 Mar 2023
+# Date updated: 25 Apr 2023
 
 ## NOTE: need to add percent cover of plants once processed by CH
 
@@ -440,7 +440,7 @@ foo %>% filter(mxdiam_mm > 300) #several values in this range so ok
 trans <- left_join(trans.raw, gps, by = 'transect') 
 
 # Save transect dataframe with all variables
-setwd(comp_dat)
+setwd(compiled_data)
 save(trans, file = 'trans_ALL.RData')
 
 # Keep only relevant columns
@@ -568,9 +568,9 @@ summary(quad$height_adj)
 
 
 
-# Force negative height values to zero
+# Force height to 0.1mm if less than or equal to 0mm
 
-quad$height_adj <- ifelse(quad$height_adj <0, 0, quad$height_adj)
+quad$height_adj <- ifelse(quad$height_adj <=0, 0.1, quad$height_adj)
 
 
 
@@ -593,7 +593,7 @@ quad <- rename(quad, height_mm = height_adj)
 
 # Save
 
-setwd(comp_dat)
+setwd(compiled_data)
 save(quad, file = 'quad.RData') #gps & transect data matched to quad data (merge_fielddata.R)
 
 
