@@ -41,25 +41,6 @@ load('trampling_analyses/compiled_data/quad.RData') #updated with reproductive m
 dat <- quad #generic dataframe name
 str(dat)
 
-
-# Create transect pair variable to use as random effect
-dat <- dat[order(dat$transect.no), ] #order dataframe by transect number
-
-dat$trans.pair <- NA #set up empty vector
-oo <- seq(1, 27, 2) #sequence of all odd transects to create pair numbers
-ee <- seq(2, 28, 2) #sequence of all even transects to create pair numbers
-
-for (i in 1:nrow(dat)) { #loop through each data row
-  
-  for (j in 1:14) { #loop through each pair
-    
-    if (dat$transect.no[i] == oo[j] | dat$transect.no[i] == ee[j]) {
-      
-      dat$trans.pair[i] <- paste(oo[j], ee[j], sep = '-')
-    }
-  }
-}
-
 # Remove P. grandiflora because only sampled at 1 site
 dat <- dat %>% 
   filter(!species == 'phygla')
