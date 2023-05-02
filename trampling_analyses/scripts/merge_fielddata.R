@@ -6,7 +6,7 @@
 
 # Author: Nathalie Chardon
 # Date created: 11 Nov 2022
-# Date updated: 25 Apr 2023
+# Date updated: 2 May 2023
 
 ## NOTE: need to add percent cover of plants once processed by CH
 
@@ -571,6 +571,30 @@ summary(quad$height_adj)
 # Forces height to 0.1mm if less than or equal to 0mm
 
 quad$height_adj <- ifelse(quad$height_adj <=0, 0.1, quad$height_adj)
+
+
+####################################################################################################
+
+# # CREATE TRANSECT PAIR VARIABLE TO USE AS RANDOM EFFECT # # 
+
+####################################################################################################
+
+quad <- quad[order(quad$transect.no), ] #order dataframe by transect number
+
+quad$trans.pair <- NA #set up empty vector
+oo <- seq(1, 27, 2) #sequence of all odd transects to create pair numbers
+ee <- seq(2, 28, 2) #sequence of all even transects to create pair numbers
+
+for (i in 1:nrow(quad)) { #loop through each data row
+  
+  for (j in 1:14) { #loop through each pair
+    
+    if (quad$transect.no[i] == oo[j] | quad$transect.no[i] == ee[j]) {
+      
+      quad$trans.pair[i] <- paste(oo[j], ee[j], sep = '-')
+    }
+  }
+}
 
 
 
