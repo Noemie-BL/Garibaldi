@@ -5,7 +5,7 @@
 
 # Author: Nathalie Chardon
 # Date created: 13 Mar 2023
-# Date updated: 4 Apr 2023 (NC)
+# Date updated: 5 May 2023 (NC)
 
 # # LIBRARIES # #
 library(rjags)
@@ -23,7 +23,7 @@ rm(list=ls())
 
 
 # # INPUT FILES # #
-load('trampling_analyses/compiled_data/quad.RData') #updated with reproductive metric & plant area (LMMs.R)
+load('trampling_analyses/compiled_data/quad.RData') ##updated with reproductive metric & plant area (repro.R)
 
 
 # # OUTPUT FILES # #
@@ -46,11 +46,16 @@ load('trampling_analyses/compiled_data/quad.RData') #updated with reproductive m
 
 str(quad) #check that categorical explanatory variables are factors, others numeric
 
-# Transform 0s and 1s for Beta distribution repro models
+# Data transformations
 quad <- quad %>% 
+  
+  #Transform 0s and 1s for Beta distribution repro models
   mutate(rel_repro = if_else(rel_repro == 0, 0.0001, rel_repro)) %>% 
-  mutate(rel_repro = if_else(rel_repro == 1, 0.9999, rel_repro)) 
-
+  mutate(rel_repro = if_else(rel_repro == 1, 0.9999, rel_repro)) %>% 
+  
+  # Integer values for negative binomial distribution height & diam models
+  mutate(height_mm = round(height_mm, 0)) %>% 
+  mutate(mxdiam_mm = round(mxdiam_mm, 0)) 
 
 summary(quad) #check that no infinite values exist
 
@@ -81,16 +86,31 @@ dat <- quad %>% #rename DF
   filter_at(vars(height_mm, dist, altitude), all_vars(!is.na(.))) %>% #remove NAs in variables used in model
   filter(species == 'phyemp')
 
-height_nb <- brms::brm(height_mm ~ dist * altitude + (1|trans.pair),
+height_nb <- brms::brm(height_mm ~ dist + altitude + (1|trans.pair), seed = 050523,
                        data = dat, family = negbinomial(link = "log", link_shape = "log"), 
                        # fitting information
                        chains = 3, iter = 5000, warmup = 1000, cores = 4, #for computers with 4 cores
-                       file = 'trampling_analyses/outputs/height_nb.rds', file_refit = 'on_change')
+                       file = 'trampling_analyses/outputs/ms_results/phyemp_height_nb.rds', file_refit = 'on_change')
 mod <- height_nb #generic model name
+
+# RESULTS FOR MS TABLE
+ss <- summary(mod)
+ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
+dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
+ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
+
+brm.res <- data.frame(Species = unique(as.character(dat$species)), Trait = ss$formula[4], N = ss$nobs, 
+                               Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
+                               Elevation = ee)
+
+brm.tab <- brm.res
+brm.tab
+
 
 ## PROBLEM: transitions after warmup exceeded max treedepth
 ## SOLUTION: increase max_treedepth > 10 BUT this is not recommended and this warning is only an 
 ## efficiency, not modeling problem (https://mc-stan.org/misc/warnings.html#maximum-treedepth-exceeded)
+## => taken care of when removing disturbance*elevation interaction
 
 # # Posterior Distribution 
 
@@ -147,11 +167,11 @@ ppc_loo_pit_overlay(dat$height_mm,
                     lw = w)
 
 
-# # Conclusion: 
+# # Conclusions after trying several models: 
 ## - major model fit issues (divergent transitions, low BF, large R-hat, low ESS) with 
 ## species as a random slope
 ## - for individual species models: data modeled much better, and good model fit! => use this approach
-
+## - no max tree depth issues without interaction term
 
 ## Model for DIAMETER
 
@@ -159,13 +179,29 @@ dat <- quad %>% #rename DF
   filter_at(vars(mxdiam_mm, dist, altitude), all_vars(!is.na(.))) %>% #remove NAs in variables used in model
   filter(species == 'phyemp')
 
-diam_nb <- brms::brm(mxdiam_mm ~ dist * altitude + (1|trans.pair),
+diam_nb <- brms::brm(mxdiam_mm ~ dist + altitude + (1|trans.pair), seed = 050523,
                        data = dat, family = negbinomial(link = "log", link_shape = "log"), 
                        # fitting information
                        chains = 3, iter = 8000, warmup = 1000, cores = 4, #for computers with 4 cores
-                       file = 'trampling_analyses/outputs/diam_nb.rds', file_refit = 'on_change')
+                       file = 'trampling_analyses/outputs/ms_results/phyemp_diam_nb.rds', file_refit = 'on_change')
 mod <- diam_nb #generic model name
 
+# RESULTS FOR MS TABLE
+ss <- summary(mod)
+ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
+dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
+ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
+
+brm.res <- data.frame(Species = unique(as.character(dat$species)), Trait = ss$formula[4], N = ss$nobs, 
+                               Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
+                               Elevation = ee)
+brm.res
+
+brm.tab <- bind_rows(brm.tab, brm.res)
+brm.tab
+
+
+# CHECK MODEL
 summary(mod) 
 plot(conditional_effects(mod), ask = FALSE) #fitted parameters and their CI
 
@@ -196,51 +232,58 @@ dat <- quad %>% #rename DF
   filter_at(vars(rel_repro, dist, altitude), all_vars(!is.na(.))) %>% #remove NAs in variables used in model
   filter(species == 'phyemp')
 
-# Compare beta and ZI beta models
-repro_beta <- brms::brm(rel_repro ~ dist * altitude + (1|trans.pair),
+repro_beta <- brms::brm(rel_repro ~ dist + altitude + (1|trans.pair), seed = 050523,
                      data = dat, family = Beta(link = "logit", link_phi = "log"), 
                      init = '0',
                      
                      # fitting information
                      chains = 3, iter = 5000, warmup = 1000, cores = 4, #for computers with 4 cores
-                     file = 'trampling_analyses/outputs/repro_beta2.rds', file_refit = 'on_change')
+                     file = 'trampling_analyses/outputs/ms_results/phyemp_repro_beta.rds', file_refit = 'on_change')
+mod <- repro_beta
 
-repro_zibeta <- brms::brm(rel_repro ~ dist * altitude + (1|trans.pair),
-                        data = dat, family = zero_inflated_beta(link = "logit", link_phi = "log", link_zi = "logit"), 
-                        init = '0',
-                        
-                        # fitting information
-                        chains = 3, iter = 5000, warmup = 1000, cores = 4, #for computers with 4 cores
-                        file = 'trampling_analyses/outputs/repro_zerobeta.rds', file_refit = 'on_change')
+# RESULTS FOR MS TABLE
+ss <- summary(mod)
+ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
+dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
+ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
+
+brm.res <- data.frame(Species = unique(as.character(dat$species)), Trait = ss$formula[4], N = ss$nobs, 
+                               Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
+                               Elevation = ee)
+brm.res
+
+brm.tab <- bind_rows(brm.tab, brm.res)
+brm.tab
+
+
+# CHECK MODEL
 
 ## PROBLEM: Stan model XXX does not contain samples
 ## DIAGNOSIS: Possible older brms version; Searching for initial values outside of possible interval 
 ## and should set init = '0' for Beta models (https://discourse.mc-stan.org/t/initialization-error-try-specifying-initial-values-reducing-ranges-of-constrained-values-or-reparameterizing-the-model/4401)
 ## SOLUTION: Update brms and devtools; Set init = '0' 
 
-pp_check(repro_beta, ndraws = 100) #slightly better
-pp_check(repro_zibeta, ndraws = 100)
-
-pairs(repro_beta)
-pairs(repro_zibeta)
-
-ppc_stat(y = dat$rel_repro, yrep = posterior_predict(repro_beta, ndraws = 1000), stat = "skew")
-ppc_stat(y = dat$rel_repro, yrep = posterior_predict(repro_zibeta, ndraws = 1000), stat = "skew")
-
-beta_loo <- loo(repro_beta, save_psis = TRUE, cores=4)
-w <- weights(beta_loo$psis_object)
-ppc_loo_pit_overlay(dat$rel_repro, posterior_predict(repro_beta), lw = w)
-
-zibeta_loo <- loo(repro_zibeta, save_psis = TRUE, cores=4)
-w <- weights(zibeta_loo$psis_object)
-ppc_loo_pit_overlay(dat$rel_repro, posterior_predict(repro_zibeta), lw = w)
-
-loo_compare(beta_loo, zibeta_loo)
+# pp_check(repro_beta, ndraws = 100) #slightly better
+# pp_check(repro_zibeta, ndraws = 100)
+# 
+# pairs(repro_beta)
+# pairs(repro_zibeta)
+# 
+# ppc_stat(y = dat$rel_repro, yrep = posterior_predict(repro_beta, ndraws = 1000), stat = "skew")
+# ppc_stat(y = dat$rel_repro, yrep = posterior_predict(repro_zibeta, ndraws = 1000), stat = "skew")
+# 
+# beta_loo <- loo(repro_beta, save_psis = TRUE, cores=4)
+# w <- weights(beta_loo$psis_object)
+# ppc_loo_pit_overlay(dat$rel_repro, posterior_predict(repro_beta), lw = w)
+# 
+# zibeta_loo <- loo(repro_zibeta, save_psis = TRUE, cores=4)
+# w <- weights(zibeta_loo$psis_object)
+# ppc_loo_pit_overlay(dat$rel_repro, posterior_predict(repro_zibeta), lw = w)
+# 
+# loo_compare(beta_loo, zibeta_loo)
 
 # # Conclusion: pp_check, skew, and PIT are almost identical and poor for both models, better elpd for Beta
 # # => use Beta because better elpd & fits faster
-
-mod <- repro_beta
 
 summary(mod) 
 plot(conditional_effects(mod), ask = FALSE) #fitted parameters and their CI
@@ -289,6 +332,8 @@ theme_set(mytheme)
    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
    theme(legend.title = element_blank()))
 
+ggsave(PhyempHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/PhyempHeightModPlot.pdf')
+
 #diameter
 (PhyempDiamModPlot <- dat %>%
     group_by(dist) %>%
@@ -296,11 +341,13 @@ theme_set(mytheme)
     ggplot(aes(x = altitude, y = mxdiam_mm, color = dist, fill = dist)) +
     stat_lineribbon(aes(y = .prediction), .width = c(.95), alpha = 0.33) +
     geom_point(data = dat) +
-    ylab("Plant maximum diameter (mm)\n") +
+    ylab("Plant diameter (mm)\n") +
     xlab("\nElevation (m)") +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     theme(legend.title = element_blank()))
+
+ggsave(PhyempDiamModPlot, file = 'trampling_analyses/outputs/ms_figs/PhyempDiamModPlot.pdf')
 
 #reproductive output
 (PhyempReproModPlot <- dat %>%
@@ -310,10 +357,12 @@ theme_set(mytheme)
     stat_lineribbon(aes(y = .prediction, fill = dist), .width = c(.95), alpha = 0.33) + #### problem: probability distributions not showing up
     geom_point(data = dat) +
     labs(x = expression(paste("Elevation (m)")),
-         y = expression(paste("Density of reproductive structures (counts/", cm^2, ")"))) +
+         y = expression(paste("Reproduction (counts/", cm^2, ")"))) +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     theme(legend.title = element_blank()))
+
+ggsave(PhyempReproModPlot, file = 'trampling_analyses/outputs/ms_figs/PhyempReproModPlot.pdf')
 
 
 
@@ -333,12 +382,28 @@ dat <- quad %>% #rename DF
   filter_at(vars(height_mm, dist, altitude), all_vars(!is.na(.))) %>% 
   filter(species == 'casmer') ###*** change here
 
-height_nb <- brms::brm(height_mm ~ dist * altitude + (1|trans.pair), data = dat, 
+height_nb <- brms::brm(height_mm ~ dist + altitude + (1|trans.pair), data = dat, seed = 050523,
                        family = negbinomial(link = "log", link_shape = "log"), 
                        chains = 3, iter = 5000, warmup = 1000, cores = 4, 
-                       file = 'trampling_analyses/outputs/height_nb_casmer.rds', ###*** change here
+                       file = 'trampling_analyses/outputs/ms_results/height_nb_casmer.rds', ###*** change here
                        file_refit = 'on_change')
 mod <- height_nb #generic model name
+
+
+# RESULTS FOR MS TABLE
+ss <- summary(mod)
+ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
+dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
+ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
+
+brm.res <- data.frame(Species = unique(as.character(dat$species)), Trait = ss$formula[4], N = ss$nobs, 
+                               Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
+                               Elevation = ee)
+brm.res
+
+brm.tab <- bind_rows(brm.tab, brm.res)
+brm.tab
+
 
 # Model results
 summary(mod) 
@@ -360,9 +425,7 @@ w <- weights(model_loo$psis_object)
 ppc_loo_pit_overlay(dat$height_mm, ###*** change here
                     posterior_predict(mod), lw = w)
 
-# # Conclusion: Very good fit; ignored because not a fit, but efficiency, issue:
-# # 265 transitions after warmup that exceeded the maximum treedepth
-
+# # Conclusion: Very good fit
 
 
 ## Model for DIAMETER
@@ -371,12 +434,27 @@ dat <- quad %>% #rename DF
   filter_at(vars(mxdiam_mm, dist, altitude), all_vars(!is.na(.))) %>% 
   filter(species == 'casmer') ###*** change here
 
-diam_nb <- brms::brm(mxdiam_mm ~ dist * altitude + (1|trans.pair), data = dat, 
+diam_nb <- brms::brm(mxdiam_mm ~ dist + altitude + (1|trans.pair), data = dat, seed = 050523,
                      family = negbinomial(link = "log", link_shape = "log"), 
                      chains = 3, iter = 5000, warmup = 1000, cores = 4, 
-                     file = 'trampling_analyses/outputs/diam_nb_casmer.rds', ###*** change here
+                     file = 'trampling_analyses/outputs/ms_results/diam_nb_casmer.rds', ###*** change here
                      file_refit = 'on_change')
 mod <- diam_nb #generic model name
+
+# RESULTS FOR MS TABLE
+ss <- summary(mod)
+ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
+dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
+ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
+
+brm.res <- data.frame(Species = unique(as.character(dat$species)), Trait = ss$formula[4], N = ss$nobs, 
+                               Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
+                               Elevation = ee)
+brm.res
+
+brm.tab <- bind_rows(brm.tab, brm.res)
+brm.tab
+
 
 # Model results
 summary(mod) 
@@ -399,8 +477,6 @@ ppc_loo_pit_overlay(dat$mxdiam_mm, ###*** change here
                     posterior_predict(mod), lw = w)
 
 # # Conclusion: skew not modeled well, otherwise good
-# # ignored: 1815 transitions after warmup that exceeded the maximum treedepth
-
 
 
 ## Model for REPRO
@@ -409,12 +485,27 @@ dat <- quad %>% #rename DF
   filter_at(vars(rel_repro, dist, altitude), all_vars(!is.na(.))) %>% 
   filter(species == 'casmer') ###*** change here
 
-repro_beta <- brms::brm(rel_repro ~ dist * altitude + (1|trans.pair), data = dat, 
+repro_beta <- brms::brm(rel_repro ~ dist + altitude + (1|trans.pair), data = dat, seed = 050523,
                         family = Beta(link = "logit", link_phi = "log"), init = '0',
                         chains = 3, iter = 5000, warmup = 1000, cores = 4, 
-                        file = 'trampling_analyses/outputs/repro_beta_casmer.rds', ###*** change here
+                        file = 'trampling_analyses/outputs/ms_results/repro_beta_casmer.rds', ###*** change here
                         file_refit = 'on_change')
 mod <- repro_beta
+
+# RESULTS FOR MS TABLE
+ss <- summary(mod)
+ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
+dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
+ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
+
+brm.res <- data.frame(Species = unique(as.character(dat$species)), Trait = ss$formula[4], N = ss$nobs, 
+                               Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
+                               Elevation = ee)
+brm.res
+
+brm.tab <- bind_rows(brm.tab, brm.res)
+brm.tab
+
 
 # Model results
 summary(mod) 
@@ -454,6 +545,8 @@ ppc_loo_pit_overlay(dat$rel_repro, ###*** change here
    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
    theme(legend.title = element_blank()))
 
+ggsave(CasmerHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/CasmerHeightModPlot.pdf')
+
 #diameter
 (CasmerDiamModPlot <- dat %>%
     group_by(dist) %>%
@@ -461,11 +554,13 @@ ppc_loo_pit_overlay(dat$rel_repro, ###*** change here
     ggplot(aes(x = altitude, y = mxdiam_mm, color = dist, fill = dist)) +
     stat_lineribbon(aes(y = .prediction), .width = c(.95), alpha = 0.33) +
     geom_point(data = dat) +
-    ylab("Plant maximum diameter (mm)\n") +
+    ylab("Plant diameter (mm)\n") +
     xlab("\nElevation (m)") +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     theme(legend.title = element_blank()))
+
+ggsave(CasmerDiamModPlot, file = 'trampling_analyses/outputs/ms_figs/CasmerDiamModPlot.pdf')
 
 #reproductive output
 (CasmerReproModPlot <- dat %>%
@@ -475,10 +570,15 @@ ppc_loo_pit_overlay(dat$rel_repro, ###*** change here
     stat_lineribbon(aes(y = .prediction, fill = dist), .width = c(.95), alpha = 0.33) + #### problem: probability distributions not showing up
     geom_point(data = dat) +
     labs(x = expression(paste("Elevation (m)")),
-         y = expression(paste("Density of reproductive structures (counts/", cm^2, ")"))) +
+         y = expression(paste("Reproduction (counts/", cm^2, ")"))) +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     theme(legend.title = element_blank()))
+
+ggsave(CasmerReproModPlot, file = 'trampling_analyses/outputs/ms_figs/CasmerReproModPlot.pdf')
+
+
+
 
 ####################################################################################################
 
@@ -495,12 +595,27 @@ dat <- quad %>% #rename DF
   filter_at(vars(height_mm, dist, altitude), all_vars(!is.na(.))) %>% 
   filter(species == 'vacova') ###*** change here
 
-height_nb <- brms::brm(height_mm ~ dist * altitude + (1|trans.pair), data = dat, 
+height_nb <- brms::brm(height_mm ~ dist + altitude + (1|trans.pair), data = dat, seed = 050523,
                        family = negbinomial(link = "log", link_shape = "log"), 
                        chains = 3, iter = 5000, warmup = 1000, cores = 4, 
-                       file = 'trampling_analyses/outputs/height_nb_vacova.rds', ###*** change here
+                       file = 'trampling_analyses/outputs/ms_results/height_nb_vacova.rds', ###*** change here
                        file_refit = 'on_change')
 mod <- height_nb #generic model name
+
+# RESULTS FOR MS TABLE
+ss <- summary(mod)
+ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
+dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
+ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
+
+brm.res <- data.frame(Species = unique(as.character(dat$species)), Trait = ss$formula[4], N = ss$nobs, 
+                      Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
+                      Elevation = ee)
+brm.res
+
+brm.tab <- bind_rows(brm.tab, brm.res)
+brm.tab
+
 
 # Model results
 summary(mod) 
@@ -522,7 +637,7 @@ w <- weights(model_loo$psis_object)
 ppc_loo_pit_overlay(dat$height_mm, 
                     posterior_predict(mod), lw = w)
 
-# # Conclusion: Good model fit! Skew not modeled well and 1 obs w pareto_k > 0.7
+# # Conclusion: Skew not modeled well and 1 obs w pareto_k > 0.7
 
 
 
@@ -532,12 +647,27 @@ dat <- quad %>% #rename DF
   filter_at(vars(mxdiam_mm, dist, altitude), all_vars(!is.na(.))) %>% 
   filter(species == 'vacova') ###*** change here
 
-diam_nb <- brms::brm(mxdiam_mm ~ dist * altitude + (1|trans.pair), data = dat, 
+diam_nb <- brms::brm(mxdiam_mm ~ dist + altitude + (1|trans.pair), data = dat, seed = 050523,
                      family = negbinomial(link = "log", link_shape = "log"), 
                      chains = 3, iter = 8000, warmup = 1000, cores = 4, 
-                     file = 'trampling_analyses/outputs/diam_nb_vacova.rds', ###*** change here
+                     file = 'trampling_analyses/outputs/April2023/diam_nb_vacova.rds', ###*** change here
                      file_refit = 'on_change')
 mod <- diam_nb #generic model name
+
+# RESULTS FOR MS TABLE
+ss <- summary(mod)
+ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
+dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
+ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
+
+brm.res <- data.frame(Species = unique(as.character(dat$species)), Trait = ss$formula[4], N = ss$nobs, 
+                      Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
+                      Elevation = ee)
+brm.res
+
+brm.tab <- bind_rows(brm.tab, brm.res)
+brm.tab
+
 
 # Model results
 summary(mod) 
@@ -568,12 +698,27 @@ dat <- quad %>% #rename DF
   filter_at(vars(rel_repro, dist, altitude), all_vars(!is.na(.))) %>% 
   filter(species == 'vacova') ###*** change here
 
-repro_beta <- brms::brm(rel_repro ~ dist * altitude + (1|trans.pair), data = dat, 
+repro_beta <- brms::brm(rel_repro ~ dist + altitude + (1|trans.pair), data = dat, seed = 050523,
                         family = Beta(link = "logit", link_phi = "log"), init = '0',
                         chains = 3, iter = 5000, warmup = 1000, cores = 4, 
-                        file = 'trampling_analyses/outputs/repro_beta_vacova.rds', ###*** change here
+                        file = 'trampling_analyses/outputs/ms_results/repro_beta_vacova.rds', ###*** change here
                         file_refit = 'on_change')
 mod <- repro_beta
+
+# RESULTS FOR MS TABLE
+ss <- summary(mod)
+ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
+dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
+ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
+
+brm.res <- data.frame(Species = unique(as.character(dat$species)), Trait = ss$formula[4], N = ss$nobs, 
+                      Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
+                      Elevation = ee)
+brm.res
+
+brm.tab <- bind_rows(brm.tab, brm.res)
+brm.tab
+
 
 # Model results
 summary(mod) 
@@ -613,6 +758,8 @@ ppc_loo_pit_overlay(dat$rel_repro,
    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
    theme(legend.title = element_blank()))
 
+ggsave(VacovaHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/VacovaHeightModPlot.pdf')
+
 #diameter
 (VacovaDiamModPlot <- dat %>%
     group_by(dist) %>%
@@ -620,11 +767,13 @@ ppc_loo_pit_overlay(dat$rel_repro,
     ggplot(aes(x = altitude, y = mxdiam_mm, color = dist, fill = dist)) +
     stat_lineribbon(aes(y = .prediction), .width = c(.95), alpha = 0.33) +
     geom_point(data = dat) +
-    ylab("Plant maximum diameter (mm)\n") +
+    ylab("Plant diameter (mm)\n") +
     xlab("\nElevation (m)") +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     theme(legend.title = element_blank()))
+
+ggsave(VacovaDiamModPlot, file = 'trampling_analyses/outputs/ms_figs/VacovaDiamModPlot.pdf')
 
 #reproductive output
 (VacovaReproModPlot <- dat %>%
@@ -634,10 +783,13 @@ ppc_loo_pit_overlay(dat$rel_repro,
     stat_lineribbon(aes(y = .prediction, fill = dist), .width = c(.95), alpha = 0.33) + #### problem: probability distributions not showing up
     geom_point(data = dat) +
     labs(x = expression(paste("Elevation (m)")),
-         y = expression(paste("Density of reproductive structures (counts/", cm^2, ")"))) +
+         y = expression(paste("Reproduction (counts/", cm^2, ")"))) +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     theme(legend.title = element_blank()))
+
+ggsave(VacovaReproModPlot, file = 'trampling_analyses/outputs/ms_figs/VacovaReproModPlot.pdf')
+
 
 
 
@@ -656,12 +808,27 @@ dat <- quad %>% #rename DF
   filter_at(vars(height_mm, dist, altitude), all_vars(!is.na(.))) %>% 
   filter(species == 'carspp') ###*** change here
 
-height_nb <- brms::brm(height_mm ~ dist * altitude + (1|trans.pair), data = dat, 
+height_nb <- brms::brm(height_mm ~ dist + altitude + (1|trans.pair), data = dat, seed = 050523,
                        family = negbinomial(link = "log", link_shape = "log"), 
                        chains = 3, iter = 5000, warmup = 1000, cores = 4, 
-                       file = 'trampling_analyses/outputs/height_nb_carspp.rds', ###*** change here
+                       file = 'trampling_analyses/outputs/ms_results/height_nb_carspp.rds', ###*** change here
                        file_refit = 'on_change')
 mod <- height_nb #generic model name
+
+# RESULTS FOR MS TABLE
+ss <- summary(mod)
+ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
+dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
+ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
+
+brm.res <- data.frame(Species = unique(as.character(dat$species)), Trait = ss$formula[4], N = ss$nobs, 
+                      Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
+                      Elevation = ee)
+brm.res
+
+brm.tab <- bind_rows(brm.tab, brm.res)
+brm.tab
+
 
 # Model results
 summary(mod) 
@@ -686,19 +853,38 @@ ppc_loo_pit_overlay(dat$height_mm,
 # # Conclusion: good fit, 1 obs > 0.7 pareto k, skew good, dispersion moderate
 
 
-
 ## Model for DIAMETER
 
 dat <- quad %>% #rename DF
   filter_at(vars(mxdiam_mm, dist, altitude), all_vars(!is.na(.))) %>% 
   filter(species == 'carspp') ###*** change here
 
-diam_nb <- brms::brm(mxdiam_mm ~ dist * altitude + (1|trans.pair), data = dat, 
+diam_nb <- brms::brm(mxdiam_mm ~ dist + altitude + (1|trans.pair), data = dat, seed = 050523,
                      family = negbinomial(link = "log", link_shape = "log"), 
                      chains = 3, iter = 8000, warmup = 1000, cores = 4, 
-                     file = 'trampling_analyses/outputs/diam_nb_carspp.rds', ###*** change here
+                     file = 'trampling_analyses/outputs/ms_results/diam_nb_carspp.rds', ###*** change here
                      file_refit = 'on_change')
 mod <- diam_nb #generic model name
+
+## PROBLEM: divergent transitions after warmup
+## SOLUTION: ncreasing adapt_delta above 0.8 may help. 
+## See http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup 
+
+
+# RESULTS FOR MS TABLE
+ss <- summary(mod)
+ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
+dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
+ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
+
+brm.res <- data.frame(Species = unique(as.character(dat$species)), Trait = ss$formula[4], N = ss$nobs, 
+                      Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
+                      Elevation = ee)
+brm.res
+
+brm.tab <- bind_rows(brm.tab, brm.res)
+brm.tab
+
 
 # Model results
 summary(mod) 
@@ -723,6 +909,9 @@ ppc_loo_pit_overlay(dat$mxdiam_mm,
 # # Conclusion: weak likelihood in one prior, skew moderate, dispersion good
 
 
+## SAVE RESULTS TABLE
+save(brm.tab, file = 'trampling_analyses/outputs/ms_results/brm_table.RData')
+write.csv(brm.tab, file = 'trampling_analyses/outputs/ms_results/brm_table.csv')
 
 
 ####### Carex PLOTS ########
@@ -740,6 +929,8 @@ ppc_loo_pit_overlay(dat$mxdiam_mm,
    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
    theme(legend.title = element_blank()))
 
+ggsave(CarexHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/CarexHeightModPlot.pdf')
+
 #diameter
 (CarexDiamModPlot <- dat %>%
     group_by(dist) %>%
@@ -747,8 +938,10 @@ ppc_loo_pit_overlay(dat$mxdiam_mm,
     ggplot(aes(x = altitude, y = mxdiam_mm, color = dist, fill = dist)) +
     stat_lineribbon(aes(y = .prediction), .width = c(.95), alpha = 0.33) +
     geom_point(data = dat) +
-    ylab("Plant maximum diameter (mm)\n") +
+    ylab("Plant diameter (mm)\n") +
     xlab("\nElevation (m)") +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     theme(legend.title = element_blank()))
+
+ggsave(CarexHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/CarexDiamModPlot.pdf')

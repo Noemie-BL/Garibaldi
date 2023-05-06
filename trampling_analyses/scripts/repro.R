@@ -29,8 +29,75 @@ load('trampling_analyses/compiled_data/quad.RData') #gps & transect data matched
 
 
 # # OUTPUT FILES # #
+load('trampling_analyses/compiled_data/quad.RData') ##updated with reproductive metric & plant area (repro.R)
 
 
+
+####################################################################################################
+
+# # CALCULATE REPRODUCTIVE METRIC # # 
+
+####################################################################################################
+
+# Data
+load('trampling_analyses/compiled_data/quad.RData') #gps & transect data matched to quad data (merge_fielddata.R)
+
+dat <- quad #generic dataframe name
+str(dat)
+
+# Remove P. grandiflora because only sampled at 1 site
+dat <- dat %>% 
+  filter(!species == 'phygla')
+
+# Convert categorical predictor variables to factor
+ff <- c('transect', 'species', 'dist', 'trans.pair')
+dat[ff] <- lapply(dat[ff], as.factor)
+
+str(dat) #check data structure
+
+
+# Calculate plant area for reproductive output
+dat$plantArea_cm2 <- (dat$mxdiam_mm * dat$height_mm)/100
+
+# Calculate reproductive metric combining buds, flws, frts and dividing by plant area
+dat$repro <- NA #initialize column
+for (i in 1:nrow(dat)) { #loop through each row of DF
+  
+  dat$repro[i] <- sum(c(dat$buds[i], dat$flws[i], dat$frts[i]), na.rm = T) / dat$plantArea_cm2[i]
+}
+summary(dat$repro)
+hist(dat$repro, breaks = 100)
+
+# dat <- dat %>% 
+#   mutate_if(is.numeric, ~ replace(., is.infinite(.), NA)) #Inf to NAs
+
+
+# Calculate relative reproduction
+mm <- dat %>% #create DF with max value per species
+  group_by(species) %>% 
+  summarise(max = max(repro, na.rm = T)) #NA listed in plots not seeded
+
+dat <- left_join(dat, mm, by = 'species') #combine DFs
+dat$rel_repro <- dat$repro/dat$max
+summary(dat$rel_repro)
+hist(dat$rel_repro, breaks = 50)
+
+dat <- dat %>% 
+  select(-c(max)) #remove max column
+
+
+# Save updated DF
+quad <- dat
+save(quad, file = 'trampling_analyses/compiled_data/quad.RData')
+
+
+
+
+####################################################################################################
+
+# # DATA FOR FIGS # # 
+
+####################################################################################################
 
 # # PLOT THEME # #
 mytheme <- theme_classic() +
@@ -52,14 +119,6 @@ mytheme <- theme_classic() +
 
 theme_set(mytheme)
 
-
-
-
-####################################################################################################
-
-# # DATA # # 
-
-####################################################################################################
 
 # Load quadrat-level data (see merge_fielddata.R for variable descriptions)
 load('trampling_analyses/compiled_data/quad.RData') #gps & transect data matched to quad data (merge_fielddata.R)
