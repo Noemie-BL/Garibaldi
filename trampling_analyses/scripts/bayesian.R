@@ -27,7 +27,10 @@ load('trampling_analyses/compiled_data/quad.RData') ##updated with reproductive 
 
 
 # # OUTPUT FILES # #
-# [jags files, see below]
+# [rds model files for each species' trait, see below]
+load('trampling_analyses/outputs/ms_results/brm_table.RData') #model results for species traits (bayesian.R)
+brm.tab <- read.csv('trampling_analyses/outputs/ms_results/brm_table.csv') #model results for species traits (bayesian.R)
+
 
 
 
@@ -112,60 +115,60 @@ brm.tab
 ## efficiency, not modeling problem (https://mc-stan.org/misc/warnings.html#maximum-treedepth-exceeded)
 ## => taken care of when removing disturbance*elevation interaction
 
-# # Posterior Distribution 
-
-# Summary of posterior distribution for fixed and random effects: 
-# Estimate: mean of posterior distribution
-# Est. Error: error associated with mean (standard error)
-# CI intervals: if CI intervals encompass 0 => can't be sure effect isn't 0
-summary(mod) 
-
-plot(conditional_effects(mod), ask = FALSE) #fitted parameters and their CI
-
-
-# # Prior distribution
-
-# What about priors? brms will try to pick reasonable defaults, which you can see:
-prior_summary(mod) #can define priors in brm(priors = ...)
-
-
-# Do priors overwhelm likelihood?  
-ps <- powerscale_sensitivity(mod) #look at 'diagnosis' column to see if prior isn't appropriate
-unique(ps$sensitivity$diagnosis)
-
-
-# # Model Fit
-
-# sample size (Bulk_ESS & Tail_ESS) should > 1000 & rhat < 1.1
-summary(mod) 
-
-plot(mod) #model convergence (L: does distribution mean match estimate? R: did all values get explored?) 
-
-# Posterior predictive check: Does data match model? (could be wrong distribution, not all effects modeled)
-pp_check(mod, ndraws = 100) #posterior predictive checks - are predicted values similar to posterior distribution?
-
-# Pairs plots to diagnose sampling problems (should show Gaussian blobs)
-pairs(mod)
-
-# Skewness: observed (black line) and simulated (grey distribution) SKEW metric (1000 simulated datasets)
-ppc_stat(y = dat$height_mm, 
-         yrep = posterior_predict(mod, ndraws = 1000),
-         stat = "skew")
-
-# Leave-one-out Crossvalidation (LOO) for marginal (pointwise) posterior predictive checks
-model_loo <- loo(mod, save_psis = TRUE, cores=4) #higher elpd => better fit 
-
-w <- weights(model_loo$psis_object)
-
-# Probability integral transform (PIT) uses CDF properties to convert continuous random 
-# variables into uniformly distributed ones. However, this only holds exactly if the distribution 
-# used to generate the continuous random variables is the true distribution.
-# -> If LOO-PIT values concentrated at 0/1 => possibly under-dispersed model
-# -> If LOO-PIT values concentrated near 0.5 => possibly over-dispersed model
-ppc_loo_pit_overlay(dat$height_mm, 
-                    posterior_predict(mod), 
-                    lw = w)
-
+# # # Posterior Distribution 
+# 
+# # Summary of posterior distribution for fixed and random effects: 
+# # Estimate: mean of posterior distribution
+# # Est. Error: error associated with mean (standard error)
+# # CI intervals: if CI intervals encompass 0 => can't be sure effect isn't 0
+# summary(mod) 
+# 
+# plot(conditional_effects(mod), ask = FALSE) #fitted parameters and their CI
+# 
+# 
+# # # Prior distribution
+# 
+# # What about priors? brms will try to pick reasonable defaults, which you can see:
+# prior_summary(mod) #can define priors in brm(priors = ...)
+# 
+# 
+# # Do priors overwhelm likelihood?  
+# ps <- powerscale_sensitivity(mod) #look at 'diagnosis' column to see if prior isn't appropriate
+# unique(ps$sensitivity$diagnosis)
+# 
+# 
+# # # Model Fit
+# 
+# # sample size (Bulk_ESS & Tail_ESS) should > 1000 & rhat < 1.1
+# summary(mod) 
+# 
+# plot(mod) #model convergence (L: does distribution mean match estimate? R: did all values get explored?) 
+# 
+# # Posterior predictive check: Does data match model? (could be wrong distribution, not all effects modeled)
+# pp_check(mod, ndraws = 100) #posterior predictive checks - are predicted values similar to posterior distribution?
+# 
+# # Pairs plots to diagnose sampling problems (should show Gaussian blobs)
+# pairs(mod)
+# 
+# # Skewness: observed (black line) and simulated (grey distribution) SKEW metric (1000 simulated datasets)
+# ppc_stat(y = dat$height_mm, 
+#          yrep = posterior_predict(mod, ndraws = 1000),
+#          stat = "skew")
+# 
+# # Leave-one-out Crossvalidation (LOO) for marginal (pointwise) posterior predictive checks
+# model_loo <- loo(mod, save_psis = TRUE, cores=4) #higher elpd => better fit 
+# 
+# w <- weights(model_loo$psis_object)
+# 
+# # Probability integral transform (PIT) uses CDF properties to convert continuous random 
+# # variables into uniformly distributed ones. However, this only holds exactly if the distribution 
+# # used to generate the continuous random variables is the true distribution.
+# # -> If LOO-PIT values concentrated at 0/1 => possibly under-dispersed model
+# # -> If LOO-PIT values concentrated near 0.5 => possibly over-dispersed model
+# ppc_loo_pit_overlay(dat$height_mm, 
+#                     posterior_predict(mod), 
+#                     lw = w)
+# 
 
 # # Conclusions after trying several models: 
 ## - major model fit issues (divergent transitions, low BF, large R-hat, low ESS) with 
@@ -201,29 +204,29 @@ brm.tab <- bind_rows(brm.tab, brm.res)
 brm.tab
 
 
-# CHECK MODEL
-summary(mod) 
-plot(conditional_effects(mod), ask = FALSE) #fitted parameters and their CI
-
-prior_summary(mod) #can define priors in brm(priors = ...)
-ps <- powerscale_sensitivity(mod) #look at 'diagnosis' column to see if prior isn't appropriate
-unique(ps$sensitivity$diagnosis)
-
-plot(mod) #model convergence (L: does distribution mean match estimate? R: did all values get explored?) 
-pp_check(mod, ndraws = 100) #posterior predictive checks - are predicted values similar to posterior distribution?
-pairs(mod)
-
-ppc_stat(y = dat$mxdiam_mm, 
-         yrep = posterior_predict(mod, ndraws = 1000),
-         stat = "skew")
-model_loo <- loo(mod, save_psis = TRUE, cores=4) #higher elpd => better fit 
-w <- weights(model_loo$psis_object)
-ppc_loo_pit_overlay(dat$mxdiam_mm, 
-                    posterior_predict(mod), 
-                    lw = w)
-
-# # Conclusion: 
-# very good model fit!
+# # CHECK MODEL
+# summary(mod) 
+# plot(conditional_effects(mod), ask = FALSE) #fitted parameters and their CI
+# 
+# prior_summary(mod) #can define priors in brm(priors = ...)
+# ps <- powerscale_sensitivity(mod) #look at 'diagnosis' column to see if prior isn't appropriate
+# unique(ps$sensitivity$diagnosis)
+# 
+# plot(mod) #model convergence (L: does distribution mean match estimate? R: did all values get explored?) 
+# pp_check(mod, ndraws = 100) #posterior predictive checks - are predicted values similar to posterior distribution?
+# pairs(mod)
+# 
+# ppc_stat(y = dat$mxdiam_mm, 
+#          yrep = posterior_predict(mod, ndraws = 1000),
+#          stat = "skew")
+# model_loo <- loo(mod, save_psis = TRUE, cores=4) #higher elpd => better fit 
+# w <- weights(model_loo$psis_object)
+# ppc_loo_pit_overlay(dat$mxdiam_mm, 
+#                     posterior_predict(mod), 
+#                     lw = w)
+# 
+# # # Conclusion: 
+# # very good model fit!
 
 
 ## Model for REPRO
@@ -285,23 +288,23 @@ brm.tab
 # # Conclusion: pp_check, skew, and PIT are almost identical and poor for both models, better elpd for Beta
 # # => use Beta because better elpd & fits faster
 
-summary(mod) 
-plot(conditional_effects(mod), ask = FALSE) #fitted parameters and their CI
-
-prior_summary(mod) #can define priors in brm(priors = ...)
-ps <- powerscale_sensitivity(mod) #look at 'diagnosis' column to see if prior isn't appropriate
-unique(ps$sensitivity$diagnosis)
-
-plot(mod) #model convergence (L: does distribution mean match estimate? R: did all values get explored?) 
-pp_check(mod, ndraws = 100) #posterior predictive checks - are predicted values similar to posterior distribution?
-pairs(mod)
-
-ppc_stat(y = dat$rel_repro, 
-         yrep = posterior_predict(mod, ndraws = 1000), stat = "skew")
-model_loo <- loo(mod, save_psis = TRUE, cores=4) #higher elpd => better fit 
-w <- weights(model_loo$psis_object)
-ppc_loo_pit_overlay(dat$rel_repro, 
-                    posterior_predict(mod), lw = w)
+# summary(mod) 
+# plot(conditional_effects(mod), ask = FALSE) #fitted parameters and their CI
+# 
+# prior_summary(mod) #can define priors in brm(priors = ...)
+# ps <- powerscale_sensitivity(mod) #look at 'diagnosis' column to see if prior isn't appropriate
+# unique(ps$sensitivity$diagnosis)
+# 
+# plot(mod) #model convergence (L: does distribution mean match estimate? R: did all values get explored?) 
+# pp_check(mod, ndraws = 100) #posterior predictive checks - are predicted values similar to posterior distribution?
+# pairs(mod)
+# 
+# ppc_stat(y = dat$rel_repro, 
+#          yrep = posterior_predict(mod, ndraws = 1000), stat = "skew")
+# model_loo <- loo(mod, save_psis = TRUE, cores=4) #higher elpd => better fit 
+# w <- weights(model_loo$psis_object)
+# ppc_loo_pit_overlay(dat$rel_repro, 
+#                     posterior_predict(mod), lw = w)
 
 
 ####### PLOTS ########
@@ -405,26 +408,26 @@ brm.tab <- bind_rows(brm.tab, brm.res)
 brm.tab
 
 
-# Model results
-summary(mod) 
-plot(conditional_effects(mod), ask = FALSE) 
-
-# Model fit
-prior_summary(mod)
-ps <- powerscale_sensitivity(mod) 
-unique(ps$sensitivity$diagnosis)
-
-plot(mod)  
-pp_check(mod, ndraws = 100) 
-pairs(mod)
-
-ppc_stat(y = dat$height_mm, ###*** change here
-         yrep = posterior_predict(mod, ndraws = 1000), stat = "skew")
-model_loo <- loo(mod, save_psis = TRUE, cores=4) 
-w <- weights(model_loo$psis_object)
-ppc_loo_pit_overlay(dat$height_mm, ###*** change here
-                    posterior_predict(mod), lw = w)
-
+# # Model results
+# summary(mod) 
+# plot(conditional_effects(mod), ask = FALSE) 
+# 
+# # Model fit
+# prior_summary(mod)
+# ps <- powerscale_sensitivity(mod) 
+# unique(ps$sensitivity$diagnosis)
+# 
+# plot(mod)  
+# pp_check(mod, ndraws = 100) 
+# pairs(mod)
+# 
+# ppc_stat(y = dat$height_mm, ###*** change here
+#          yrep = posterior_predict(mod, ndraws = 1000), stat = "skew")
+# model_loo <- loo(mod, save_psis = TRUE, cores=4) 
+# w <- weights(model_loo$psis_object)
+# ppc_loo_pit_overlay(dat$height_mm, ###*** change here
+#                     posterior_predict(mod), lw = w)
+# 
 # # Conclusion: Very good fit
 
 
@@ -456,26 +459,26 @@ brm.tab <- bind_rows(brm.tab, brm.res)
 brm.tab
 
 
-# Model results
-summary(mod) 
-plot(conditional_effects(mod), ask = FALSE) 
-
-# Model fit
-prior_summary(mod)
-ps <- powerscale_sensitivity(mod) 
-unique(ps$sensitivity$diagnosis)
-
-plot(mod)  
-pp_check(mod, ndraws = 100) 
-pairs(mod)
-
-ppc_stat(y = dat$mxdiam_mm, ###*** change here
-         yrep = posterior_predict(mod, ndraws = 1000), stat = "skew")
-model_loo <- loo(mod, save_psis = TRUE, cores=4) 
-w <- weights(model_loo$psis_object)
-ppc_loo_pit_overlay(dat$mxdiam_mm, ###*** change here
-                    posterior_predict(mod), lw = w)
-
+# # Model results
+# summary(mod) 
+# plot(conditional_effects(mod), ask = FALSE) 
+# 
+# # Model fit
+# prior_summary(mod)
+# ps <- powerscale_sensitivity(mod) 
+# unique(ps$sensitivity$diagnosis)
+# 
+# plot(mod)  
+# pp_check(mod, ndraws = 100) 
+# pairs(mod)
+# 
+# ppc_stat(y = dat$mxdiam_mm, ###*** change here
+#          yrep = posterior_predict(mod, ndraws = 1000), stat = "skew")
+# model_loo <- loo(mod, save_psis = TRUE, cores=4) 
+# w <- weights(model_loo$psis_object)
+# ppc_loo_pit_overlay(dat$mxdiam_mm, ###*** change here
+#                     posterior_predict(mod), lw = w)
+# 
 # # Conclusion: skew not modeled well, otherwise good
 
 
@@ -507,27 +510,27 @@ brm.tab <- bind_rows(brm.tab, brm.res)
 brm.tab
 
 
-# Model results
-summary(mod) 
-plot(conditional_effects(mod), ask = FALSE) 
-
-# Model fit
-prior_summary(mod)
-ps <- powerscale_sensitivity(mod) 
-unique(ps$sensitivity$diagnosis)
-
-plot(mod)  
-pp_check(mod, ndraws = 100) 
-pairs(mod)
-
-ppc_stat(y = dat$rel_repro, ###*** change here
-         yrep = posterior_predict(mod, ndraws = 1000), stat = "skew")
-model_loo <- loo(mod, save_psis = TRUE, cores=4) 
-w <- weights(model_loo$psis_object)
-ppc_loo_pit_overlay(dat$rel_repro, ###*** change here
-                    posterior_predict(mod), lw = w)
-
-# # Conclusion: skew not well modeled, 1 observation with pareto K > 0.7
+# # Model results
+# summary(mod) 
+# plot(conditional_effects(mod), ask = FALSE) 
+# 
+# # Model fit
+# prior_summary(mod)
+# ps <- powerscale_sensitivity(mod) 
+# unique(ps$sensitivity$diagnosis)
+# 
+# plot(mod)  
+# pp_check(mod, ndraws = 100) 
+# pairs(mod)
+# 
+# ppc_stat(y = dat$rel_repro, ###*** change here
+#          yrep = posterior_predict(mod, ndraws = 1000), stat = "skew")
+# model_loo <- loo(mod, save_psis = TRUE, cores=4) 
+# w <- weights(model_loo$psis_object)
+# ppc_loo_pit_overlay(dat$rel_repro, ###*** change here
+#                     posterior_predict(mod), lw = w)
+# 
+# # # Conclusion: skew not well modeled, 1 observation with pareto K > 0.7
 
 
 ####### CASMER PLOTS ########
@@ -617,26 +620,26 @@ brm.tab <- bind_rows(brm.tab, brm.res)
 brm.tab
 
 
-# Model results
-summary(mod) 
-plot(conditional_effects(mod), ask = FALSE) 
-
-# Model fit
-prior_summary(mod)
-ps <- powerscale_sensitivity(mod) 
-unique(ps$sensitivity$diagnosis)
-
-plot(mod)  
-pp_check(mod, ndraws = 100) 
-pairs(mod)
-
-ppc_stat(y = dat$height_mm, 
-         yrep = posterior_predict(mod, ndraws = 1000), stat = "skew")
-model_loo <- loo(mod, save_psis = TRUE, cores=4) 
-w <- weights(model_loo$psis_object)
-ppc_loo_pit_overlay(dat$height_mm, 
-                    posterior_predict(mod), lw = w)
-
+# # Model results
+# summary(mod) 
+# plot(conditional_effects(mod), ask = FALSE) 
+# 
+# # Model fit
+# prior_summary(mod)
+# ps <- powerscale_sensitivity(mod) 
+# unique(ps$sensitivity$diagnosis)
+# 
+# plot(mod)  
+# pp_check(mod, ndraws = 100) 
+# pairs(mod)
+# 
+# ppc_stat(y = dat$height_mm, 
+#          yrep = posterior_predict(mod, ndraws = 1000), stat = "skew")
+# model_loo <- loo(mod, save_psis = TRUE, cores=4) 
+# w <- weights(model_loo$psis_object)
+# ppc_loo_pit_overlay(dat$height_mm, 
+#                     posterior_predict(mod), lw = w)
+# 
 # # Conclusion: Skew not modeled well and 1 obs w pareto_k > 0.7
 
 
@@ -669,25 +672,25 @@ brm.tab <- bind_rows(brm.tab, brm.res)
 brm.tab
 
 
-# Model results
-summary(mod) 
-plot(conditional_effects(mod), ask = FALSE) 
-
-# Model fit
-prior_summary(mod)
-ps <- powerscale_sensitivity(mod) 
-unique(ps$sensitivity$diagnosis)
-
-plot(mod)  
-pp_check(mod, ndraws = 100) 
-pairs(mod)
-
-ppc_stat(y = dat$mxdiam_mm, 
-         yrep = posterior_predict(mod, ndraws = 1000), stat = "skew")
-model_loo <- loo(mod, save_psis = TRUE, cores=4) 
-w <- weights(model_loo$psis_object)
-ppc_loo_pit_overlay(dat$mxdiam_mm, 
-                    posterior_predict(mod), lw = w)
+# # Model results
+# summary(mod) 
+# plot(conditional_effects(mod), ask = FALSE) 
+# 
+# # Model fit
+# prior_summary(mod)
+# ps <- powerscale_sensitivity(mod) 
+# unique(ps$sensitivity$diagnosis)
+# 
+# plot(mod)  
+# pp_check(mod, ndraws = 100) 
+# pairs(mod)
+# 
+# ppc_stat(y = dat$mxdiam_mm, 
+#          yrep = posterior_predict(mod, ndraws = 1000), stat = "skew")
+# model_loo <- loo(mod, save_psis = TRUE, cores=4) 
+# w <- weights(model_loo$psis_object)
+# ppc_loo_pit_overlay(dat$mxdiam_mm, 
+#                     posterior_predict(mod), lw = w)
 
 # # Conclusion: Increased iterations to increase ESS; model fit well except for skew
 
@@ -720,26 +723,26 @@ brm.tab <- bind_rows(brm.tab, brm.res)
 brm.tab
 
 
-# Model results
-summary(mod) 
-plot(conditional_effects(mod), ask = FALSE) 
-
-# Model fit
-prior_summary(mod)
-ps <- powerscale_sensitivity(mod) 
-unique(ps$sensitivity$diagnosis)
-
-plot(mod)  
-pp_check(mod, ndraws = 100) 
-pairs(mod)
-
-ppc_stat(y = dat$rel_repro, 
-         yrep = posterior_predict(mod, ndraws = 1000), stat = "skew")
-model_loo <- loo(mod, save_psis = TRUE, cores=4) 
-w <- weights(model_loo$psis_object)
-ppc_loo_pit_overlay(dat$rel_repro, 
-                    posterior_predict(mod), lw = w)
-
+# # Model results
+# summary(mod) 
+# plot(conditional_effects(mod), ask = FALSE) 
+# 
+# # Model fit
+# prior_summary(mod)
+# ps <- powerscale_sensitivity(mod) 
+# unique(ps$sensitivity$diagnosis)
+# 
+# plot(mod)  
+# pp_check(mod, ndraws = 100) 
+# pairs(mod)
+# 
+# ppc_stat(y = dat$rel_repro, 
+#          yrep = posterior_predict(mod, ndraws = 1000), stat = "skew")
+# model_loo <- loo(mod, save_psis = TRUE, cores=4) 
+# w <- weights(model_loo$psis_object)
+# ppc_loo_pit_overlay(dat$rel_repro, 
+#                     posterior_predict(mod), lw = w)
+# 
 # # Conclusion: good model fit except for skew and dispersion
 
 
@@ -830,25 +833,25 @@ brm.tab <- bind_rows(brm.tab, brm.res)
 brm.tab
 
 
-# Model results
-summary(mod) 
-plot(conditional_effects(mod), ask = FALSE) 
-
-# Model fit
-prior_summary(mod)
-ps <- powerscale_sensitivity(mod) 
-unique(ps$sensitivity$diagnosis)
-
-plot(mod)  
-pp_check(mod, ndraws = 100) 
-pairs(mod)
-
-ppc_stat(y = dat$height_mm, 
-         yrep = posterior_predict(mod, ndraws = 1000), stat = "skew")
-model_loo <- loo(mod, save_psis = TRUE, cores=4) 
-w <- weights(model_loo$psis_object)
-ppc_loo_pit_overlay(dat$height_mm, 
-                    posterior_predict(mod), lw = w)
+# # Model results
+# summary(mod) 
+# plot(conditional_effects(mod), ask = FALSE) 
+# 
+# # Model fit
+# prior_summary(mod)
+# ps <- powerscale_sensitivity(mod) 
+# unique(ps$sensitivity$diagnosis)
+# 
+# plot(mod)  
+# pp_check(mod, ndraws = 100) 
+# pairs(mod)
+# 
+# ppc_stat(y = dat$height_mm, 
+#          yrep = posterior_predict(mod, ndraws = 1000), stat = "skew")
+# model_loo <- loo(mod, save_psis = TRUE, cores=4) 
+# w <- weights(model_loo$psis_object)
+# ppc_loo_pit_overlay(dat$height_mm, 
+#                     posterior_predict(mod), lw = w)
 
 # # Conclusion: good fit, 1 obs > 0.7 pareto k, skew good, dispersion moderate
 
@@ -862,13 +865,13 @@ dat <- quad %>% #rename DF
 diam_nb <- brms::brm(mxdiam_mm ~ dist + altitude + (1|trans.pair), data = dat, seed = 050523,
                      family = negbinomial(link = "log", link_shape = "log"), 
                      chains = 3, iter = 8000, warmup = 1000, cores = 4, 
+                     control = list(adapt_delta = .99),
                      file = 'trampling_analyses/outputs/ms_results/diam_nb_carspp.rds', ###*** change here
                      file_refit = 'on_change')
 mod <- diam_nb #generic model name
 
 ## PROBLEM: divergent transitions after warmup
-## SOLUTION: ncreasing adapt_delta above 0.8 may help. 
-## See http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup 
+## SOLUTION: increased adapt_delta = 0.99 (http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup)
 
 
 # RESULTS FOR MS TABLE
@@ -886,32 +889,46 @@ brm.tab <- bind_rows(brm.tab, brm.res)
 brm.tab
 
 
-# Model results
-summary(mod) 
-plot(conditional_effects(mod), ask = FALSE) 
+# # Model results
+# summary(mod) 
+# plot(conditional_effects(mod), ask = FALSE) 
+# 
+# # Model fit
+# prior_summary(mod)
+# ps <- powerscale_sensitivity(mod) 
+# unique(ps$sensitivity$diagnosis)
+# 
+# plot(mod)  
+# pp_check(mod, ndraws = 100) 
+# pairs(mod)
+# 
+# ppc_stat(y = dat$mxdiam_mm, 
+#          yrep = posterior_predict(mod, ndraws = 1000), stat = "skew")
+# model_loo <- loo(mod, save_psis = TRUE, cores=4) 
+# w <- weights(model_loo$psis_object)
+# ppc_loo_pit_overlay(dat$mxdiam_mm, 
+#                     posterior_predict(mod), lw = w)
+# 
+# # Conclusion: skew moderate, 1 obs w pareto_k > 0.7, dispersion good
 
-# Model fit
-prior_summary(mod)
-ps <- powerscale_sensitivity(mod) 
-unique(ps$sensitivity$diagnosis)
 
-plot(mod)  
-pp_check(mod, ndraws = 100) 
-pairs(mod)
+## CLEAN UP & SAVE RESULTS TABLE
+brm.tab <- brm.tab %>% 
+  rename(Trait = resp) #rename column
 
-ppc_stat(y = dat$mxdiam_mm, 
-         yrep = posterior_predict(mod, ndraws = 1000), stat = "skew")
-model_loo <- loo(mod, save_psis = TRUE, cores=4) 
-w <- weights(model_loo$psis_object)
-ppc_loo_pit_overlay(dat$mxdiam_mm, 
-                    posterior_predict(mod), lw = w)
+brm.tab <- brm.tab %>% 
+  mutate(Species = if_else(Species == 'phyemp', 'P. empetriformis', Species)) %>% #replace species codes with species names
+  mutate(Species = if_else(Species == 'casmer', 'C. mertensiana', Species)) %>% 
+  mutate(Species = if_else(Species == 'vacova', 'V. ovalifolium', Species)) %>% 
+  mutate(Species = if_else(Species == 'carspp', 'Carex spp.', Species)) %>% 
+  mutate(Trait = if_else(Trait == 'heightmm', 'Height', Trait)) %>% #rename trait variables
+  mutate(Trait = if_else(Trait == 'mxdiammm', 'Diameter', Trait)) %>%
+  mutate(Trait = if_else(Trait == 'relrepro', 'Reproduction', Trait))
+brm.tab
+  
 
-# # Conclusion: weak likelihood in one prior, skew moderate, dispersion good
-
-
-## SAVE RESULTS TABLE
 save(brm.tab, file = 'trampling_analyses/outputs/ms_results/brm_table.RData')
-write.csv(brm.tab, file = 'trampling_analyses/outputs/ms_results/brm_table.csv')
+write.csv(brm.tab, file = 'trampling_analyses/outputs/ms_results/brm_table.csv', row.names = F)
 
 
 ####### Carex PLOTS ########
