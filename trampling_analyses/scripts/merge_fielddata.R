@@ -1,14 +1,13 @@
 # Aims:
 # 1. Import GPS with elev, transect, and quadrat data
 # 2. Match transect-level & GPS data to quadrat-level data
-# 3. Check data
-# 4. Save compiled datasets
+# 3. Add percent cover data calculated in Quadrat_Analysis
+# 4. Check data
+# 5. Save compiled datasets
 
 # Author: Nathalie Chardon
 # Date created: 11 Nov 2022
-# Date updated: 2 May 2023
-
-## NOTE: need to add percent cover of plants once processed by CH
+# Date updated: 15 May 2023 (NC)
 
 # # LIBRARIES # #
 library(tidyverse)
@@ -598,6 +597,52 @@ for (i in 1:nrow(quad)) { #loop through each data row
 
 
 
+####################################################################################################
+
+# # ADD PLANT PERCENT COVER DATA # # 
+
+####################################################################################################
+
+# Data
+load('trampling_analyses/compiled_data/quad.RData') #gps & transect data matched to quad data (merge_fielddata.R)
+plant.dat <- read.csv('trampling_analyses/Quadrat_Analysis/final_coverage_data.csv')
+
+# Check data
+head(plant.dat)
+summary(plant.dat)
+dotchart(plant.dat$Percent.Cover)
+hist(plant.dat$Percent.Cover, breaks = 50) #Beta distribution would work nicely
+
+# Add to main DF
+plant.dat$id <- paste(plant.dat$Location, plant.dat$Transect, plant.dat$Quadrat, sep = '-')
+quad$id <- paste(quad$transect, quad$quad, sep = '-')
+
+anti_join(quad, plant.dat, by = 'id') # quad where no pic was taken
+anti_join(plant.dat, quad, by = 'id')
+
+## PROBLEM: 12 ids not found in quads
+## DIAGNOSIS: checking raw data sheets
+## - quads with PHYGLA removed from main dataset
+## - quads with no focal plants not in main dataset
+## SOLUTION: full_join to preserve all data
+
+# plant.dat$location.transect <- paste(plant.dat$Location, plant.dat$Transect, sep = '-')
+# 
+# foo <- anti_join(plant.dat, quad, by = 'id')
+# ii <- unique(foo$location.transect)
+# mism <- quad[which(quad$transect %in% ii),]
+# 
+# quad %>% filter(transect == 'BT-15') %>% select(transect, quad, species, mxdiam_mm)
+
+plant.dat <- plant.dat %>% 
+  rename(perc.cov = Percent.Cover) %>% 
+  select(id, perc.cov)
+
+quad <- full_join(quad, plant.dat, by = 'id')
+summary(quad)
+
+
+
 
 ####################################################################################################
 
@@ -616,9 +661,7 @@ quad <- quad %>%
 quad <- rename(quad, height_mm = height_adj)
 
 # Save
-
-setwd(compiled_data)
-save(quad, file = 'quad.RData') #gps & transect data matched to quad data (merge_fielddata.R)
+save(quad, file = 'trampling_analyses/compiled_data/quad.RData') #gps & transect data matched to quad data (merge_fielddata.R)
 
 
 

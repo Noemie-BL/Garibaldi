@@ -5,7 +5,7 @@
 
 # Author: Nathalie Chardon
 # Date created: 13 Mar 2023
-# Date updated: 5 May 2023 (NC)
+# Date updated: 15 May 2023 (NC)
 
 # # LIBRARIES # #
 library(rjags)
@@ -911,26 +911,6 @@ brm.tab
 # 
 # # Conclusion: skew moderate, 1 obs w pareto_k > 0.7, dispersion good
 
-
-## CLEAN UP & SAVE RESULTS TABLE
-brm.tab <- brm.tab %>% 
-  rename(Trait = resp) #rename column
-
-brm.tab <- brm.tab %>% 
-  mutate(Species = if_else(Species == 'phyemp', 'P. empetriformis', Species)) %>% #replace species codes with species names
-  mutate(Species = if_else(Species == 'casmer', 'C. mertensiana', Species)) %>% 
-  mutate(Species = if_else(Species == 'vacova', 'V. ovalifolium', Species)) %>% 
-  mutate(Species = if_else(Species == 'carspp', 'Carex spp.', Species)) %>% 
-  mutate(Trait = if_else(Trait == 'heightmm', 'Height', Trait)) %>% #rename trait variables
-  mutate(Trait = if_else(Trait == 'mxdiammm', 'Diameter', Trait)) %>%
-  mutate(Trait = if_else(Trait == 'relrepro', 'Reproduction', Trait))
-brm.tab
-  
-
-save(brm.tab, file = 'trampling_analyses/outputs/ms_results/brm_table.RData')
-write.csv(brm.tab, file = 'trampling_analyses/outputs/ms_results/brm_table.csv', row.names = F)
-
-
 ####### Carex PLOTS ########
 
 #height
@@ -962,3 +942,86 @@ ggsave(CarexHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/CarexHeigh
     theme(legend.title = element_blank()))
 
 ggsave(CarexHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/CarexDiamModPlot.pdf')
+
+
+
+
+####################################################################################################
+
+# # PLANT PERCENT COVER # #
+# Family: Beta
+# Fixed effects: dist * altitude
+# Random effects: (1|trans.pair)
+
+####################################################################################################
+
+## Model for PLANT PERCENT COVER
+
+dat <- quad %>% #rename DF
+  filter_at(vars(perc.cov, dist, altitude), all_vars(!is.na(.))) %>% 
+  distinct(id, .keep_all = T)
+
+cover_beta <- brms::brm(perc.cov ~ dist + altitude + (1|trans.pair), data = dat, seed = 050523,
+                        family = Beta(link = "logit", link_phi = "log"), init = '0',
+                        chains = 3, iter = 3000, warmup = 1000, cores = 4, 
+                        file = 'trampling_analyses/outputs/ms_results/perc-cov_beta.rds', ###*** change here
+                        file_refit = 'on_change')
+mod <- cover_beta
+
+# RESULTS FOR MS TABLE
+ss <- summary(mod)
+ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
+dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
+ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
+
+brm.res <- data.frame(Species = '[All Plants]', Trait = 'Percent Cover', N = ss$nobs, 
+                      Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
+                      Elevation = ee)
+brm.res
+
+brm.tab <- bind_rows(brm.tab, brm.res)
+brm.tab
+
+
+# Model results
+summary(mod)
+plot(conditional_effects(mod), ask = FALSE)
+
+# Model fit
+prior_summary(mod)
+ps <- powerscale_sensitivity(mod)
+unique(ps$sensitivity$diagnosis)
+
+plot(mod)
+pp_check(mod, ndraws = 100)
+pairs(mod)
+
+ppc_stat(y = dat$perc.cov,
+         yrep = posterior_predict(mod, ndraws = 1000), stat = "skew")
+model_loo <- loo(mod, save_psis = TRUE, cores=4)
+w <- weights(model_loo$psis_object)
+ppc_loo_pit_overlay(dat$perc.cov,
+                    posterior_predict(mod), lw = w)
+
+# Conclusion: good model fit except for skew and dispersion
+
+
+
+## CLEAN UP & SAVE RESULTS TABLE
+brm.tab <- brm.tab %>% 
+  rename(Trait = resp) #rename column
+
+brm.tab <- brm.tab %>% 
+  mutate(Species = if_else(Species == 'phyemp', 'P. empetriformis', Species)) %>% #replace species codes with species names
+  mutate(Species = if_else(Species == 'casmer', 'C. mertensiana', Species)) %>% 
+  mutate(Species = if_else(Species == 'vacova', 'V. ovalifolium', Species)) %>% 
+  mutate(Species = if_else(Species == 'carspp', 'Carex spp.', Species)) %>% 
+  mutate(Trait = if_else(Trait == 'heightmm', 'Height', Trait)) %>% #rename trait variables
+  mutate(Trait = if_else(Trait == 'mxdiammm', 'Diameter', Trait)) %>%
+  mutate(Trait = if_else(Trait == 'relrepro', 'Reproduction', Trait))
+brm.tab
+
+
+save(brm.tab, file = 'trampling_analyses/outputs/ms_results/brm_table.RData')
+write.csv(brm.tab, file = 'trampling_analyses/outputs/ms_results/brm_table.csv', row.names = F)
+
