@@ -129,7 +129,7 @@ ggsave(CarexHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/CarexHeigh
 #phyemp
 (PhyempDiamModPlot <- dat %>%
     group_by(dist) %>%
-    add_predicted_draws(phyemp_diam_nb, allow_new_levels = TRUE) %>%
+    add_predicted_draws(phyemp_diam_nb, allow_new_levels = TRUE, re_formula = NA) %>%
     ggplot(aes(x = altitude, y = mxdiam_mm, color = dist, fill = dist)) +
     stat_lineribbon(aes(y = .prediction), .width = c(.95), alpha = 0.33) +
     geom_point(data = dat %>% filter(species == "phyemp")) +
