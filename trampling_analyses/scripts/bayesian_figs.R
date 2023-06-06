@@ -3,12 +3,13 @@
 
 # Author: Philippa Stone
 # Date created: 17 May 2023
-# Date updated: 
+# Date updated: 6 June 2023
 
 # # LIBRARIES # #
 library(ggplot2)
 library(tidybayes)
 library(tidyverse)
+library(gridExtra)
 
 #set wd to Garibaldi
 
@@ -59,7 +60,7 @@ theme_set(mytheme)
 # # HEIGHT # #
 
 #phyemp
-(PhyempHeightModPlot <- dat %>%
+PhyempHeightModPlot <- dat %>%
     group_by(dist) %>%
     add_predicted_draws(phyemp_height_nb, allow_new_levels = TRUE, re_formula = NA) %>%
     ggplot(aes(x = altitude, y = height_mm, color = dist, fill = dist)) +
@@ -70,12 +71,12 @@ theme_set(mytheme)
     xlab("\nElevation (m)") +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    theme(legend.title = element_blank()))
+    theme(legend.title = element_blank())
 
 ggsave(PhyempHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/PhyempHeightModPlot.pdf', width = 10, height = 8)
 
 #casmer
-(CasmerHeightModPlot <- dat %>%
+CasmerHeightModPlot <- dat %>%
     group_by(dist) %>%
     add_predicted_draws(height_nb_casmer, allow_new_levels = TRUE, re_formula = NA) %>%
     ggplot(aes(x = altitude, y = height_mm, color = dist, fill = dist)) +
@@ -86,12 +87,12 @@ ggsave(PhyempHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/PhyempHei
     xlab("\nElevation (m)") +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    theme(legend.title = element_blank()))
+    theme(legend.title = element_blank())
 
 ggsave(CasmerHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/CasmerHeightModPlot.pdf', width = 10, height = 8)
 
 #vacova
-(VacovaHeightModPlot <- dat %>%
+VacovaHeightModPlot <- dat %>%
     group_by(dist) %>%
     add_predicted_draws(height_nb_vacova, allow_new_levels = TRUE, re_formula = NA) %>%
     ggplot(aes(x = altitude, y = height_mm, color = dist, fill = dist)) +
@@ -102,12 +103,12 @@ ggsave(CasmerHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/CasmerHei
     xlab("\nElevation (m)") +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    theme(legend.title = element_blank()))
+    theme(legend.title = element_blank())
 
 ggsave(VacovaHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/VacovaHeightModPlot.pdf', width = 10, height = 8)
 
 #carspp
-(CarexHeightModPlot <- dat %>%
+CarexHeightModPlot <- dat %>%
     group_by(dist) %>%
     add_predicted_draws(height_nb_carspp, allow_new_levels = TRUE, re_formula = NA) %>%
     ggplot(aes(x = altitude, y = height_mm, color = dist, fill = dist)) +
@@ -118,7 +119,7 @@ ggsave(VacovaHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/VacovaHei
     xlab("\nElevation (m)") +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    theme(legend.title = element_blank()))
+    theme(legend.title = element_blank())
 
 ggsave(CarexHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/CarexHeightModPlot.pdf', width = 10, height = 8)
 
@@ -127,7 +128,7 @@ ggsave(CarexHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/CarexHeigh
 # # DIAMETER # #
 
 #phyemp
-(PhyempDiamModPlot <- dat %>%
+PhyempDiamModPlot <- dat %>%
     group_by(dist) %>%
     add_predicted_draws(phyemp_diam_nb, allow_new_levels = TRUE, re_formula = NA) %>%
     ggplot(aes(x = altitude, y = mxdiam_mm, color = dist, fill = dist)) +
@@ -138,12 +139,12 @@ ggsave(CarexHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/CarexHeigh
     xlab("\nElevation (m)") +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    theme(legend.title = element_blank()))
+    theme(legend.title = element_blank())
 
 ggsave(PhyempDiamModPlot, file = 'trampling_analyses/outputs/ms_figs/PhyempDiamModPlot.pdf', width = 10, height = 8)
 
 #casmer
-(CasmerDiamModPlot <- dat %>%
+CasmerDiamModPlot <- dat %>%
     group_by(dist) %>%
     add_predicted_draws(diam_nb_casmer, allow_new_levels = TRUE, re_formula = NA) %>%
     ggplot(aes(x = altitude, y = mxdiam_mm, color = dist, fill = dist)) +
@@ -154,12 +155,12 @@ ggsave(PhyempDiamModPlot, file = 'trampling_analyses/outputs/ms_figs/PhyempDiamM
     xlab("\nElevation (m)") +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    theme(legend.title = element_blank()))
+    theme(legend.title = element_blank())
 
-ggsave(VacovaDiamModPlot, file = 'trampling_analyses/outputs/ms_figs/CasmerDiamModPlot.pdf', width = 10, height = 8)
+ggsave(CasmerDiamModPlot, file = 'trampling_analyses/outputs/ms_figs/CasmerDiamModPlot.pdf', width = 10, height = 8)
 
 #vacova
-(VacovaDiamModPlot <- dat %>%
+VacovaDiamModPlot <- dat %>%
     group_by(dist) %>%
     add_predicted_draws(diam_nb_vacova, allow_new_levels = TRUE, re_formula = NA) %>%
     ggplot(aes(x = altitude, y = mxdiam_mm, color = dist, fill = dist)) +
@@ -170,12 +171,12 @@ ggsave(VacovaDiamModPlot, file = 'trampling_analyses/outputs/ms_figs/CasmerDiamM
     xlab("\nElevation (m)") +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    theme(legend.title = element_blank()))
+    theme(legend.title = element_blank())
 
 ggsave(VacovaDiamModPlot, file = 'trampling_analyses/outputs/ms_figs/VacovaDiamModPlot.pdf', width = 10, height = 8)
 
 #carspp
-(CarexDiamModPlot <- dat %>%
+CarexDiamModPlot <- dat %>%
     group_by(dist) %>%
     add_predicted_draws(diam_nb_carspp, allow_new_levels = TRUE, re_formula = NA) %>%
     ggplot(aes(x = altitude, y = mxdiam_mm, color = dist, fill = dist)) +
@@ -186,19 +187,19 @@ ggsave(VacovaDiamModPlot, file = 'trampling_analyses/outputs/ms_figs/VacovaDiamM
     xlab("\nElevation (m)") +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    theme(legend.title = element_blank()))
+    theme(legend.title = element_blank())
 
-ggsave(CarexHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/CarexDiamModPlot.pdf', width = 10, height = 8)
+ggsave(CarexDiamModPlot, file = 'trampling_analyses/outputs/ms_figs/CarexDiamModPlot.pdf', width = 10, height = 8)
 
 
 
 # # REPRODUCTIVE OUTPUT # #
 
 #phyemp
-(PhyempReproModPlot <- dat %>%
+PhyempReproModPlot <- dat %>%
     group_by(dist) %>%
     add_predicted_draws(phyemp_repro_beta, allow_new_levels = TRUE, re_formula = NA) %>%
-    ggplot(aes(x = altitude, y = mxdiam_mm, color = dist, fill = dist)) +
+    ggplot(aes(x = altitude, y = repro, color = dist, fill = dist)) +
     stat_lineribbon(aes(y = .prediction, fill = dist), .width = c(.95), alpha = 0.33) + #### problem: probability distributions not showing up
     geom_point(data = dat %>% filter(species == "phyemp")) +
     labs(title = "Phyllodoce empetriformis") +
@@ -206,15 +207,15 @@ ggsave(CarexHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/CarexDiamM
          y = expression(paste("Reproduction (counts/", cm^2, ")"))) +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    theme(legend.title = element_blank()))
+    theme(legend.title = element_blank())
 
 ggsave(PhyempReproModPlot, file = 'trampling_analyses/outputs/ms_figs/PhyempReproModPlot.pdf', width = 10, height = 8)
 
 #casmer
-(CasmerReproModPlot <- dat %>%
+CasmerReproModPlot <- dat %>%
     group_by(dist) %>%
     add_predicted_draws(repro_beta_casmer, allow_new_levels = TRUE, re_formula = NA) %>%
-    ggplot(aes(x = altitude, y = mxdiam_mm, color = dist, fill = dist)) +
+    ggplot(aes(x = altitude, y = repro, color = dist, fill = dist)) +
     stat_lineribbon(aes(y = .prediction, fill = dist), .width = c(.95), alpha = 0.33) + #### problem: probability distributions not showing up
     geom_point(data = dat %>% filter(species == "casmer")) +
     labs(title = "Cassiope mertensiana") +
@@ -222,15 +223,15 @@ ggsave(PhyempReproModPlot, file = 'trampling_analyses/outputs/ms_figs/PhyempRepr
          y = expression(paste("Reproduction (counts/", cm^2, ")"))) +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    theme(legend.title = element_blank()))
+    theme(legend.title = element_blank())
 
 ggsave(CasmerReproModPlot, file = 'trampling_analyses/outputs/ms_figs/CasmerReproModPlot.pdf', width = 10, height = 8)
 
 #vacova
-(VacovaReproModPlot <- dat %>%
+VacovaReproModPlot <- dat %>%
     group_by(dist) %>%
     add_predicted_draws(repro_beta_vacova, allow_new_levels = TRUE, re_formula = NA) %>%
-    ggplot(aes(x = altitude, y = mxdiam_mm, color = dist, fill = dist)) +
+    ggplot(aes(x = altitude, y = repro, color = dist, fill = dist)) +
     stat_lineribbon(aes(y = .prediction, fill = dist), .width = c(.95), alpha = 0.33) + #### problem: probability distributions not showing up
     geom_point(data = dat %>% filter(species == "vacova")) +
     labs(title = "Vaccinium ovalifolium") +
@@ -238,7 +239,7 @@ ggsave(CasmerReproModPlot, file = 'trampling_analyses/outputs/ms_figs/CasmerRepr
          y = expression(paste("Reproduction (counts/", cm^2, ")"))) +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    theme(legend.title = element_blank()))
+    theme(legend.title = element_blank())
 
 ggsave(VacovaReproModPlot, file = 'trampling_analyses/outputs/ms_figs/VacovaReproModPlot.pdf', width = 10, height = 8)
 
@@ -246,17 +247,17 @@ ggsave(VacovaReproModPlot, file = 'trampling_analyses/outputs/ms_figs/VacovaRepr
 
 # # PERCENT COVER # #
 
-(PercentCoverModPlot <- dat %>%
+PercentCoverModPlot <- dat %>%
     group_by(dist) %>%
     add_predicted_draws(percentCover, allow_new_levels = TRUE, re_formula = NA) %>%
-    ggplot(aes(x = altitude, y = height_mm, color = dist, fill = dist)) +
+    ggplot(aes(x = altitude, y = perc.cov, color = dist, fill = dist)) +
     stat_lineribbon(aes(y = .prediction), .width = c(.95), alpha = 0.33) +
     geom_point(data = dat) +
     ylab("percent cover") +
     xlab("\nElevation (m)") +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    theme(legend.title = element_blank()))
+    theme(legend.title = element_blank())
 
 ggsave(PercentCoverModPlot, file = 'trampling_analyses/outputs/ms_figs/PercentCoverModPlot.pdf', width = 10, height = 8)
 
@@ -265,5 +266,10 @@ ggsave(PercentCoverModPlot, file = 'trampling_analyses/outputs/ms_figs/PercentCo
 
 
 # # PANEL FIGURES # #
+
+panelPlot <- grid.arrange(PhyempHeightModPlot, CasmerHeightModPlot, VacovaHeightModPlot, CarexHeightModPlot, PhyempDiamModPlot, CasmerDiamModPlot, VacovaDiamModPlot, CarexDiamModPlot, PhyempReproModPlot, CasmerReproModPlot, VacovaReproModPlot, PercentCoverModPlot, nrow=3)
+
+ggsave(PanelPlot, file = 'trampling_analyses/outputs/ms_figs/PanelPlot.pdf', width = 40, height = 24)
+
 
 
