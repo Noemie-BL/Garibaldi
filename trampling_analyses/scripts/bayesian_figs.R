@@ -206,7 +206,7 @@ PhyempReproModPlot <- dat %>%
     geom_point(data = dat %>% filter(species == "phyemp")) +
     labs(title = "Phyllodoce empetriformis") +
     labs(x = expression(paste("Elevation (m)")),
-         y = expression(paste("Reproduction (counts/", cm^2, ")"))) +
+         y = expression(paste("Reproductive output (counts/", cm^2, ")"))) +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     theme(legend.title = element_blank())
@@ -222,7 +222,7 @@ CasmerReproModPlot <- dat %>%
     geom_point(data = dat %>% filter(species == "casmer")) +
     labs(title = "Cassiope mertensiana") +
     labs(x = expression(paste("Elevation (m)")),
-         y = expression(paste("Reproduction (counts/", cm^2, ")"))) +
+         y = expression(paste("Reproductive output (counts/", cm^2, ")"))) +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     theme(legend.title = element_blank())
@@ -238,7 +238,7 @@ VacovaReproModPlot <- dat %>%
     geom_point(data = dat %>% filter(species == "vacova")) +
     labs(title = "Vaccinium ovalifolium") +
     labs(x = expression(paste("Elevation (m)")),
-         y = expression(paste("Reproduction (counts/", cm^2, ")"))) +
+         y = expression(paste("Reproductive output (counts/", cm^2, ")"))) +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     theme(legend.title = element_blank())
