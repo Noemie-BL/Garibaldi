@@ -10,11 +10,12 @@ library(ggplot2)
 library(tidybayes)
 library(tidyverse)
 library(gridExtra)
+library(scales) #for percentage conversion on Y axis
 
 #set wd to Garibaldi
 
 # # INPUT FILES # #
-# [rds model files for each species' trait]
+# # [rds model files for each species' trait]
 phyemp_height_nb <- readRDS("trampling_analyses/outputs/ms_results/phyemp_height_nb.rds")
 height_nb_vacova <- readRDS("trampling_analyses/outputs/ms_results/height_nb_vacova.rds")
 height_nb_casmer <- readRDS("trampling_analyses/outputs/ms_results/height_nb_casmer.rds")
@@ -35,6 +36,7 @@ percentCover <- readRDS("trampling_analyses/outputs/ms_results/perc-cov_beta.rds
 load("trampling_analyses/compiled_data/quad.RData")
 dat <- quad
 
+
 # # OUTPUT FILES # #
 # [PDFs for plots of models for each species' trait]
 
@@ -51,7 +53,7 @@ mytheme <-   theme_classic() +
 
 theme_set(mytheme)
 
-#may need this line later for making species names in plots italicised
+#######may need this line later for making species names in plots italicised
 # theme(plot.title = element_text(face = "italic"))
 
 # # PLOTS # #
@@ -127,7 +129,7 @@ ggsave(CarexHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/CarexHeigh
 
 # # DIAMETER # #
 
-#phyemp
+##phyemp
 PhyempDiamModPlot <- dat %>%
     group_by(dist) %>%
     add_predicted_draws(phyemp_diam_nb, allow_new_levels = TRUE, re_formula = NA) %>%
@@ -143,7 +145,7 @@ PhyempDiamModPlot <- dat %>%
 
 ggsave(PhyempDiamModPlot, file = 'trampling_analyses/outputs/ms_figs/PhyempDiamModPlot.pdf', width = 10, height = 8)
 
-#casmer
+##casmer
 CasmerDiamModPlot <- dat %>%
     group_by(dist) %>%
     add_predicted_draws(diam_nb_casmer, allow_new_levels = TRUE, re_formula = NA) %>%
@@ -159,7 +161,7 @@ CasmerDiamModPlot <- dat %>%
 
 ggsave(CasmerDiamModPlot, file = 'trampling_analyses/outputs/ms_figs/CasmerDiamModPlot.pdf', width = 10, height = 8)
 
-#vacova
+##vacova
 VacovaDiamModPlot <- dat %>%
     group_by(dist) %>%
     add_predicted_draws(diam_nb_vacova, allow_new_levels = TRUE, re_formula = NA) %>%
@@ -175,7 +177,7 @@ VacovaDiamModPlot <- dat %>%
 
 ggsave(VacovaDiamModPlot, file = 'trampling_analyses/outputs/ms_figs/VacovaDiamModPlot.pdf', width = 10, height = 8)
 
-#carspp
+##carspp
 CarexDiamModPlot <- dat %>%
     group_by(dist) %>%
     add_predicted_draws(diam_nb_carspp, allow_new_levels = TRUE, re_formula = NA) %>%
@@ -195,7 +197,7 @@ ggsave(CarexDiamModPlot, file = 'trampling_analyses/outputs/ms_figs/CarexDiamMod
 
 # # REPRODUCTIVE OUTPUT # #
 
-#phyemp
+##phyemp
 PhyempReproModPlot <- dat %>%
     group_by(dist) %>%
     add_predicted_draws(phyemp_repro_beta, allow_new_levels = TRUE, re_formula = NA) %>%
@@ -211,7 +213,7 @@ PhyempReproModPlot <- dat %>%
 
 ggsave(PhyempReproModPlot, file = 'trampling_analyses/outputs/ms_figs/PhyempReproModPlot.pdf', width = 10, height = 8)
 
-#casmer
+##casmer
 CasmerReproModPlot <- dat %>%
     group_by(dist) %>%
     add_predicted_draws(repro_beta_casmer, allow_new_levels = TRUE, re_formula = NA) %>%
@@ -227,7 +229,7 @@ CasmerReproModPlot <- dat %>%
 
 ggsave(CasmerReproModPlot, file = 'trampling_analyses/outputs/ms_figs/CasmerReproModPlot.pdf', width = 10, height = 8)
 
-#vacova
+##vacova
 VacovaReproModPlot <- dat %>%
     group_by(dist) %>%
     add_predicted_draws(repro_beta_vacova, allow_new_levels = TRUE, re_formula = NA) %>%
@@ -253,8 +255,10 @@ PercentCoverModPlot <- dat %>%
     ggplot(aes(x = altitude, y = perc.cov, color = dist, fill = dist)) +
     stat_lineribbon(aes(y = .prediction), .width = c(.95), alpha = 0.33) +
     geom_point(data = dat) +
-    ylab("percent cover") +
+    labs(title = "All species") +
+    ylab("Percent cover") +
     xlab("\nElevation (m)") +
+    scale_y_continuous(labels = percent_format()) +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     theme(legend.title = element_blank())
@@ -267,9 +271,21 @@ ggsave(PercentCoverModPlot, file = 'trampling_analyses/outputs/ms_figs/PercentCo
 
 # # PANEL FIGURES # #
 
-panelPlot <- grid.arrange(PhyempHeightModPlot, CasmerHeightModPlot, VacovaHeightModPlot, CarexHeightModPlot, PhyempDiamModPlot, CasmerDiamModPlot, VacovaDiamModPlot, CarexDiamModPlot, PhyempReproModPlot, CasmerReproModPlot, VacovaReproModPlot, PercentCoverModPlot, nrow=3)
+heightPanelPlot <- grid.arrange(PhyempHeightModPlot, CasmerHeightModPlot, VacovaHeightModPlot, CarexHeightModPlot, nrow=1)
+ggsave(heightPanelPlot, file = 'trampling_analyses/outputs/ms_figs/heightPanelPlot.pdf', width = 40, height = 8)
 
-ggsave(PanelPlot, file = 'trampling_analyses/outputs/ms_figs/PanelPlot.pdf', width = 40, height = 24)
+diamPanelPlot <- grid.arrange(PhyempDiamModPlot, CasmerDiamModPlot, VacovaDiamModPlot, CarexDiamModPlot, nrow=1)
+ggsave(diamPanelPlot, file = 'trampling_analyses/outputs/ms_figs/diamPanelPlot.pdf', width = 40, height = 8)
+
+reproPanelPlot <- grid.arrange(PhyempReproModPlot, CasmerReproModPlot, VacovaReproModPlot, nrow=1)
+ggsave(reproPanelPlot, file = 'trampling_analyses/outputs/ms_figs/reproPanelPlot.pdf', width = 40, height = 8)
+
+reproPerccoverPanelPlot <- grid.arrange(PhyempReproModPlot, CasmerReproModPlot, VacovaReproModPlot, PercentCoverModPlot, nrow =1)
+ggsave(reproPerccoverPanelPlot, file = 'trampling_analyses/outputs/ms_figs/repro-perccoverPanelPlot.pdf', width = 40, height = 8)
+
+allPanelPlot <- grid.arrange(PhyempHeightModPlot, CasmerHeightModPlot, VacovaHeightModPlot, CarexHeightModPlot, PhyempDiamModPlot, CasmerDiamModPlot, VacovaDiamModPlot, CarexDiamModPlot, PhyempReproModPlot, CasmerReproModPlot, VacovaReproModPlot, PercentCoverModPlot, nrow=3)
+ggsave(allPanelPlot, file = 'trampling_analyses/outputs/ms_figs/allTraitsPanelPlot.pdf', width = 40, height = 24)
+
 
 
 
