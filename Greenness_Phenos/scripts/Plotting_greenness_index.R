@@ -69,7 +69,7 @@ data_name <- "June2023"
 
 # remove values with high variation or NA
 greenness_data_raw <- na.omit(greenness_data_June2023)
-greenness_data_raw <- greenness_data_raw[which(greenness_data_raw$Mean < 4.5|greenness_data_raw$Mean > 2.9),]
+greenness_data_raw <- greenness_data_raw[which(greenness_data_raw$Mean < 4.5 & greenness_data_raw$Mean > 2.9),]
 #greenness_data_raw <- greenness_data_raw[-which(greenness_data_raw$SD > 1.0),]
 
 #-----------------------
