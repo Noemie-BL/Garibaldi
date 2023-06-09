@@ -25,52 +25,56 @@ library(psych)
 # library(devtools)
 # install_github("https://github.com/TundraEcologyLab/tundra_lab_r_package")
 
-
 #------------------------------
 # first change path to where you want the figures output to
-#setwd("~/GitHub/Garibaldi/Greenness_Phenos/") # CE directory
+setwd("~/GitHub/Garibaldi/Greenness_Phenos/") # CE directory
 
 #------------------------------
 # import the data - ideally this is the only part of the script that changes per dataset
 # currently works for quadrant data only
 
-greenness_data_poster_raw <- read.table("./data/2022_poster_method.csv", header=FALSE, sep =",", dec = ".")
-colnames(greenness_data_poster_raw) <- c("Site", "Plot", "Trmt", "Filename", "Date", "Quad1", "Quad2", "Quad3", "Quad4")
-data_name <- "Poster"
-greenness_data_raw <- greenness_data_poster_raw
+greenness_data_June2023 <- read.table("./data/poster_methodJUNE2023_SORTED_MEAN_STDEV_50P_75P_90P_95P.csv", header=FALSE, sep =",", dec = ".")
+# check header 
+colnames(greenness_data_June2023 ) <- c("Site", "Plot", "Trmt", "Filename", "Date", "Mean", "SD", "D50percentile","D70percentile", "D90percentile", "D95percentile")
+data_name <- "June2023"
 
-greenness_data_2G_RBI_quad_raw <- read.table("./data/2022_2G-RBI_quadrants.csv", header=FALSE, sep =",", dec = ".")
-colnames(greenness_data_2G_RBI_quad_raw) <- c("Site", "Plot", "Trmt", "Filename", "Date", "Quad1", "Quad2", "Quad3", "Quad4")
-data_name <- "2G_RBI_quad"
-greenness_data_raw <- greenness_data_2G_RBI_quad_raw
+# greenness_data_poster_raw <- read.table("./data/2022_poster_method.csv", header=FALSE, sep =",", dec = ".")
+# colnames(greenness_data_poster_raw) <- c("Site", "Plot", "Trmt", "Filename", "Date", "Quad1", "Quad2", "Quad3", "Quad4")
+# data_name <- "Poster"
+# greenness_data_raw <- greenness_data_poster_raw
 
-greenness_data_GCC_Quad_raw <- read.table("./data/2022_GCC_quadrants.csv", header=FALSE, sep =",", dec = ".")
-colnames(greenness_data_GCC_Quad_raw) <- c("Site", "Plot", "Trmt", "Filename", "Date", "Quad1", "Quad2", "Quad3", "Quad4")
-data_name <- "GCC_Quad"
-greenness_data_raw <- greenness_data_GCC_Quad_raw
-
-greenness_data_oldmeth_Quad_raw <- read.table("./data/2022_oldmethod_quadrants.csv", header=FALSE, sep =",", dec = ".")
-colnames(greenness_data_oldmeth_Quad_raw) <- c("Site", "Plot", "Trmt", "Filename", "Date", "Quad1", "Quad2", "Quad3", "Quad4")
-data_name <- "oldmeth_Quad"
-greenness_data_raw <- greenness_data_oldmeth_Quad_raw
+# greenness_data_2G_RBI_quad_raw <- read.table("./data/2022_2G-RBI_quadrants.csv", header=FALSE, sep =",", dec = ".")
+# colnames(greenness_data_2G_RBI_quad_raw) <- c("Site", "Plot", "Trmt", "Filename", "Date", "Quad1", "Quad2", "Quad3", "Quad4")
+# data_name <- "2G_RBI_quad"
+# greenness_data_raw <- greenness_data_2G_RBI_quad_raw
+# 
+# greenness_data_GCC_Quad_raw <- read.table("./data/2022_GCC_quadrants.csv", header=FALSE, sep =",", dec = ".")
+# colnames(greenness_data_GCC_Quad_raw) <- c("Site", "Plot", "Trmt", "Filename", "Date", "Quad1", "Quad2", "Quad3", "Quad4")
+# data_name <- "GCC_Quad"
+# greenness_data_raw <- greenness_data_GCC_Quad_raw
+# 
+# greenness_data_oldmeth_Quad_raw <- read.table("./data/2022_oldmethod_quadrants.csv", header=FALSE, sep =",", dec = ".")
+# colnames(greenness_data_oldmeth_Quad_raw) <- c("Site", "Plot", "Trmt", "Filename", "Date", "Quad1", "Quad2", "Quad3", "Quad4")
+# data_name <- "oldmeth_Quad"
+# greenness_data_raw <- greenness_data_oldmeth_Quad_raw
 
 
 #---------------------
 # calculate Quadrant average
-greenness_data_raw$mean <- rowMeans(subset(greenness_data_raw, select = c("Quad1", "Quad2", "Quad3", "Quad4")), na.rm = TRUE)
-greenness_data_raw$harm_mean <- apply(subset(greenness_data_raw, select = c("Quad1", "Quad2", "Quad3", "Quad4")), 1, harmonic.mean, na.rm=TRUE)
+#greenness_data_raw$mean <- rowMeans(subset(greenness_data_raw, select = c("Quad1", "Quad2", "Quad3", "Quad4")), na.rm = TRUE)
+#greenness_data_raw$harm_mean <- apply(subset(greenness_data_raw, select = c("Quad1", "Quad2", "Quad3", "Quad4")), 1, harmonic.mean, na.rm=TRUE)
 
 # calculate SD
-greenness_data_raw$SD <- apply(subset(greenness_data_raw, select = c("Quad1", "Quad2", "Quad3", "Quad4")), 1, sd, na.rm=TRUE)
+#greenness_data_raw$SD <- apply(subset(greenness_data_raw, select = c("Quad1", "Quad2", "Quad3", "Quad4")), 1, sd, na.rm=TRUE)
 
 # remove values with high variation or NA
-greenness_data_raw <- na.omit(greenness_data_raw)
-#greenness_data_raw <- greenness_data_raw[-which(greenness_data_raw$mean < 0.1),]
+greenness_data_raw <- na.omit(greenness_data_June2023)
+greenness_data_raw <- greenness_data_raw[which(greenness_data_raw$Mean < 4.5|greenness_data_raw$Mean > 2.9),]
 #greenness_data_raw <- greenness_data_raw[-which(greenness_data_raw$SD > 1.0),]
 
 #-----------------------
 # Set data set for analysis - can choose mean, median or harmonic mean
-greenness_data_raw$Greenness_Index <- greenness_data_raw$mean
+greenness_data_raw$Greenness_Index <- greenness_data_raw$D90percentile
 greenness_data <- greenness_data_raw
 
 #------------------------
