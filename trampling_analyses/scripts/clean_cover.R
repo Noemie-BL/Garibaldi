@@ -1,4 +1,4 @@
-## Edited by N. Chardon (28 Mar 2023) to check percent cover data for errors
+## Edited by N. Chardon (28 Mar 2023) to check plant percent cover data for errors
 
 library(dplyr)
 

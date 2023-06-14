@@ -653,7 +653,7 @@ dat <- quad %>% #rename DF
 diam_nb <- brms::brm(mxdiam_mm ~ dist + altitude + (1|trans.pair), data = dat, seed = 050523,
                      family = negbinomial(link = "log", link_shape = "log"), 
                      chains = 3, iter = 8000, warmup = 1000, cores = 4, 
-                     file = 'trampling_analyses/outputs/April2023/diam_nb_vacova.rds', ###*** change here
+                     file = 'trampling_analyses/outputs/ms_results/diam_nb_vacova.rds', ###*** change here
                      file_refit = 'on_change')
 mod <- diam_nb #generic model name
 
