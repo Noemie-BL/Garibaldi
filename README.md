@@ -2,7 +2,7 @@
 
 ### Site Details
 
-Location: Nch'kay and t'ak't'ak mu'yin tl'a in7in'a'xe7en regions (Garibaldi Provincial Park, British Columbia), Canada
+Location: Nch'kay and t'ak't'ak mu'yin tl'a in7in'a'xe7en regions (Garibaldi Provincial Park, British Columbia) in the Squamish and Lil'wat territories, Canada
 
 Year established: 2022
 
@@ -15,7 +15,9 @@ Website: https://garibaldialpine.wixsite.com/garibaldialpine
 
 Please see individual folders for data and analyses:
 
-*trampling_analyses*: Tests i) effects of human trampling disturbance on plant growth and reproduction proxies of common plants across an elevation gradient, and ii) which species are more susceptible to trampling. Chardon et al. _Human trampling disturbance impacts subalpine and alpine plant growth more than reproduction_. In review.
+**trampling_analyses**: Tests i) effects of human trampling disturbance on plant growth and reproduction proxies of common plants across an elevation gradient, and ii) which species are more susceptible to trampling. (Chardon et al. _Human trampling disturbance impacts subalpine and alpine plant growth more than reproduction_. In review.)
+
+Additional information:
 
 When starting an analysis project copy the template folder to get a base structure and README
 
