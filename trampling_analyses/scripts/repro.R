@@ -86,8 +86,13 @@ dat <- dat %>%
   select(-c(max)) #remove max column
 
 
-# Save updated DF
+# Check outliers
 quad <- dat
+
+foo <- quad %>% filter(repro > 2) #Phyemp outlier is so large because a very small plant had 1 bud and 1 fruit
+
+
+# Save updated DF
 save(quad, file = 'trampling_analyses/compiled_data/quad.RData')
 
 
