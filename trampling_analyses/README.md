@@ -35,7 +35,7 @@ Goals: We aim to quantify the continued effects of human trampling on these plan
 ### Data files
 
 #### raw_data
-FILENAME <description of file contents, date collected>
+_FILENAME <description of file contents, date collected>_
 
 Trampling-TRANSECTS_data.csv/xlsx: 10 m x 0.5 m transect-level data (see merge_fielddata.R for abbreviations); July-Aug 2022
 
@@ -44,7 +44,7 @@ Trampling-QUADS_data.csv/xlsx: quad-level data (see merge_fielddata.R for abbrev
 GPS_with-elev: lat, long, elev for each transect (see merge_fielddata.R for data details); July-Aug 2022
 
 #### compiled_data
-FILENAME <description of file contents, date modified, whether mid or final version>
+_FILENAME <description of file contents, date modified, whether mid or final version>_
 
 quad.RData: gps & transect data matched to quad data; created in merge_fielddata.R; modifed on 25 Apr 2023; final version; variables described in merge_fielddata.R 
 
@@ -55,7 +55,7 @@ P_albicaulis_Garibaldi_Aug2022.csv: Pinus albicaulis locations for BC Rangers; e
 plant-percent-cover.csv: Calculated plant percent cover values for each quadrat (Allen Zhao, allen10to11@gmail.com); created on 27 March 2023; final version; analyses in Quadrat_Analysis folder
 
 #### scripts
-SCRIPTNAME <description of script purpose, coding language, versions of software/libraries used>
+_SCRIPTNAME <description of script purpose, coding language, versions of software/libraries used>_
 
 merge_fielddata.R: merge GPS, elevation, transect, and quad-level data; add plant percent cover values from Quadrat_Analysis; R; tidyverse, dplyr, lattice
 
@@ -67,10 +67,12 @@ bayesian.R: analyses in Bayesian framework to model disturbance effects on plant
 
 ms_figs.R: figures for manuscript; R; ggplot2, tidybayes, tidyverse, gridExtra, scales
 
-ms_tables.R: tables for manuscript; R; 
+ms_tables.R: tables for manuscript; R; tidyverse
 
 #### outputs
-ms_results/: model results and table for manuscript (May 2023)
+_FOLDERNAME <description of contents>_
+
+ms_results/: Bayesian RDS model files (named by trait_model-family_species) and tables for manuscript (May 2023)
 
 ms_figs/: plot results for manuscript (June 2023)
 
@@ -79,4 +81,4 @@ BC_PARF_figs/: Carly Hilbert's figures for BC PARF (Dec 2022)
 
 #### Quadrat_Analysis
 
-*Allen fill in info here*
+****Allen fill in info here****

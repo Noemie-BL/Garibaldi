@@ -28,9 +28,6 @@ load('trampling_analyses/compiled_data/quad.RData') ##updated with reproductive 
 
 # # OUTPUT FILES # #
 # [rds model files for each species' trait, see below]
-load('trampling_analyses/outputs/ms_results/brm_table.RData') #model results for species traits (bayesian.R)
-brm.tab <- read.csv('trampling_analyses/outputs/ms_results/brm_table.csv') #model results for species traits (bayesian.R)
-
 
 
 
@@ -95,20 +92,6 @@ height_nb <- brms::brm(height_mm ~ dist + altitude + (1|trans.pair), seed = 0505
                        chains = 3, iter = 5000, warmup = 1000, cores = 4, #for computers with 4 cores
                        file = 'trampling_analyses/outputs/ms_results/phyemp_height_nb.rds', file_refit = 'on_change')
 mod <- height_nb #generic model name
-
-# RESULTS FOR MS TABLE
-ss <- summary(mod)
-ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
-dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
-ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
-
-brm.res <- data.frame(Species = unique(as.character(dat$species)), Trait = ss$formula[4], N = ss$nobs, 
-                               Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
-                               Elevation = ee)
-
-brm.tab <- brm.res
-brm.tab
-
 
 ## PROBLEM: transitions after warmup exceeded max treedepth
 ## SOLUTION: increase max_treedepth > 10 BUT this is not recommended and this warning is only an 
@@ -189,21 +172,6 @@ diam_nb <- brms::brm(mxdiam_mm ~ dist + altitude + (1|trans.pair), seed = 050523
                        file = 'trampling_analyses/outputs/ms_results/phyemp_diam_nb.rds', file_refit = 'on_change')
 mod <- diam_nb #generic model name
 
-# RESULTS FOR MS TABLE
-ss <- summary(mod)
-ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
-dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
-ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
-
-brm.res <- data.frame(Species = unique(as.character(dat$species)), Trait = ss$formula[4], N = ss$nobs, 
-                               Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
-                               Elevation = ee)
-brm.res
-
-brm.tab <- bind_rows(brm.tab, brm.res)
-brm.tab
-
-
 # # CHECK MODEL
 # summary(mod) 
 # plot(conditional_effects(mod), ask = FALSE) #fitted parameters and their CI
@@ -243,21 +211,6 @@ repro_beta <- brms::brm(rel_repro ~ dist + altitude + (1|trans.pair), seed = 050
                      chains = 3, iter = 5000, warmup = 1000, cores = 4, #for computers with 4 cores
                      file = 'trampling_analyses/outputs/ms_results/phyemp_repro_beta.rds', file_refit = 'on_change')
 mod <- repro_beta
-
-# RESULTS FOR MS TABLE
-ss <- summary(mod)
-ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
-dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
-ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
-
-brm.res <- data.frame(Species = unique(as.character(dat$species)), Trait = ss$formula[4], N = ss$nobs, 
-                               Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
-                               Elevation = ee)
-brm.res
-
-brm.tab <- bind_rows(brm.tab, brm.res)
-brm.tab
-
 
 # CHECK MODEL
 
@@ -392,22 +345,6 @@ height_nb <- brms::brm(height_mm ~ dist + altitude + (1|trans.pair), data = dat,
                        file_refit = 'on_change')
 mod <- height_nb #generic model name
 
-
-# RESULTS FOR MS TABLE
-ss <- summary(mod)
-ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
-dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
-ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
-
-brm.res <- data.frame(Species = unique(as.character(dat$species)), Trait = ss$formula[4], N = ss$nobs, 
-                               Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
-                               Elevation = ee)
-brm.res
-
-brm.tab <- bind_rows(brm.tab, brm.res)
-brm.tab
-
-
 # # Model results
 # summary(mod) 
 # plot(conditional_effects(mod), ask = FALSE) 
@@ -444,21 +381,6 @@ diam_nb <- brms::brm(mxdiam_mm ~ dist + altitude + (1|trans.pair), data = dat, s
                      file_refit = 'on_change')
 mod <- diam_nb #generic model name
 
-# RESULTS FOR MS TABLE
-ss <- summary(mod)
-ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
-dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
-ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
-
-brm.res <- data.frame(Species = unique(as.character(dat$species)), Trait = ss$formula[4], N = ss$nobs, 
-                               Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
-                               Elevation = ee)
-brm.res
-
-brm.tab <- bind_rows(brm.tab, brm.res)
-brm.tab
-
-
 # # Model results
 # summary(mod) 
 # plot(conditional_effects(mod), ask = FALSE) 
@@ -494,21 +416,6 @@ repro_beta <- brms::brm(rel_repro ~ dist + altitude + (1|trans.pair), data = dat
                         file = 'trampling_analyses/outputs/ms_results/repro_beta_casmer.rds', ###*** change here
                         file_refit = 'on_change')
 mod <- repro_beta
-
-# RESULTS FOR MS TABLE
-ss <- summary(mod)
-ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
-dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
-ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
-
-brm.res <- data.frame(Species = unique(as.character(dat$species)), Trait = ss$formula[4], N = ss$nobs, 
-                               Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
-                               Elevation = ee)
-brm.res
-
-brm.tab <- bind_rows(brm.tab, brm.res)
-brm.tab
-
 
 # # Model results
 # summary(mod) 
@@ -605,21 +512,6 @@ height_nb <- brms::brm(height_mm ~ dist + altitude + (1|trans.pair), data = dat,
                        file_refit = 'on_change')
 mod <- height_nb #generic model name
 
-# RESULTS FOR MS TABLE
-ss <- summary(mod)
-ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
-dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
-ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
-
-brm.res <- data.frame(Species = unique(as.character(dat$species)), Trait = ss$formula[4], N = ss$nobs, 
-                      Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
-                      Elevation = ee)
-brm.res
-
-brm.tab <- bind_rows(brm.tab, brm.res)
-brm.tab
-
-
 # # Model results
 # summary(mod) 
 # plot(conditional_effects(mod), ask = FALSE) 
@@ -643,7 +535,6 @@ brm.tab
 # # Conclusion: Skew not modeled well and 1 obs w pareto_k > 0.7
 
 
-
 ## Model for DIAMETER
 
 dat <- quad %>% #rename DF
@@ -656,21 +547,6 @@ diam_nb <- brms::brm(mxdiam_mm ~ dist + altitude + (1|trans.pair), data = dat, s
                      file = 'trampling_analyses/outputs/ms_results/diam_nb_vacova.rds', ###*** change here
                      file_refit = 'on_change')
 mod <- diam_nb #generic model name
-
-# RESULTS FOR MS TABLE
-ss <- summary(mod)
-ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
-dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
-ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
-
-brm.res <- data.frame(Species = unique(as.character(dat$species)), Trait = ss$formula[4], N = ss$nobs, 
-                      Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
-                      Elevation = ee)
-brm.res
-
-brm.tab <- bind_rows(brm.tab, brm.res)
-brm.tab
-
 
 # # Model results
 # summary(mod) 
@@ -707,21 +583,6 @@ repro_beta <- brms::brm(rel_repro ~ dist + altitude + (1|trans.pair), data = dat
                         file = 'trampling_analyses/outputs/ms_results/repro_beta_vacova.rds', ###*** change here
                         file_refit = 'on_change')
 mod <- repro_beta
-
-# RESULTS FOR MS TABLE
-ss <- summary(mod)
-ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
-dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
-ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
-
-brm.res <- data.frame(Species = unique(as.character(dat$species)), Trait = ss$formula[4], N = ss$nobs, 
-                      Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
-                      Elevation = ee)
-brm.res
-
-brm.tab <- bind_rows(brm.tab, brm.res)
-brm.tab
-
 
 # # Model results
 # summary(mod) 
@@ -818,21 +679,6 @@ height_nb <- brms::brm(height_mm ~ dist + altitude + (1|trans.pair), data = dat,
                        file_refit = 'on_change')
 mod <- height_nb #generic model name
 
-# RESULTS FOR MS TABLE
-ss <- summary(mod)
-ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
-dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
-ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
-
-brm.res <- data.frame(Species = unique(as.character(dat$species)), Trait = ss$formula[4], N = ss$nobs, 
-                      Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
-                      Elevation = ee)
-brm.res
-
-brm.tab <- bind_rows(brm.tab, brm.res)
-brm.tab
-
-
 # # Model results
 # summary(mod) 
 # plot(conditional_effects(mod), ask = FALSE) 
@@ -872,22 +718,6 @@ mod <- diam_nb #generic model name
 
 ## PROBLEM: divergent transitions after warmup
 ## SOLUTION: increased adapt_delta = 0.99 (http://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup)
-
-
-# RESULTS FOR MS TABLE
-ss <- summary(mod)
-ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
-dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
-ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
-
-brm.res <- data.frame(Species = unique(as.character(dat$species)), Trait = ss$formula[4], N = ss$nobs, 
-                      Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
-                      Elevation = ee)
-brm.res
-
-brm.tab <- bind_rows(brm.tab, brm.res)
-brm.tab
-
 
 # # Model results
 # summary(mod) 
@@ -968,21 +798,6 @@ cover_beta <- brms::brm(perc.cov ~ dist + altitude + (1|trans.pair), data = dat,
                         file_refit = 'on_change')
 mod <- cover_beta
 
-# RESULTS FOR MS TABLE
-ss <- summary(mod)
-ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
-dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
-ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
-
-brm.res <- data.frame(Species = '[All Plants]', Trait = 'Percent Cover', N = ss$nobs, 
-                      Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
-                      Elevation = ee)
-brm.res
-
-brm.tab <- bind_rows(brm.tab, brm.res)
-brm.tab
-
-
 # Model results
 summary(mod)
 plot(conditional_effects(mod), ask = FALSE)
@@ -1006,22 +821,4 @@ ppc_loo_pit_overlay(dat$perc.cov,
 # Conclusion: good model fit except for skew and dispersion
 
 
-
-## CLEAN UP & SAVE RESULTS TABLE
-brm.tab <- brm.tab %>% 
-  rename(Trait = resp) #rename column
-
-brm.tab <- brm.tab %>% 
-  mutate(Species = if_else(Species == 'phyemp', 'P. empetriformis', Species)) %>% #replace species codes with species names
-  mutate(Species = if_else(Species == 'casmer', 'C. mertensiana', Species)) %>% 
-  mutate(Species = if_else(Species == 'vacova', 'V. ovalifolium', Species)) %>% 
-  mutate(Species = if_else(Species == 'carspp', 'Carex spp.', Species)) %>% 
-  mutate(Trait = if_else(Trait == 'heightmm', 'Height', Trait)) %>% #rename trait variables
-  mutate(Trait = if_else(Trait == 'mxdiammm', 'Diameter', Trait)) %>%
-  mutate(Trait = if_else(Trait == 'relrepro', 'Reproduction', Trait))
-brm.tab
-
-
-save(brm.tab, file = 'trampling_analyses/outputs/ms_results/brm_table.RData')
-write.csv(brm.tab, file = 'trampling_analyses/outputs/ms_results/brm_table.csv', row.names = F)
 
