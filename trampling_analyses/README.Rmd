@@ -1,3 +1,5 @@
+output: rmarkdown::github_document
+
 ## TRAMPLING ANALYSES
 
 Tests i) effects of human trampling disturbance on plant growth and reproduction proxies of common plants across an elevation gradient, and ii) which species are more susceptible to trampling.

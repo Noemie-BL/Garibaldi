@@ -1,0 +1,216 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{\vspace{-2.5em}}
+
+\begin{document}
+
+\hypertarget{trampling-analyses}{%
+\subsection{TRAMPLING ANALYSES}\label{trampling-analyses}}
+
+Tests i) effects of human trampling disturbance on plant growth and
+reproduction proxies of common plants across an elevation gradient, and
+ii) which species are more susceptible to trampling.
+
+\hypertarget{contributors}{%
+\subsection{Contributors:}\label{contributors}}
+
+Nathalie Chardon
+(\href{mailto:nathalie.chardon@gmail.com}{\nolinkurl{nathalie.chardon@gmail.com}}),
+Carly Hilbert
+(\href{mailto:chilbe02@student.ubc.ca}{\nolinkurl{chilbe02@student.ubc.ca}}),
+Philippa Stone
+(\href{mailto:philippa.stone@botany.ubc.ca}{\nolinkurl{philippa.stone@botany.ubc.ca}}),
+Cassandra Elphinstone
+(\href{mailto:cassandra.elphinstone@shaw.ca}{\nolinkurl{cassandra.elphinstone@shaw.ca}}),
+Allen Zhao
+(\href{mailto:allen10to11@gmail.com}{\nolinkurl{allen10to11@gmail.com}})
+
+Last edited: 14 June 2023
+
+\#----------------------------- \#\# Data collection notes summer 2022 -
+Who, when, where, why and how the data were collected
+
+Dates: July-August 2022
+
+Location: Garibaldi Provincial Park on Taylor Meadow (TM), Black Tusk
+(BT), and Panorama Ridge (PR) trails.
+
+Samplers: Nathalie Chardon, Carly Hilbert, Mackenzie Urquhart-Cronish,
+Brianna Ragsdale, Teagan MacLachlan, Vickie Lee, Christian Lauber,
+Carolyn Chong
+
+Data entered by: Carly Hilbert
+
+Methods: In the summer of 2022, we established long-term transects near
+the major trails in the park (Taylor Meadows, Black Tusk, Panorama
+Ridge) to quantify the effects of trampling by recreational users. To
+address how trampling affects charismatic plant communities (blueberry,
+heather and sedge meadows) along elevational gradients, we chose sites
+at multiple elevations per trail. We established transects directly
+adjacent to the trail and at least a 5 m perpendicular distance away
+from the trail (control) to compare the effects of trampling on the same
+vegetation types.
+
+Plant communities. We recorded landscape characteristics (slope, aspect,
+latitude, longitude, presence of trees) for each transect and used 0.5m
+x 1m quadrats to record height, maximum diameter, and bud/flower/fruit
+counts of our focal plant species (Vaccinium ovalifolium, Cassiope
+mertensiana, Phyllodoce empetriformis, Phyllodoce grandiflora, Carex
+sp.). Because we only found Phyllodoce grandiflora at one site, we did
+not use this species in our analyses. Please see N. Chardon's recent
+work on human trampling for greater detail on this sampling approach:
+\url{https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/1365-2664.13384}
+\url{https://onlinelibrary.wiley.com/doi/full/10.1002/ece3.4276}
+
+We also used a standardized approach to photograph each quadrat, and are
+used these images to calculate how vegetation greenness is impacted by
+human trampling. We calcluated plant percent cover with a custom
+algorithm.
+
+Microbial communities. We selected representative transects per trail to
+study microbial activity. As a proxy for measuring litter decomposition
+by microbes, we buried tea bags at these transects to undergo microbial
+decomposition for one year.
+
+Upcoming work. In Summer 2023, we will return to each transect to
+re-survey transects for species diversity. We will dig out the buried
+teabags, and bury new ones to decompose for another year. The species
+diversity and microbial data are not currently used in analyses.
+
+Goals: We aim to quantify the continued effects of human trampling on
+these plant and microbial communities by returning each year, thus
+generating a multi year dataset. Such a dataset will allow us to answer
+how these plant communities are responding to continuous trampling and
+ambient warming. We will incorporate BC Parks data on visitation numbers
+in our analyses to answer how strongly yearly visitation rates correlate
+with community responses, or if these responses show more of a lag
+response to past visitation rates.
+
+\#----------------------------- \#\# Data files \#\# Raw data FILENAME
+\textless description of file contents, date collected\textgreater{}
+
+Trampling-TRANSECTS\_data.csv/xlsx: 10 m x 0.5 m transect-level data
+(see merge\_fielddata.R for abbreviations); July-Aug 2022
+
+Trampling-QUADS\_data.csv/xlsx: quad-level data (see merge\_fielddata.R
+for abbreviations); July-Aug 2022
+
+GPS\_with-elev: lat, long, elev for each transect (see
+merge\_fielddata.R for data details); July-Aug 2022
+
+\hypertarget{compiled-data}{%
+\subsection{Compiled data}\label{compiled-data}}
+
+FILENAME \textless description of file contents, date modified, whether
+mid or final version\textgreater{}
+
+quad.RData: gps \& transect data matched to quad data; created in
+merge\_fielddata.R; modifed on 25 Apr 2023; final version; variables
+described in merge\_fielddata.R
+
+trans\_ALL.RData: all transect field data, gps, and altitude; created on
+15 Nov 2022; final version; variables described in merge\_fielddata.R
+
+P\_albicaulis\_Garibaldi\_Aug2022.csv: Pinus albicaulis locations for BC
+Rangers; emailed data to Kym Welstead
+(\href{mailto:Kym.Welstead@gov.bc.ca}{\nolinkurl{Kym.Welstead@gov.bc.ca}})
+on 7 Dec 2022
+
+plant-percent-cover.csv: Estimated plant percent cover values for each
+quadrat (Allen Zhao:
+\href{mailto:allen10to11@gmail.com}{\nolinkurl{allen10to11@gmail.com}});
+created on 27 March 2023; mid version because many transects missing and
+data needs to be checked
+
+\#----------------------------- \#\# Analysis notes FILENAME
+\textless description of notes purpose, coding language, versions of
+software/libraries used\textgreater{}
+
+\#----------------------------- \#\# Scripts SCRIPTNAME
+\textless description of script purpose, coding language, versions of
+software/libraries used\textgreater{}
+
+merge\_fielddata.R: merge GPS, elevation, transect, and quad-level data;
+R; tidyverse, dplyr, lattice
+
+LMMs.R: basic linear mixed models testing the effects of trampling and
+elevation on plant responses; R; tidyverse, lmerTest, AICmodavg
+
+figs.R: figures visualizing data; R; ggplot2, ggsignif, tidyr, dplyr
+
+repro.R: define and calculate a standardized reproductive metric, add to
+quads.RData, and test relationship between reproductive density and
+plant area by species; ggplot2, ggtext, scales, tidyverse, brms
+
+\#----------------------------- \#\# Figures FOLDERNAME
+
+/publication/: figures for publication (Mar 2023)
+
+/BC\_PARF/: Carly's figures for BC PARF (Dec 2022)
+
+\end{document}
