@@ -1,11 +1,13 @@
+options(blogdown.method = "markdown")
+
 ## TRAMPLING ANALYSES
 
-What is the effect of human trampling on plant communities across an elevational gradient, and which species are more susceptible to trampling?
+Tests i) effects of human trampling disturbance on plant growth and reproduction proxies of common plants across an elevation gradient, and ii) which species are more susceptible to trampling.
 
 ## Contributors: 
-Nathalie Chardon (nathalie.chardon@gmail.com), Carly Hilbert (chilbe02@student.ubc.ca), Philippa Stone (philippa.stone@botany.ubc.ca), Cassandra Elphinstone (cassandra.elphinstone@shaw.ca)
+Nathalie Chardon (nathalie.chardon@gmail.com), Carly Hilbert (chilbe02@student.ubc.ca), Philippa Stone (philippa.stone@botany.ubc.ca), Cassandra Elphinstone (cassandra.elphinstone@shaw.ca), Allen Zhao (allen10to11@gmail.com)
 
-Last edited: 29 Mar 2023
+Last edited: 14 June 2023
 
 #-----------------------------
 ## Data collection notes summer 2022 - Who, when, where, why and how the data were collected
@@ -24,10 +26,11 @@ Plant communities. We recorded landscape characteristics (slope, aspect, latitud
 https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/1365-2664.13384
 https://onlinelibrary.wiley.com/doi/full/10.1002/ece3.4276
 
-We also used a standardized approach to photograph each quadrat, and are using these images to calculate how vegetation greenness is impacted by human trampling. 
+We also used a standardized approach to photograph each quadrat, and are used these images to calculate how vegetation greenness is impacted by human trampling. We calcluated plant percent cover with a custom algorithm. 
 
 Microbial communities. We selected representative transects per trail to study microbial activity. As a proxy for measuring litter decomposition by microbes, we buried tea bags at these transects to undergo microbial decomposition for one year.
-Upcoming work. Next summer (2023), we will return to each transect to re-survey using the same methodology described above. We will dig out the buried teabags, and bury new ones to decompose for another year. 
+
+Upcoming work. In Summer 2023, we will return to each transect to re-survey transects for species diversity. We will dig out the buried teabags, and bury new ones to decompose for another year. The species diversity and microbial data are not currently used in analyses.
 
 Goals: We aim to quantify the continued effects of human trampling on these plant and microbial communities by returning each year, thus generating a multi year dataset. Such a dataset will allow us to answer how these plant communities are responding to continuous trampling and ambient warming. We will incorporate BC Parks data on visitation numbers in our analyses to answer how strongly yearly visitation rates correlate with community responses, or if these responses show more of a lag response to past visitation rates. 
 
