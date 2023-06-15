@@ -13,6 +13,7 @@ library(tidybayes)
 library(tidyverse)
 library(gridExtra)
 library(scales) #for percentage conversion on Y axis
+library(ggtext) #for italics in plot titles
 
 #set wd to Garibaldi
 
@@ -45,18 +46,16 @@ dat <- quad
 
 # # THEME # #
 mytheme <-   theme_classic() +
-  theme(axis.text.x = element_text(colour = 'black', size = 25), #x axis text size
-        axis.text.y = element_text(colour = 'black', size = 25), #y axis text size
-        axis.title.x = element_text(size = 28), #x axis label size
-        axis.title.y = element_text(size = 28), #x axis label size
-        plot.title = element_text(size = 30, #title size
+  theme(axis.text.x = element_text(colour = 'black', size = 30), #x axis text size
+        axis.text.y = element_text(colour = 'black', size = 30), #y axis text size
+        axis.title.x = element_text(size = 34), #x axis label size
+        axis.title.y = element_text(size = 34), #x axis label size
+        plot.title = element_text(size = 38, #title size
                                   hjust = 0.5), #align title to center
-        legend.title = element_text(size = 24), legend.text = element_text(size = 22)) 
+        legend.title = element_text(size = 28), legend.text = element_text(size = 26), #legend text size
+        plot.margin = margin(0.5,1.5,0.5,0.5, "cm"))  #increased plot margins on right so axis text seen in full
 
 theme_set(mytheme)
-
-#######may need this line later for making species names in plots italicised
-# theme(plot.title = element_text(face = "italic"))
 
 
 
@@ -81,9 +80,9 @@ PhyempHeightModPlot <- dat %>%
     xlab("\nElevation (m)") +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    theme(legend.title = element_blank())
+    theme(legend.title = element_blank(), legend.position = c(0.8, 0.7), plot.title = element_text(face = "italic"))
 
-ggsave(PhyempHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/PhyempHeightModPlot.pdf', width = 10, height = 8)
+#ggsave(PhyempHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/PhyempHeightModPlot.pdf', width = 10, height = 8)
 
 #casmer
 CasmerHeightModPlot <- dat %>%
@@ -97,9 +96,9 @@ CasmerHeightModPlot <- dat %>%
     xlab("\nElevation (m)") +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    theme(legend.title = element_blank())
+    theme(legend.position = "none", plot.title = element_text(face = "italic"))
 
-ggsave(CasmerHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/CasmerHeightModPlot.pdf', width = 10, height = 8)
+#ggsave(CasmerHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/CasmerHeightModPlot.pdf', width = 10, height = 8)
 
 #vacova
 VacovaHeightModPlot <- dat %>%
@@ -113,9 +112,9 @@ VacovaHeightModPlot <- dat %>%
     xlab("\nElevation (m)") +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    theme(legend.title = element_blank())
+    theme(legend.position = "none", plot.title = element_text(face = "italic"))
 
-ggsave(VacovaHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/VacovaHeightModPlot.pdf', width = 10, height = 8)
+#ggsave(VacovaHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/VacovaHeightModPlot.pdf', width = 10, height = 8)
 
 #carspp
 CarexHeightModPlot <- dat %>%
@@ -124,14 +123,14 @@ CarexHeightModPlot <- dat %>%
     ggplot(aes(x = altitude, y = height_mm, color = dist, fill = dist)) +
     stat_lineribbon(aes(y = .prediction), .width = c(.95), alpha = 0.33) +
     geom_point(data = dat %>% filter(species == "carspp")) +
-    labs(title = "Carex spp.") +
+    ggtitle(expression(atop(paste(italic("Carex "), "spp.")))) +
     ylab("Plant height (mm)\n") +
     xlab("\nElevation (m)") +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    theme(legend.title = element_blank())
+    theme(legend.position = "none")
 
-ggsave(CarexHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/CarexHeightModPlot.pdf', width = 10, height = 8)
+#ggsave(CarexHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/CarexHeightModPlot.pdf', width = 10, height = 8)
 
 
 
@@ -148,8 +147,8 @@ PhyempDiamModPlot <- dat %>%
     ylab("Plant diameter (mm)\n") +
     xlab("\nElevation (m)") +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    theme(legend.title = element_blank())
+    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance")  +
+    theme(legend.position = "none", plot.title = element_text(face = "italic"))
 
 ggsave(PhyempDiamModPlot, file = 'trampling_analyses/outputs/ms_figs/PhyempDiamModPlot.pdf', width = 10, height = 8)
 
@@ -164,8 +163,8 @@ CasmerDiamModPlot <- dat %>%
     ylab("Plant diameter (mm)\n") +
     xlab("\nElevation (m)") +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    theme(legend.title = element_blank())
+    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance")  +
+    theme(legend.position = "none", plot.title = element_text(face = "italic"))
 
 ggsave(CasmerDiamModPlot, file = 'trampling_analyses/outputs/ms_figs/CasmerDiamModPlot.pdf', width = 10, height = 8)
 
@@ -180,8 +179,8 @@ VacovaDiamModPlot <- dat %>%
     ylab("Plant diameter (mm)\n") +
     xlab("\nElevation (m)") +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    theme(legend.title = element_blank())
+    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance")  +
+    theme(legend.position = "none", plot.title = element_text(face = "italic"))
 
 ggsave(VacovaDiamModPlot, file = 'trampling_analyses/outputs/ms_figs/VacovaDiamModPlot.pdf', width = 10, height = 8)
 
@@ -192,12 +191,12 @@ CarexDiamModPlot <- dat %>%
     ggplot(aes(x = altitude, y = mxdiam_mm, color = dist, fill = dist)) +
     stat_lineribbon(aes(y = .prediction), .width = c(.95), alpha = 0.33) +
     geom_point(data = dat %>% filter(species == "carspp")) +
-    labs(title = "Carex spp.") +
+    ggtitle(expression(atop(paste(italic("Carex "), "spp.")))) +
     ylab("Plant diameter (mm)\n") +
     xlab("\nElevation (m)") +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    theme(legend.title = element_blank())
+    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance")  +
+    theme(legend.position = "none")
 
 ggsave(CarexDiamModPlot, file = 'trampling_analyses/outputs/ms_figs/CarexDiamModPlot.pdf', width = 10, height = 8)
 
@@ -216,8 +215,8 @@ PhyempReproModPlot <- dat %>%
     labs(x = expression(paste("Elevation (m)")),
          y = expression(paste("Reproductive output (counts/", cm^2, ")"))) +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    theme(legend.title = element_blank())
+    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance")  +
+  theme(legend.position = "none", plot.title = element_text(face = "italic"))
 
 ggsave(PhyempReproModPlot, file = 'trampling_analyses/outputs/ms_figs/PhyempReproModPlot.pdf', width = 10, height = 8)
 
@@ -232,8 +231,8 @@ CasmerReproModPlot <- dat %>%
     labs(x = expression(paste("Elevation (m)")),
          y = expression(paste("Reproductive output (counts/", cm^2, ")"))) +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    theme(legend.title = element_blank())
+    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance")  +
+  theme(legend.position = "none", plot.title = element_text(face = "italic"))
 
 ggsave(CasmerReproModPlot, file = 'trampling_analyses/outputs/ms_figs/CasmerReproModPlot.pdf', width = 10, height = 8)
 
@@ -248,8 +247,8 @@ VacovaReproModPlot <- dat %>%
     labs(x = expression(paste("Elevation (m)")),
          y = expression(paste("Reproductive output (counts/", cm^2, ")"))) +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    theme(legend.title = element_blank())
+    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance")  +
+  theme(legend.position = "none", plot.title = element_text(face = "italic"))
 
 ggsave(VacovaReproModPlot, file = 'trampling_analyses/outputs/ms_figs/VacovaReproModPlot.pdf', width = 10, height = 8)
 
@@ -268,8 +267,8 @@ PercentCoverModPlot <- dat %>%
     xlab("\nElevation (m)") +
     scale_y_continuous(labels = percent_format()) +
     scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    theme(legend.title = element_blank())
+    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance")  +
+  theme(legend.position = "none")
 
 ggsave(PercentCoverModPlot, file = 'trampling_analyses/outputs/ms_figs/PercentCoverModPlot.pdf', width = 10, height = 8)
 
@@ -280,7 +279,7 @@ ggsave(PercentCoverModPlot, file = 'trampling_analyses/outputs/ms_figs/PercentCo
 # # PANEL FIGURES # #
 
 heightPanelPlot <- grid.arrange(PhyempHeightModPlot, CasmerHeightModPlot, VacovaHeightModPlot, CarexHeightModPlot, nrow=1)
-ggsave(heightPanelPlot, file = 'trampling_analyses/outputs/ms_figs/heightPanelPlot.pdf', width = 40, height = 8)
+ggsave(heightPanelPlot, file = 'trampling_analyses/outputs/ms_figs/heightPanelPlotEdits.pdf', width = 40, height = 8)
 
 diamPanelPlot <- grid.arrange(PhyempDiamModPlot, CasmerDiamModPlot, VacovaDiamModPlot, CarexDiamModPlot, nrow=1)
 ggsave(diamPanelPlot, file = 'trampling_analyses/outputs/ms_figs/diamPanelPlot.pdf', width = 40, height = 8)
