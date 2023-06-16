@@ -44,7 +44,8 @@ phyemp_repro_beta <- readRDS("trampling_analyses/outputs/ms_results/phyemp_repro
 percentCover <- readRDS("trampling_analyses/outputs/ms_results/perc-cov_beta.rds")
 
 
-
+#https://stackoverflow.com/questions/59925895/labelling-plots-arranged-with-grid-arrange
+#for grid arrange
 
 # # OUTPUT FILES # #
 # [PDFs for plots of models for each species' trait]
@@ -300,7 +301,7 @@ ggsave(reproPanelPlot, file = 'trampling_analyses/outputs/ms_figs/reproPanelPlot
 reproPerccoverPanelPlot <- grid.arrange(PhyempReproModPlot, CasmerReproModPlot, VacovaReproModPlot, PercentCoverModPlot, nrow =1)
 ggsave(reproPerccoverPanelPlot, file = 'trampling_analyses/outputs/ms_figs/repro-perccoverPanelPlot.pdf', width = 40, height = 8)
 
-allPanelPlot <- grid.arrange(PhyempHeightModPlot, CasmerHeightModPlot, VacovaHeightModPlot, CarexHeightModPlot, PhyempDiamModPlot, CasmerDiamModPlot, VacovaDiamModPlot, CarexDiamModPlot, PhyempReproModPlot, CasmerReproModPlot, VacovaReproModPlot, PercentCoverModPlot, nrow=3)
+allTraitsPanelPlot <- grid.arrange(PhyempHeightModPlot, CasmerHeightModPlot, VacovaHeightModPlot, CarexHeightModPlot, PhyempDiamModPlot, CasmerDiamModPlot, VacovaDiamModPlot, CarexDiamModPlot, PhyempReproModPlot, CasmerReproModPlot, VacovaReproModPlot, PercentCoverModPlot, nrow=3)
 ggsave(allPanelPlot, file = 'trampling_analyses/outputs/ms_figs/allTraitsPanelPlot.pdf', width = 40, height = 24)
 
 
@@ -318,7 +319,7 @@ mytheme <- theme_classic() +
         axis.text.y = element_text(colour = 'black', size = 25), #y axis text size
         axis.title.x = element_text(size = 28), #x axis label size
         axis.title.y = element_text(size = 28), #x axis label size
-        plot.title = element_text(size = 30, #title size
+        plot.title = element_text(size = 32, #title size
                                   hjust = 0.5), #align title to center
         legend.title = element_text(size = 24), legend.text = element_text(size = 22),
         panel.grid.major = element_blank(), #remove major gridlines
@@ -328,7 +329,8 @@ mytheme <- theme_classic() +
         legend.key.size = unit(2, "line"), #increase size of legend key
         legend.spacing.y = unit(0.5, "cm"), #increase vertical spacing between legend items
         strip.background = element_rect(fill = "white"), #set background color for facet labels
-        strip.text.x = element_text(face = "italic", size = 20)) #set size for x-axis facet labels
+        strip.text.x = element_text(face = "italic", size = 20), #set size for x-axis facet labels
+        plot.margin = margin(0.5,0.5,0.5,0.5, "cm")) 
 
 theme_set(mytheme)
 
@@ -336,7 +338,7 @@ theme_set(mytheme)
 dat <- quad %>% 
   filter(species != "carspp")
 
-#remove Phyllodoce outlier causing problems with visualisaiton for plot
+#remove Phyllodoce outlier causing problems with visualisation for plot
 dat <- filter(dat, repro <20)
 
 # full species names
@@ -355,7 +357,6 @@ species_names <- c('carspp'= "Carex spp.", 'casmer' = "Cassiope mertensiana", 'p
   coord_trans(y = "log1p") + #log10 y axis 
   labs(x = expression(paste("Plant size (", cm^2, ")")),
        y = expression(paste("Density of reproductive structures (counts/", cm^2, ")"))) +
-  mytheme +
   theme(legend.position = c(0.2, 0.87)))
 
 totalReproPlotAreaBySpecies <- tag_facet(totalReproPlotAreaBySpecies)
@@ -363,5 +364,43 @@ totalReproPlotAreaBySpecies <- tag_facet(totalReproPlotAreaBySpecies)
 ggsave(filename = "trampling_analyses/outputs/ms_figs/totalReproPlotAreaBySpecies.pdf", plot = totalReproPlotAreaBySpecies, device = "pdf", dpi = 600, width = 20, height = 10, units = "in")
 
 
+(casmerPlotAreaBySpecies <- ggplot(dat %>% filter(species == "casmer"), aes(x= plantArea_cm2, y= repro, color = dist)) +
+    geom_point(data = dat %>% filter(species == "casmer")) +
+    labs(title = "Cassiope mertensiana") +
+    stat_smooth(aes(fill = dist), method = "lm", formula = y ~ x, geom = "ribbon", alpha = 0.3, size = 0) +
+    stat_smooth(aes(color = dist), method = "lm", formula = y ~ x, geom = "line", size=1) +
+    scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
+    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
+    coord_trans(y = "log1p") + #log10 y axis 
+    labs(x = expression(paste("Plant size (", cm^2, ")")),
+         y = expression(paste("Density of reproductive structures (counts/", cm^2, ")"))) +
+    theme(legend.position = c(0.75, 0.75), plot.title = element_text(face = "italic")))
+
+(phyempPlotAreaBySpecies <- ggplot(dat %>% filter(species == "phyemp"), aes(x= plantArea_cm2, y= repro, color = dist)) +
+    geom_point(data = dat %>% filter(species == "phyemp")) +
+    labs(title = "Phyllodoce empetriformis") +
+    stat_smooth(aes(fill = dist), method = "lm", formula = y ~ x, geom = "ribbon", alpha = 0.3, size = 0) +
+    stat_smooth(aes(color = dist), method = "lm", formula = y ~ x, geom = "line", size=1) +
+    scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
+    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
+    coord_trans(y = "log1p") + #log10 y axis 
+    labs(x = expression(paste("Plant size (", cm^2, ")")),
+         y = expression(paste("Density of reproductive structures (counts/", cm^2, ")"))) +
+    theme(legend.position = "none", plot.title = element_text(face = "italic")))
+
+(vacovaPlotAreaBySpecies <- ggplot(dat %>% filter(species == "vacova"), aes(x= plantArea_cm2, y= repro, color = dist)) +
+    geom_point(data = dat %>% filter(species == "vacova")) +
+    labs(title = "Vaccinium ovalifolium") +
+    stat_smooth(aes(fill = dist), method = "lm", formula = y ~ x, geom = "ribbon", alpha = 0.3, size = 0) +
+    stat_smooth(aes(color = dist), method = "lm", formula = y ~ x, geom = "line", size=1) +
+    scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
+    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
+    coord_trans(y = "log1p") + #log10 y axis 
+    labs(x = expression(paste("Plant size (", cm^2, ")")),
+         y = expression(paste("Density of reproductive structures (counts/", cm^2, ")"))) +
+    theme(legend.position = "none", plot.title = element_text(face = "italic")))
+
+allSpeciesReproPlot <- grid.arrange(casmerPlotAreaBySpecies, phyempPlotAreaBySpecies, vacovaPlotAreaBySpecies, nrow=1)
+ggsave(allSpeciesReproPlot, file = 'trampling_analyses/outputs/ms_figs/allSpeciesReproPlot.pdf', width = 20, height = 10)
 
 ####################################################################################################
