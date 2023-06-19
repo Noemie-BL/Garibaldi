@@ -10,16 +10,6 @@ Allen Zhao (allen10to11@gmail.com) - Image analysis code.
 
 Last edited: 18 June 2023
 
-### Data collection - Who, when, where, why and how the data were collected
-
-Dates: July-August 2022
-
-Location: Garibaldi Provincial Park on Taylor Meadow (TM), Black Tusk (BT), and Panorama Ridge (PR) trails.
-
-Samplers: Nathalie Chardon, Carly Hilbert, Mackenzie Urquhart-Cronish, Brianna Ragsdale, Teagan MacLachlan, Vickie Lee, Christian Lauber, Carolyn Chong
-
-Data entered by: Carly Hilbert
-
 Methods: Using a script, we boosted the saturation of our image to easily identify and isolate pixels that are predominantly green. This was found to be a reliable indicator of green vegetation in our images. We then find use the percentage of the image area occupied by the images as our coverage value.
 
 ### Data files
@@ -46,7 +36,3 @@ Dependencies:
 * Numpy
 * Matplotlib (for optional coverage visualizer)
 * exifread
-
-#### Quadrat_Analysis
-
-****Allen fill in info here****
