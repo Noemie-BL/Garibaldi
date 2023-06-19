@@ -81,4 +81,4 @@ BC_PARF_figs/: Carly Hilbert's figures for BC PARF (Dec 2022)
 
 #### Quadrat_Analysis
 
-****Allen fill in info here****
+Analysis code for estimating plant coverage from photos of quadrats located around Black Tusk and Taylor Meadows in Garibaldi Provincial Park. Additional details can be found in the included README.
