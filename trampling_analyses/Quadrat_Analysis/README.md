@@ -22,8 +22,8 @@ For housing image data files prior to processing.
 
 final_coverage_data.csv: Calculated plant percent cover values for each quadrat (Allen Zhao, allen10to11@gmail.com); created on 27 March 2023; final version; analyses in Quadrat_Analysis folder
 
-#### scripts
-_SCRIPTNAME <description of script purpose, coding language, versions of software/libraries used>_
+#### Scripts
+All scripts are written in Python 3.10.
 
 dirtools.py: Basic file and directory handling functions
 
