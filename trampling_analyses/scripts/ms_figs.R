@@ -5,7 +5,7 @@
 
 # Author: Philippa Stone
 # Date created: 17 May 2023
-# Date updated: 14 June 2023 (NC)
+# Date updated: 20 June 2023 (NC)
 
 rm(list=ls()) 
 
@@ -18,7 +18,6 @@ library(gridExtra)
 library(scales) #for percentage conversion on Y axis
 library(ggtext) #for italics in plot titles
 
-#set wd to Garibaldi
 
 # # INPUT FILES # #
 
@@ -49,9 +48,12 @@ percentCover <- readRDS("trampling_analyses/outputs/ms_results/perc-cov_beta.rds
 
 
 
+
 ####################################################################################################
 
-# # Fig. [RESULTS]: disturbance only # # 
+# # Fig. 1: disturbance only # # 
+
+####################################################################################################
 
 # # THEME # #
 mytheme <-   theme_classic() +
@@ -282,14 +284,13 @@ allTraitsPanelPlot <- grid.arrange(phyemp_height_plot, casmer_height_plot, vacov
 ggsave(allTraitsPanelPlot, file = 'trampling_analyses/outputs/ms_figs/allTraitsPanelPlot.pdf', width = 40, height = 42)
 
 
-####################################################################################################
-
-
 
 
 ####################################################################################################
 
-# # Fig. S[RESULTS]: disturbance + elevation # #
+# # Fig. S1: disturbance + elevation # #
+
+####################################################################################################
 
 # # THEME # #
 mytheme <-   theme_classic() +
@@ -532,13 +533,13 @@ allTraitsAltitudePanelPlot <- grid.arrange(PhyempHeightModPlot, CasmerHeightModP
 ggsave(allTraitsAltitudePanelPlot, file = 'trampling_analyses/outputs/ms_figs/allTraitsAltitudePanelPlot.pdf', width = 40, height = 42)
 
 
+
+
 ####################################################################################################
 
-
+# # Fig. S2: reproductive structure density # # 
 
 ####################################################################################################
-
-# # Fig. S[AREA-REPRO]: reproductive structure density # # 
 
 # # PLOT THEME # #
 mytheme <- theme_classic() +
@@ -620,5 +621,3 @@ species_names <- c('carspp'= "Carex spp.", 'casmer' = "Cassiope mertensiana", 'p
 
 allSpeciesReproPlot <- grid.arrange(casmerPlotAreaBySpecies, phyempPlotAreaBySpecies, vacovaPlotAreaBySpecies, nrow=1)
 ggsave(allSpeciesReproPlot, file = 'trampling_analyses/outputs/ms_figs/allSpeciesReproPlot.pdf', width = 20, height = 10)
-
-####################################################################################################
