@@ -10,6 +10,7 @@
 
 # # LIBRARIES # #
 library(tidyverse)
+library(lmerTest)
 
 
 rm(list=ls()) 
@@ -71,18 +72,6 @@ plot(totalReproStruct ~ plantArea_cm2, data = quad)
 
 mod <- lmer(totalReproStruct ~ plantArea_cm2 + (1|species) + (1|trans.pair), data = quad)
 summary(mod) #larger plants have more repro structures
-
-
-
-
-
-## IN PROGRESS 19.6.
-
-# Why is CARSPP showing reproduction when we didn't measure it for Carex spp?
-foo <- quad %>% filter(species == 'carspp' & repro > 0) #15% (32/209) have data so maybe not always recorded?
-
-# If not everyone measured -> turn all repro values to NA for CARSPP
-# If everyone measured -> run repro analyses for CARSPP
 
 
 

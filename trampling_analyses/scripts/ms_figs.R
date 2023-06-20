@@ -3,7 +3,7 @@
 # 2. Bayesian model results for disturbance + elevation
 # 3. Reproductive density
 
-# Author: Philippa Stone
+# Author: Philippa Stone, Nathalie Chardon
 # Date created: 17 May 2023
 # Date updated: 20 June 2023 (NC)
 
