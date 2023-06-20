@@ -3,7 +3,7 @@
 
 # Authors: Nathalie Chardon, Cassandra Elphinstone, Philippa Stone
 # Date created: 15 Feb 2023
-# Date updated: 28 March 2023 (NC)
+# Date updated: 20 June 2023 (NC)
 
 
 # # LIBRARIES # # 
@@ -91,6 +91,15 @@ quad <- dat
 
 foo <- quad %>% filter(repro > 2) #Phyemp outlier is so large because a very small plant had 1 bud and 1 fruit
 
+
+# Set Carex repro to NA because inconsistently measured in the field 
+quad <- quad %>% 
+  mutate(flws = if_else(species == 'carspp', NA_real_, flws)) %>% 
+  mutate(frts = if_else(species == 'carspp', NA_real_, frts)) %>% 
+  mutate(buds = if_else(species == 'carspp', NA_real_, buds)) %>% 
+  mutate(repro = if_else(species == 'carspp', NA_real_, repro)) %>% 
+  mutate(rel_repro = if_else(species == 'carspp', NA_real_, rel_repro))
+  
 
 # Save updated DF
 save(quad, file = 'trampling_analyses/compiled_data/quad.RData')
@@ -327,6 +336,8 @@ ggsave(filename = "../figures/publication/totalReproPlotBySpecies", plot = total
 # package: lmerTest
 # Fixed effects: plantArea_cm2 + dist
 # Random effects: (1|trans.pair)
+
+# Note: code moved to ms_figs.R
 
 ####################################################################################################
 
