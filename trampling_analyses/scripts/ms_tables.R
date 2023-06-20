@@ -1,11 +1,12 @@
 # Aims: Manuscript tables
-# 1. Bayesian results
-# 2. BRMS details (created manually)
+# 1. MS stats
+# 2. Bayesian results
+# 3. BRMS details (created manually)
 
 
 # Author: Nathalie Chardon
 # Date created: 14 June 2023
-# Date updated: 14 June 2023 (NC)
+# Date updated: 20 June 2023 (NC)
 
 # # LIBRARIES # #
 library(tidyverse)
@@ -15,6 +16,7 @@ rm(list=ls())
 
 
 # # INPUT FILES # #
+load('trampling_analyses/compiled_data/quad.RData') ##updated with reproductive metric & plant area (repro.R)
 #[individual BRMS model files, see below]
 
 
@@ -25,9 +27,69 @@ brm.tab <- read.csv('trampling_analyses/outputs/ms_results/brm_table.csv') #mode
 
 
 
+
 ####################################################################################################
 
-# # Table [RESULTS]: Estimated parameters of hierarchical models
+# # MS Stats
+
+####################################################################################################
+
+# # Is lower reproduction on trail compared to off trail because plant sizes are lower?
+# Data
+load('trampling_analyses/compiled_data/quad.RData') ##updated with reproductive metric & plant area (repro.R)
+
+totalReproStruct <- quad$flws + quad$frts + quad$buds #total repro structures
+quad <- cbind(quad, totalReproStruct)
+
+# Across all species
+sum_stats <- quad %>% 
+  filter(!is.na(totalReproStruct)) %>% 
+  group_by(dist) %>% 
+  summarize(max = max(totalReproStruct), min = min(totalReproStruct), 
+            avg = mean(totalReproStruct), med = median(totalReproStruct)) 
+sum_stats #median and mean repro is lower on trail
+
+# Per species
+sum_stats <- quad %>% 
+  filter(!is.na(totalReproStruct) & repro < 15) %>% #this needs to be first
+  group_by(species, dist) %>% 
+  summarize(max = max(totalReproStruct), min = min(totalReproStruct), 
+            avg = mean(totalReproStruct), med = median(totalReproStruct)) 
+sum_stats #median repro is lower on trail
+
+# Histogram of reproduction shows less repro on trail, but this could also be due to less plants
+trail <- quad %>% 
+  filter(dist == 1 & totalReproStruct > 0) 
+offtrail <- quad %>% 
+  filter(dist == 0 & totalReproStruct > 0) 
+
+hist(offtrail$totalReproStruct, breaks = 50)
+hist(trail$totalReproStruct, breaks = 50, col = 'red', add = T)
+
+# Test that reproduction is smaller with smaller plants per species
+plot(totalReproStruct ~ plantArea_cm2, data = quad)
+
+mod <- lmer(totalReproStruct ~ plantArea_cm2 + (1|species) + (1|trans.pair), data = quad)
+summary(mod) #larger plants have more repro structures
+
+
+
+
+
+## IN PROGRESS 19.6.
+
+# Why is CARSPP showing reproduction when we didn't measure it for Carex spp?
+foo <- quad %>% filter(species == 'carspp' & repro > 0) #15% (32/209) have data so maybe not always recorded?
+
+# If not everyone measured -> turn all repro values to NA for CARSPP
+# If everyone measured -> run repro analyses for CARSPP
+
+
+
+
+####################################################################################################
+
+# # Table 1: Estimated parameters of hierarchical models
 
 ####################################################################################################
 
@@ -272,7 +334,7 @@ write.csv(brm.tab, file = 'trampling_analyses/outputs/ms_results/brm_table.csv',
 
 ####################################################################################################
 
-# # Table S[BRMS]: Model fitting details
+# # Table S1: Model fitting details
 
 ####################################################################################################
 

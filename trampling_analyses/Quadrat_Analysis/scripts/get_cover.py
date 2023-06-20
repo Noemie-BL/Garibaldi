@@ -1,14 +1,17 @@
 import csv
 import numpy as np
-import PIL
 from PIL import Image
 import dirtools as dt
 from coverage_getter import percent_cover
 import datetime
 import exifread
 
-output = "./"
-output_name = "export.csv"
+
+output = "../output_data/"
+output_name = "final_coverage_data_{}.csv".format(datetime.date.today())
+datapath = "..//raw_data//cropped_quad_photos_final_2023"
+
+op = output + output_name
 
 class Photo:
     def __init__(self, path, location, transect, quad, photographer):
@@ -36,8 +39,6 @@ class Photo:
             return False
 
 
-datapath = ".\\data\\cropped_quad_photos_final_2023"
-
 photos = []
 fnames = dt.get_files(datapath)
 files = dt.get_files(datapath, fullpath=True)
@@ -64,8 +65,8 @@ for photo in photos:
     print(photo.photographer)
     photo.value = percent_cover(photo.data, visualize=False)
 
-with open(output_name, mode="w", newline='') as output:
+with open(op, mode="w", newline='') as output:
     output_writer = csv.writer(
-        output, delimiter=',', quoting=csv.QUOTE_NONE)
+        op, delimiter=',', quoting=csv.QUOTE_NONE)
     for entry in photos:
         output_writer.writerow(entry.return_csv_line())
