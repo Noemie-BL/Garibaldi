@@ -620,4 +620,72 @@ species_names <- c('carspp'= "Carex spp.", 'casmer' = "Cassiope mertensiana", 'p
     theme(legend.position = "none", plot.title = element_text(face = "italic")))
 
 allSpeciesReproPlot <- grid.arrange(casmerPlotAreaBySpecies, phyempPlotAreaBySpecies, vacovaPlotAreaBySpecies, nrow=1)
+
+
+
+
+####################################################################################################
+
+# # TEST FOR RELATIONSHIP BETWEEN PLANT AREA AND REPRO STRUCTURES BY SPECIES (Nathalie) # # 
+# package: lmerTest
+# Fixed effects: plantArea_cm2 + dist
+# Random effects: (1|trans.pair)
+
+####################################################################################################
+
+# # Data
+str(quad) #check that categorical explanatory variables are factors, others numeric
+
+# Skew function (from: https://towardsdatascience.com/evaluating-bayesian-mixed-models-in-r-python-27d344a03016_)
+skew <- function(y){ # Fisher-Pearson Skew function based on NIST definition
+  n <- length(y)
+  dif <- y - mean(y)
+  skew_stat <- (sqrt(n-1)/(n-2))*n *(sum(dif^3)/(sum(dif^2)^1.5))
+  return(skew_stat)
+}
+
+## PHYEMP ##
+
+# Filter by species 
+dat <- quad %>%
+  filter(species == 'phyemp')
+
+hist(dat$totalReproStructByArea, breaks = 100)
+
+# # Fit Model 
+mod <- lmer(totalReproStructByArea ~ plantArea_cm2 + dist + (1|trans.pair), data = dat)
+
+summary(mod)
+
+
+## CASMER ##
+
+# Filter by species 
+dat <- quad %>%
+  filter(species == 'casmer')
+
+hist(dat$totalReproStructByArea, breaks = 100)
+
+# # Fit Model 
+mod <- lmer(totalReproStructByArea ~ plantArea_cm2 + dist + (1|trans.pair), data = dat)
+
+summary(mod)
+
+
+## VACOVA ##
+
+# Filter by species 
+dat <- quad %>%
+  filter(species == 'vacova')
+
+hist(dat$totalReproStructByArea, breaks = 100)
+
+# # Fit Model 
+mod <- lmer(totalReproStructByArea ~ plantArea_cm2 + dist + (1|trans.pair), data = dat)
+
+summary(mod)
+
+
+
+
 ggsave(allSpeciesReproPlot, file = 'trampling_analyses/outputs/ms_figs/allSpeciesReproPlot.pdf', width = 20, height = 10)
