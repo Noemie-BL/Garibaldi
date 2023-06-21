@@ -77,6 +77,11 @@ theme_set(mytheme)
 cond <- conditional_effects(phyemp_height_nb, effect = 'dist')
 est <- as.data.frame(cond[[1]])
 
+#with random effects considered - estimates are slightly different 
+summary(phyemp_height_nb)
+condr <- conditional_effects(phyemp_height_nb, effect = 'dist', re_formula = NULL) #NULL=include all random effects
+estr <- as.data.frame(condr[[1]])
+
 phyemp_height_plot <- ggplot(est, aes(dist, height_mm, color = dist)) +
     labs(title = "Phyllodoce empetriformis", tag = "a)", subtitle = "*") +
     ylab("Plant height (mm)") +
