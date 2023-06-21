@@ -57,16 +57,16 @@ percentCover <- readRDS("trampling_analyses/outputs/ms_results/perc-cov_beta.rds
 
 # # THEME # #
 mytheme <-   theme_classic() +
-  theme(axis.text.x = element_text(colour = 'black', size = 36, angle = 30, hjust = 1), #x axis text size
-        axis.text.y = element_text(colour = 'black', size = 36), #y axis text size
-        axis.title.x = element_text(size = 40), #x axis label size
-        axis.title.y = element_text(size = 40), #x axis label size
-        plot.title = element_text(size = 44, #title size
+  theme(axis.text.x = element_text(colour = 'black', size = 46, angle = 30, hjust = 1), #x axis text size
+        axis.text.y = element_text(colour = 'black', size = 46), #y axis text size
+        axis.title.x=element_blank(), #x axis label size
+        axis.title.y = element_text(size = 50), #x axis label size
+        plot.title = element_text(size = 51, #title size
                                   hjust = 0.5), #align title to center
-        plot.tag = element_text(size = 40), plot.tag.position = c(0.08, 0.98), #plot tags for labelling within figure
+        plot.tag = element_text(size = 50), plot.tag.position = c(0.08, 0.98), #plot tags for labelling within figure
         plot.subtitle = element_text(size = 60, hjust = 1), #subtitle is being used to show sig asterisk
-        legend.title = element_text(size = 36), legend.text = element_text(size = 35), #legend text size
-        plot.margin = margin(1.5,1.5,1.5,0.5, "cm"))  #increased plot margins on right so axis text seen in full
+        legend.title = element_text(size = 46), legend.text = element_text(size = 35), #legend text size
+        plot.margin = margin(1,1.5,1,0.5, "cm"))  #increased plot margins on right so axis text seen in full
 
 theme_set(mytheme)
 
@@ -80,10 +80,9 @@ est <- as.data.frame(cond[[1]])
 phyemp_height_plot <- ggplot(est, aes(dist, height_mm, color = dist)) +
     labs(title = "Phyllodoce empetriformis", tag = "a)", subtitle = "*") +
     ylab("Plant height (mm)") +
-    xlab("Disturbance") +
-    geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 1.75) +
-    geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.5, linewidth = 1.75) +
-    geom_pointrange(aes(y = estimate__, ymin = lower__, ymax = upper__), size = 1.75) +
+    geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 2.75) +
+    geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.5, linewidth = 2.75) +
+    geom_pointrange(aes(y = estimate__, ymin = lower__, ymax = upper__), size = 2.75) +
     scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
     scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
     scale_x_discrete(labels=c("0" = "Undisturbed", "1" = "Disturbed")) +
@@ -97,9 +96,9 @@ casmer_height_plot <- ggplot(est, aes(dist, height_mm, color = dist)) +
     labs(title = "Cassiope mertensiana", tag = "b)", subtitle = "*") +
     ylab("Plant height (mm)") +
     xlab("Disturbance") +
-    geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 1.75) +
-    geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.5, linewidth = 1.75) +
-    geom_pointrange(aes(y = estimate__, ymin = lower__, ymax = upper__), size = 1.75) +
+    geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 2.75) +
+    geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.5, linewidth = 2.75) +
+    geom_pointrange(aes(y = estimate__, ymin = lower__, ymax = upper__), size = 2.75) +
     scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
     scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
     scale_x_discrete(labels=c("0" = "Undisturbed", "1" = "Disturbed")) +
@@ -110,12 +109,12 @@ cond <- conditional_effects(height_nb_vacova, effect = 'dist')
 est <- as.data.frame(cond[[1]])
 
 vacova_height_plot <- ggplot(est, aes(dist, height_mm, color = dist)) +
-    labs(title = "Vaccinium ovatum", tag = "c)", subtitle = "*") +
+    labs(title = "Vaccinium ovatifolium", tag = "c)", subtitle = "*") +
     ylab("Plant height (mm)") +
     xlab("Disturbance") +
-    geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 1.75) +
-    geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.5, linewidth = 1.75) +
-    geom_pointrange(aes(y = estimate__, ymin = lower__, ymax = upper__), size = 1.75) +
+    geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 2.75) +
+    geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.5, linewidth = 2.75) +
+    geom_pointrange(aes(y = estimate__, ymin = lower__, ymax = upper__), size = 2.75) +
     scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
     scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
     scale_x_discrete(labels=c("0" = "Undisturbed", "1" = "Disturbed")) +
@@ -130,9 +129,9 @@ carspp_height_plot <- ggplot(est, aes(dist, height_mm, color = dist)) +
   labs(tag = "d)", subtitle = " ") +
   ylab("Plant height (mm)") +
   xlab("Disturbance") +
-  geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 1.75) +
-  geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.5, linewidth = 1.75) +
-  geom_pointrange(aes(y = estimate__, ymin = lower__, ymax = upper__), size = 1.75) +
+  geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 2.75) +
+  geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.5, linewidth = 2.75) +
+  geom_pointrange(aes(y = estimate__, ymin = lower__, ymax = upper__), size = 2.75) +
   scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_x_discrete(labels=c("0" = "Undisturbed", "1" = "Disturbed")) +
@@ -149,9 +148,9 @@ phyemp_diam_plot <- ggplot(est, aes(dist, mxdiam_mm, color = dist)) +
   labs(title = "Phyllodoce empetriformis", tag = "e)", subtitle = "*") +
   ylab("Plant maximum diameter (mm)") +
   xlab("Disturbance") +
-  geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 1.75) +
-  geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.5, linewidth = 1.75) +
-  geom_pointrange(aes(y = estimate__, ymin = lower__, ymax = upper__), size = 1.75) +
+  geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 2.75) +
+  geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.5, linewidth = 2.75) +
+  geom_pointrange(aes(y = estimate__, ymin = lower__, ymax = upper__), size = 2.75) +
   scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_x_discrete(labels=c("0" = "Undisturbed", "1" = "Disturbed")) +
@@ -165,9 +164,9 @@ casmer_diam_plot <- ggplot(est, aes(dist, mxdiam_mm, color = dist)) +
   labs(title = "Cassiope mertensiana", tag = "f)", subtitle = "*") +
   ylab("Plant maximum diameter (mm)") +
   xlab("Disturbance") +
-  geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 1.75) +
-  geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.5, linewidth = 1.75) +
-  geom_pointrange(aes(y = estimate__, ymin = lower__, ymax = upper__), size = 1.75) +
+  geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 2.75) +
+  geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.5, linewidth = 2.75) +
+  geom_pointrange(aes(y = estimate__, ymin = lower__, ymax = upper__), size = 2.75) +
   scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_x_discrete(labels=c("0" = "Undisturbed", "1" = "Disturbed")) +
@@ -178,12 +177,12 @@ cond <- conditional_effects(diam_nb_vacova, effect = 'dist')
 est <- as.data.frame(cond[[1]])
 
 vacova_diam_plot <- ggplot(est, aes(dist, mxdiam_mm, color = dist)) +
-  labs(title = "Vaccinium ovatum", tag = "g)", subtitle = "*") +
+  labs(title = "Vaccinium ovatifolium", tag = "g)", subtitle = "*") +
   ylab("Plant maximum diameter (mm)") +
   xlab("Disturbance") +
-  geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 1.75) +
-  geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.5, linewidth = 1.75) +
-  geom_pointrange(aes(y = estimate__, ymin = lower__, ymax = upper__), size = 1.75) +
+  geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 2.75) +
+  geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.5, linewidth = 2.75) +
+  geom_pointrange(aes(y = estimate__, ymin = lower__, ymax = upper__), size = 2.75) +
   scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_x_discrete(labels=c("0" = "Undisturbed", "1" = "Disturbed")) +
@@ -198,9 +197,9 @@ carspp_diam_plot <- ggplot(est, aes(dist, mxdiam_mm, color = dist)) +
   labs(tag = "h)", subtitle = "*") +
   ylab("Plant maximum diameter (mm)") +
   xlab("Disturbance") +
-  geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 1.75) +
-  geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.5, linewidth = 1.75) +
-  geom_pointrange(aes(y = estimate__, ymin = lower__, ymax = upper__), size = 1.75) +
+  geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 2.75) +
+  geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.5, linewidth = 2.75) +
+  geom_pointrange(aes(y = estimate__, ymin = lower__, ymax = upper__), size = 2.75) +
   scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_x_discrete(labels=c("0" = "Undisturbed", "1" = "Disturbed")) +
@@ -217,9 +216,9 @@ phyemp_repro_plot <- ggplot(est, aes(dist, rel_repro, color = dist)) +
   labs(title = "Phyllodoce empetriformis", tag = "i)", subtitle = " ") +
   labs(x = expression(paste("Disturbance")),
        y = expression(paste("Relative reproductive output"))) +
-  geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 1.75) +
-  geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.5, linewidth = 1.75) +
-  geom_pointrange(aes(y = estimate__, ymin = lower__, ymax = upper__), size = 1.75) +
+  geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 2.75) +
+  geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.5, linewidth = 2.75) +
+  geom_pointrange(aes(y = estimate__, ymin = lower__, ymax = upper__), size = 2.75) +
   scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_x_discrete(labels=c("0" = "Undisturbed", "1" = "Disturbed")) +
@@ -233,9 +232,9 @@ casmer_repro_plot <- ggplot(est, aes(dist, rel_repro, color = dist)) +
   labs(title = "Cassiope mertensiana", tag = "j)", subtitle = " ") +
   labs(x = expression(paste("Disturbance")),
        y = expression(paste("Relative reproductive output"))) +
-  geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 1.75) +
-  geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.5, linewidth = 1.75) +
-  geom_pointrange(aes(y = estimate__, ymin = lower__, ymax = upper__), size = 1.75) +
+  geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 2.75) +
+  geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.5, linewidth = 2.75) +
+  geom_pointrange(aes(y = estimate__, ymin = lower__, ymax = upper__), size = 2.75) +
   scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_x_discrete(labels=c("0" = "Undisturbed", "1" = "Disturbed")) +
@@ -246,12 +245,12 @@ cond <- conditional_effects(repro_beta_vacova, effect = 'dist')
 est <- as.data.frame(cond[[1]])
 
 vacova_repro_plot <- ggplot(est, aes(dist, rel_repro, color = dist)) +
-  labs(title = "Vaccinium ovatum", tag = "k)", subtitle = "*") +
+  labs(title = "Vaccinium ovatifolium", tag = "k)", subtitle = "*") +
   labs(x = expression(paste("Disturbance")),
        y = expression(paste("Relative reproductive output"))) +
-  geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 1.75) +
-  geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.5, linewidth = 1.75) +
-  geom_pointrange(aes(y = estimate__, ymin = lower__, ymax = upper__), size = 1.75) +
+  geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 2.75) +
+  geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.5, linewidth = 2.75) +
+  geom_pointrange(aes(y = estimate__, ymin = lower__, ymax = upper__), size = 2.75) +
   scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_x_discrete(labels=c("0" = "Undisturbed", "1" = "Disturbed")) +
@@ -268,9 +267,9 @@ perccover_plot <- ggplot(est, aes(dist, perc.cov, color = dist)) +
   ylab("Percent cover") +
   xlab("Disturbance") +
   scale_y_continuous(labels = percent_format()) +
-  geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 1.75) +
-  geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.5, linewidth = 1.75) +
-  geom_pointrange(aes(y = estimate__, ymin = lower__, ymax = upper__), size = 1.75) +
+  geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 2.75) +
+  geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.5, linewidth = 2.75) +
+  geom_pointrange(aes(y = estimate__, ymin = lower__, ymax = upper__), size = 2.75) +
   scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_x_discrete(labels=c("0" = "Undisturbed", "1" = "Disturbed")) +
@@ -294,18 +293,18 @@ ggsave(allTraitsPanelPlot, file = 'trampling_analyses/outputs/ms_figs/allTraitsP
 
 # # THEME # #
 mytheme <-   theme_classic() +
-  theme(axis.text.x = element_text(colour = 'black', size = 36), #x axis text size
-        axis.text.y = element_text(colour = 'black', size = 36), #y axis text size
-        axis.title.x = element_text(size = 40), #x axis label size
-        axis.title.y = element_text(size = 40), #x axis label size
-        plot.title = element_text(size = 44, #title size
+  theme(axis.text.x = element_text(colour = 'black', size = 46, angle = 30, hjust = 1), #x axis text size
+        axis.text.y = element_text(colour = 'black', size = 46), #y axis text size
+        axis.title.x= element_text(size = 50), #x axis label size
+        axis.title.y = element_text(size = 50), #x axis label size
+        plot.title = element_text(size = 51, #title size
                                   hjust = 0.5), #align title to center
-        plot.tag = element_text(size = 40), plot.tag.position = c(0.08, 0.98), #plot tags for labelling within figure
-        legend.title = element_text(size = 36), legend.text = element_text(size = 35), #legend text size
-        plot.margin = margin(0.5,1.5,0.5,0.5, "cm"))  #increased plot margins on right so axis text seen in full
+        plot.tag = element_text(size = 50), plot.tag.position = c(0.08, 0.98), #plot tags for labelling within figure
+        plot.subtitle = element_text(size = 60, hjust = 1), #subtitle is being used to show sig asterisk
+        legend.title = element_text(size = 46), legend.text = element_text(size = 35), #legend text size
+        plot.margin = margin(1,1.5,1,0.5, "cm"))  #increased plot margins on right so axis text seen in full
 
 theme_set(mytheme)
-
 
 # # HEIGHT # #
 
@@ -315,7 +314,7 @@ PhyempHeightModPlot <- dat %>%
   add_predicted_draws(phyemp_height_nb, allow_new_levels = TRUE, re_formula = NA) %>%
   ggplot(aes(x = altitude, y = height_mm, color = dist, fill = dist)) +
   stat_lineribbon(aes(y = .prediction), .width = c(.95), alpha = 0.33) +
-  geom_point(data = dat %>% filter(species == "phyemp")) +
+  geom_point(data = dat %>% filter(species == "phyemp"), size = 3) +
   labs(title = "Phyllodoce empetriformis", tag = "a)") +
   ylab("Plant height (mm)") +
   xlab("Elevation (m)") +
@@ -323,7 +322,7 @@ PhyempHeightModPlot <- dat %>%
   scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
   theme(legend.title = element_blank(), legend.position = c(0.7, 0.75), plot.title = element_text(face = "italic"))
 
-#ggsave(PhyempHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/PhyempHeightModPlot.pdf', width = 10, height = 8)
+ggsave(PhyempHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/PhyempHeightModPlotEdits3.pdf', width = 10, height = 8)
 
 #casmer
 CasmerHeightModPlot <- dat %>%
@@ -331,7 +330,7 @@ CasmerHeightModPlot <- dat %>%
   add_predicted_draws(height_nb_casmer, allow_new_levels = TRUE, re_formula = NA) %>%
   ggplot(aes(x = altitude, y = height_mm, color = dist, fill = dist)) +
   stat_lineribbon(aes(y = .prediction), .width = c(.95), alpha = 0.33) +
-  geom_point(data = dat %>% filter(species == "casmer")) +
+  geom_point(data = dat %>% filter(species == "casmer"), size = 3) +
   labs(title = "Cassiope mertensiana", tag = "b)") +
   ylab("Plant height (mm)") +
   xlab("Elevation (m)") +
@@ -347,7 +346,7 @@ VacovaHeightModPlot <- dat %>%
   add_predicted_draws(height_nb_vacova, allow_new_levels = TRUE, re_formula = NA) %>%
   ggplot(aes(x = altitude, y = height_mm, color = dist, fill = dist)) +
   stat_lineribbon(aes(y = .prediction), .width = c(.95), alpha = 0.33) +
-  geom_point(data = dat %>% filter(species == "vacova")) +
+  geom_point(data = dat %>% filter(species == "vacova"), size = 3) +
   labs(title = "Vaccinium ovalifolium", tag = "c)") +
   ylab("Plant height (mm)") +
   xlab("Elevation (m)") +
@@ -363,8 +362,8 @@ CarexHeightModPlot <- dat %>%
   add_predicted_draws(height_nb_carspp, allow_new_levels = TRUE, re_formula = NA) %>%
   ggplot(aes(x = altitude, y = height_mm, color = dist, fill = dist)) +
   stat_lineribbon(aes(y = .prediction), .width = c(.95), alpha = 0.33) +
-  geom_point(data = dat %>% filter(species == "carspp")) +
-  ggtitle(expression(atop(paste(italic("Carex "), "spp.")))) +
+  geom_point(data = dat %>% filter(species == "carspp"), size = 3) +
+  ggtitle(expression(paste(italic("Carex "), "spp."))) +
   labs(tag = "d") +
   ylab("Plant height (mm)") +
   xlab("Elevation (m)") +
@@ -384,7 +383,7 @@ PhyempDiamModPlot <- dat %>%
   add_predicted_draws(phyemp_diam_nb, allow_new_levels = TRUE, re_formula = NA) %>%
   ggplot(aes(x = altitude, y = mxdiam_mm, color = dist, fill = dist)) +
   stat_lineribbon(aes(y = .prediction), .width = c(.95), alpha = 0.33) +
-  geom_point(data = dat %>% filter(species == "phyemp")) +
+  geom_point(data = dat %>% filter(species == "phyemp"), size = 3) +
   labs(title = "Phyllodoce empetriformis", tag = "e)") +
   ylab("Plant maximum diameter (mm)") +
   xlab("Elevation (m)") +
@@ -400,7 +399,7 @@ CasmerDiamModPlot <- dat %>%
   add_predicted_draws(diam_nb_casmer, allow_new_levels = TRUE, re_formula = NA) %>%
   ggplot(aes(x = altitude, y = mxdiam_mm, color = dist, fill = dist)) +
   stat_lineribbon(aes(y = .prediction), .width = c(.95), alpha = 0.33) +
-  geom_point(data = dat %>% filter(species == "casmer")) +
+  geom_point(data = dat %>% filter(species == "casmer"), size = 3) +
   labs(title = "Cassiope mertensiana", tag = "f)") +
   ylab("Plant maximum diameter (mm)") +
   xlab("Elevation (m)") +
@@ -416,7 +415,7 @@ VacovaDiamModPlot <- dat %>%
   add_predicted_draws(diam_nb_vacova, allow_new_levels = TRUE, re_formula = NA) %>%
   ggplot(aes(x = altitude, y = mxdiam_mm, color = dist, fill = dist)) +
   stat_lineribbon(aes(y = .prediction), .width = c(.95), alpha = 0.33) +
-  geom_point(data = dat %>% filter(species == "vacova")) +
+  geom_point(data = dat %>% filter(species == "vacova"), size = 3) +
   labs(title = "Vaccinium ovalifolium", tag = "g)") +
   ylab("Plant maximum diameter (mm)") +
   xlab("Elevation (m)") +
@@ -432,11 +431,11 @@ CarexDiamModPlot <- dat %>%
   add_predicted_draws(diam_nb_carspp, allow_new_levels = TRUE, re_formula = NA) %>%
   ggplot(aes(x = altitude, y = mxdiam_mm, color = dist, fill = dist)) +
   stat_lineribbon(aes(y = .prediction), .width = c(.95), alpha = 0.33) +
-  geom_point(data = dat %>% filter(species == "carspp")) +
-  ggtitle(expression(atop(paste(italic("Carex "), "spp.")))) +
+  geom_point(data = dat %>% filter(species == "carspp"), size = 3) +
+  ggtitle(expression(paste(italic("Carex "), "spp."))) +
   ylab("Plant maximum diameter (mm)") +
   xlab("Elevation (m)") +
-  labs(tag = "h") +
+  labs(tag = "h)") +
   scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
   scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance")  +
   theme(legend.position = "none")
@@ -453,7 +452,7 @@ PhyempReproModPlot <- dat %>%
     add_predicted_draws(phyemp_repro_beta, allow_new_levels = TRUE, re_formula = NA) %>%
     ggplot(aes(x = altitude, y = rel_repro, color = dist, fill = dist)) +
     stat_lineribbon(aes(y = .prediction, fill = dist), .width = c(.95), alpha = 0.33) + #### problem: probability distributions not showing up
-    geom_point(data = dat %>% filter(species == "phyemp")) +
+    geom_point(data = dat %>% filter(species == "phyemp"), size = 3) +
     labs(title = "Phyllodoce empetriformis", tag = "i)") +
     labs(x = expression(paste("Elevation (m)")),
          y = expression(paste("Relative reproductive output"))) +
@@ -469,7 +468,7 @@ CasmerReproModPlot <- dat %>%
   add_predicted_draws(repro_beta_casmer, allow_new_levels = TRUE, re_formula = NA) %>%
   ggplot(aes(x = altitude, y = rel_repro, color = dist, fill = dist)) +
   stat_lineribbon(aes(y = .prediction, fill = dist), .width = c(.95), alpha = 0.33) + #### problem: probability distributions not showing up
-  geom_point(data = dat %>% filter(species == "casmer")) +
+  geom_point(data = dat %>% filter(species == "casmer"), size = 3) +
   labs(title = "Cassiope mertensiana", tag = "j)") +
   labs(x = expression(paste("Elevation (m)")),
        y = expression(paste("Relative reproductive output"))) +
@@ -485,7 +484,7 @@ VacovaReproModPlot <- dat %>%
   add_predicted_draws(repro_beta_vacova, allow_new_levels = TRUE, re_formula = NA) %>%
   ggplot(aes(x = altitude, y = rel_repro, color = dist, fill = dist)) +
   stat_lineribbon(aes(y = .prediction, fill = dist), .width = c(.95), alpha = 0.33) + #### problem: probability distributions not showing up
-  geom_point(data = dat %>% filter(species == "vacova")) +
+  geom_point(data = dat %>% filter(species == "vacova"), size = 3) +
   labs(title = "Vaccinium ovalifolium", tag = "k)") +
   labs(x = expression(paste("Elevation (m)")),
        y = expression(paste("Relative reproductive output"))) +
@@ -504,7 +503,7 @@ PercentCoverModPlot <- dat %>%
   add_predicted_draws(percentCover, allow_new_levels = TRUE, re_formula = NA) %>%
   ggplot(aes(x = altitude, y = perc.cov, color = dist, fill = dist)) +
   stat_lineribbon(aes(y = .prediction), .width = c(.95), alpha = 0.33) +
-  geom_point(data = dat) +
+  geom_point(data = dat, size = 3) +
   labs(title = "All species") +
   ylab("Percent cover") +
   xlab("\nElevation (m)") +
@@ -580,19 +579,6 @@ species_names <- c('carspp'= "Carex spp.", 'casmer' = "Cassiope mertensiana", 'p
 
 # Plot size vs number of buds, flowers, and fruits/(height * diameter) by disturbed/undisturbed
 
-(casmerPlotAreaBySpecies <- ggplot(dat %>% filter(species == "casmer"), aes(x= plantArea_cm2, y= repro, color = dist)) +
-    geom_point(data = dat %>% filter(species == "casmer")) +
-    labs(title = "Cassiope mertensiana") +
-    stat_smooth(aes(fill = dist), method = "lm", formula = y ~ x, geom = "ribbon", alpha = 0.3, size = 0) +
-    stat_smooth(aes(color = dist), method = "lm", formula = y ~ x, geom = "line", size=1) +
-    scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-    coord_trans(y = "log1p") + #log10 y axis 
-    labs(x = expression(paste("Plant size (", cm^2, ")")),
-         y = expression(paste("Density of reproductive structures (counts/", cm^2, ")")),
-        tag = "a)") +
-    theme(legend.position = c(0.75, 0.75), plot.title = element_text(face = "italic")))
-
 (phyempPlotAreaBySpecies <- ggplot(dat %>% filter(species == "phyemp"), aes(x= plantArea_cm2, y= repro, color = dist)) +
     geom_point(data = dat %>% filter(species == "phyemp")) +
     labs(title = "Phyllodoce empetriformis") +
@@ -605,6 +591,19 @@ species_names <- c('carspp'= "Carex spp.", 'casmer' = "Cassiope mertensiana", 'p
          y = expression(paste("Density of reproductive structures (counts/", cm^2, ")")),
          tag = "b)") +
     theme(legend.position = "none", plot.title = element_text(face = "italic")))
+
+(casmerPlotAreaBySpecies <- ggplot(dat %>% filter(species == "casmer"), aes(x= plantArea_cm2, y= repro, color = dist)) +
+    geom_point(data = dat %>% filter(species == "casmer")) +
+    labs(title = "Cassiope mertensiana") +
+    stat_smooth(aes(fill = dist), method = "lm", formula = y ~ x, geom = "ribbon", alpha = 0.3, size = 0) +
+    stat_smooth(aes(color = dist), method = "lm", formula = y ~ x, geom = "line", size=1) +
+    scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
+    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
+    coord_trans(y = "log1p") + #log10 y axis 
+    labs(x = expression(paste("Plant size (", cm^2, ")")),
+         y = expression(paste("Density of reproductive structures (counts/", cm^2, ")")),
+        tag = "a)") +
+    theme(legend.position = c(0.75, 0.75), plot.title = element_text(face = "italic")))
 
 (vacovaPlotAreaBySpecies <- ggplot(dat %>% filter(species == "vacova"), aes(x= plantArea_cm2, y= repro, color = dist)) +
     geom_point(data = dat %>% filter(species == "vacova")) +
@@ -619,9 +618,9 @@ species_names <- c('carspp'= "Carex spp.", 'casmer' = "Cassiope mertensiana", 'p
          tag = "c)") +
     theme(legend.position = "none", plot.title = element_text(face = "italic")))
 
-allSpeciesReproPlot <- grid.arrange(casmerPlotAreaBySpecies, phyempPlotAreaBySpecies, vacovaPlotAreaBySpecies, nrow=1)
+allSpeciesReproPlot <- grid.arrange(phyempPlotAreaBySpecies, casmerPlotAreaBySpecies, vacovaPlotAreaBySpecies, nrow=1)
 
-
+ggsave(allSpeciesReproPlot, file = 'trampling_analyses/outputs/ms_figs/allSpeciesReproPlot.pdf', width = 20, height = 10)
 
 
 ####################################################################################################
@@ -685,7 +684,3 @@ mod <- lmer(totalReproStructByArea ~ plantArea_cm2 + dist + (1|trans.pair), data
 
 summary(mod)
 
-
-
-
-ggsave(allSpeciesReproPlot, file = 'trampling_analyses/outputs/ms_figs/allSpeciesReproPlot.pdf', width = 20, height = 10)
