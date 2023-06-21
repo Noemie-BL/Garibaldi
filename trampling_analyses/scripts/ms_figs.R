@@ -65,8 +65,8 @@ mytheme <-   theme_classic() +
                                   hjust = 0.5), #align title to center
         plot.tag = element_text(size = 50), plot.tag.position = c(0.08, 0.98), #plot tags for labelling within figure
         plot.subtitle = element_text(size = 60, hjust = 1), #subtitle is being used to show sig asterisk
-        legend.title = element_text(size = 46), legend.text = element_text(size = 35), #legend text size
-        plot.margin = margin(1,1.5,1,0.5, "cm"))  #increased plot margins on right so axis text seen in full
+        legend.title = element_text(size = 46), legend.text = element_text(size = 40), legend.key.height = unit(2, 'cm'), legend.key.width = unit(1, 'cm'), #legend text size
+        plot.margin = margin(1.5,1.5,1.5,0.5, "cm"))  #increased plot margins on right so axis text seen in full
 
 theme_set(mytheme)
 
@@ -74,13 +74,13 @@ theme_set(mytheme)
 # # HEIGHT # #
 
 #phyemp
-cond <- conditional_effects(phyemp_height_nb, effect = 'dist')
+cond <- conditional_effects(phyemp_height_nb, effect = 'dist', re_formula = NULL)
 est <- as.data.frame(cond[[1]])
 
 #with random effects considered - estimates are slightly different 
-summary(phyemp_height_nb)
-condr <- conditional_effects(phyemp_height_nb, effect = 'dist', re_formula = NULL) #NULL=include all random effects
-estr <- as.data.frame(condr[[1]])
+# summary(phyemp_height_nb)
+# condr <- conditional_effects(phyemp_height_nb, effect = 'dist', re_formula = NULL) #NULL=include all random effects
+# estr <- as.data.frame(condr[[1]])
 
 phyemp_height_plot <- ggplot(est, aes(dist, height_mm, color = dist)) +
     labs(title = "Phyllodoce empetriformis", tag = "a)", subtitle = "*") +
@@ -91,10 +91,10 @@ phyemp_height_plot <- ggplot(est, aes(dist, height_mm, color = dist)) +
     scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
     scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
     scale_x_discrete(labels=c("0" = "Undisturbed", "1" = "Disturbed")) +
-    theme(legend.title = element_blank(), legend.position = c(0.8, 0.83), plot.title = element_text(face = "italic"))
+    theme(legend.title = element_blank(), legend.position = c(0.78, 0.88), plot.title = element_text(face = "italic"), axis.text.x=element_blank(), axis.ticks.x=element_blank())
 
 #casmer
-cond <- conditional_effects(height_nb_casmer, effect = 'dist')
+cond <- conditional_effects(height_nb_casmer, effect = 'dist', re_formula = NULL)
 est <- as.data.frame(cond[[1]])
 
 casmer_height_plot <- ggplot(est, aes(dist, height_mm, color = dist)) +
@@ -107,10 +107,10 @@ casmer_height_plot <- ggplot(est, aes(dist, height_mm, color = dist)) +
     scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
     scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
     scale_x_discrete(labels=c("0" = "Undisturbed", "1" = "Disturbed")) +
-    theme(legend.position = "none", plot.title = element_text(face = "italic"))
+    theme(legend.position = "none", plot.title = element_text(face = "italic"), axis.text.x=element_blank(), axis.ticks.x=element_blank())
 
 #vacova
-cond <- conditional_effects(height_nb_vacova, effect = 'dist')
+cond <- conditional_effects(height_nb_vacova, effect = 'dist', re_formula = NULL)
 est <- as.data.frame(cond[[1]])
 
 vacova_height_plot <- ggplot(est, aes(dist, height_mm, color = dist)) +
@@ -123,10 +123,10 @@ vacova_height_plot <- ggplot(est, aes(dist, height_mm, color = dist)) +
     scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
     scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
     scale_x_discrete(labels=c("0" = "Undisturbed", "1" = "Disturbed")) +
-    theme(legend.position = "none", plot.title = element_text(face = "italic"))
+    theme(legend.position = "none", plot.title = element_text(face = "italic"), axis.text.x=element_blank(), axis.ticks.x=element_blank())
 
 #carspp
-cond <- conditional_effects(height_nb_carspp, effect = 'dist')
+cond <- conditional_effects(height_nb_carspp, effect = 'dist', re_formula = NULL)
 est <- as.data.frame(cond[[1]])
 
 carspp_height_plot <- ggplot(est, aes(dist, height_mm, color = dist)) +
@@ -140,18 +140,18 @@ carspp_height_plot <- ggplot(est, aes(dist, height_mm, color = dist)) +
   scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_x_discrete(labels=c("0" = "Undisturbed", "1" = "Disturbed")) +
-  theme(legend.position = "none")
+  theme(legend.position = "none", axis.text.x=element_blank(), axis.ticks.x=element_blank())
 
 
 # # DIAMETER # #
 
 #phyemp
-cond <- conditional_effects(phyemp_diam_nb, effect = 'dist')
+cond <- conditional_effects(phyemp_diam_nb, effect = 'dist', re_formula = NULL)
 est <- as.data.frame(cond[[1]])
 
 phyemp_diam_plot <- ggplot(est, aes(dist, mxdiam_mm, color = dist)) +
   labs(title = "Phyllodoce empetriformis", tag = "e)", subtitle = "*") +
-  ylab("Plant maximum diameter (mm)") +
+  ylab("Plant diameter (mm)") +
   xlab("Disturbance") +
   geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 2.75) +
   geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.5, linewidth = 2.75) +
@@ -159,15 +159,15 @@ phyemp_diam_plot <- ggplot(est, aes(dist, mxdiam_mm, color = dist)) +
   scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_x_discrete(labels=c("0" = "Undisturbed", "1" = "Disturbed")) +
-  theme(legend.position = "none", plot.title = element_text(face = "italic"))
+  theme(legend.position = "none", plot.title = element_text(face = "italic"), axis.text.x=element_blank(), axis.ticks.x=element_blank())
 
 #casmer
-cond <- conditional_effects(diam_nb_casmer, effect = 'dist')
+cond <- conditional_effects(diam_nb_casmer, effect = 'dist', re_formula = NULL)
 est <- as.data.frame(cond[[1]])
 
 casmer_diam_plot <- ggplot(est, aes(dist, mxdiam_mm, color = dist)) +
   labs(title = "Cassiope mertensiana", tag = "f)", subtitle = "*") +
-  ylab("Plant maximum diameter (mm)") +
+  ylab("Plant diameter (mm)") +
   xlab("Disturbance") +
   geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 2.75) +
   geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.5, linewidth = 2.75) +
@@ -175,15 +175,15 @@ casmer_diam_plot <- ggplot(est, aes(dist, mxdiam_mm, color = dist)) +
   scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_x_discrete(labels=c("0" = "Undisturbed", "1" = "Disturbed")) +
-  theme(legend.position = "none", plot.title = element_text(face = "italic"))
+  theme(legend.position = "none", plot.title = element_text(face = "italic"), axis.text.x=element_blank(), axis.ticks.x=element_blank())
 
 #vacova
-cond <- conditional_effects(diam_nb_vacova, effect = 'dist')
+cond <- conditional_effects(diam_nb_vacova, effect = 'dist', re_formula = NULL)
 est <- as.data.frame(cond[[1]])
 
 vacova_diam_plot <- ggplot(est, aes(dist, mxdiam_mm, color = dist)) +
   labs(title = "Vaccinium ovatifolium", tag = "g)", subtitle = "*") +
-  ylab("Plant maximum diameter (mm)") +
+  ylab("Plant diameter (mm)") +
   xlab("Disturbance") +
   geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 2.75) +
   geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.5, linewidth = 2.75) +
@@ -191,16 +191,16 @@ vacova_diam_plot <- ggplot(est, aes(dist, mxdiam_mm, color = dist)) +
   scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_x_discrete(labels=c("0" = "Undisturbed", "1" = "Disturbed")) +
-  theme(legend.position = "none", plot.title = element_text(face = "italic"))
+  theme(legend.position = "none", plot.title = element_text(face = "italic"), axis.text.x=element_blank(), axis.ticks.x=element_blank())
 
 #carspp
-cond <- conditional_effects(diam_nb_carspp, effect = 'dist')
+cond <- conditional_effects(diam_nb_carspp, effect = 'dist', re_formula = NULL)
 est <- as.data.frame(cond[[1]])
 
 carspp_diam_plot <- ggplot(est, aes(dist, mxdiam_mm, color = dist)) +
   ggtitle(expression(paste(italic("Carex "), "spp."))) +
   labs(tag = "h)", subtitle = "*") +
-  ylab("Plant maximum diameter (mm)") +
+  ylab("Plant diameter (mm)") +
   xlab("Disturbance") +
   geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 2.75) +
   geom_errorbar(aes(ymin = lower__, ymax = upper__), width = 0.5, linewidth = 2.75) +
@@ -208,13 +208,13 @@ carspp_diam_plot <- ggplot(est, aes(dist, mxdiam_mm, color = dist)) +
   scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_x_discrete(labels=c("0" = "Undisturbed", "1" = "Disturbed")) +
-  theme(legend.position = "none")
+  theme(legend.position = "none", axis.text.x=element_blank(), axis.ticks.x=element_blank())
 
 
 # # REPRODUCTIVE OUTPUT # #
 
 #phyemp
-cond <- conditional_effects(phyemp_repro_beta, effect = 'dist')
+cond <- conditional_effects(phyemp_repro_beta, effect = 'dist', re_formula = NULL)
 est <- as.data.frame(cond[[1]])
 
 phyemp_repro_plot <- ggplot(est, aes(dist, rel_repro, color = dist)) +
@@ -227,10 +227,10 @@ phyemp_repro_plot <- ggplot(est, aes(dist, rel_repro, color = dist)) +
   scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_x_discrete(labels=c("0" = "Undisturbed", "1" = "Disturbed")) +
-  theme(legend.position = "none", plot.title = element_text(face = "italic"))
+  theme(legend.position = "none", plot.title = element_text(face = "italic"), axis.text.x=element_blank(), axis.ticks.x=element_blank())
 
 #casmer
-cond <- conditional_effects(repro_beta_casmer, effect = 'dist')
+cond <- conditional_effects(repro_beta_casmer, effect = 'dist', re_formula = NULL)
 est <- as.data.frame(cond[[1]])
 
 casmer_repro_plot <- ggplot(est, aes(dist, rel_repro, color = dist)) +
@@ -243,10 +243,10 @@ casmer_repro_plot <- ggplot(est, aes(dist, rel_repro, color = dist)) +
   scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_x_discrete(labels=c("0" = "Undisturbed", "1" = "Disturbed")) +
-  theme(legend.position = "none", plot.title = element_text(face = "italic"))
+  theme(legend.position = "none", plot.title = element_text(face = "italic"), axis.text.x=element_blank(), axis.ticks.x=element_blank())
 
 #vacova
-cond <- conditional_effects(repro_beta_vacova, effect = 'dist')
+cond <- conditional_effects(repro_beta_vacova, effect = 'dist', re_formula = NULL)
 est <- as.data.frame(cond[[1]])
 
 vacova_repro_plot <- ggplot(est, aes(dist, rel_repro, color = dist)) +
@@ -259,12 +259,12 @@ vacova_repro_plot <- ggplot(est, aes(dist, rel_repro, color = dist)) +
   scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_x_discrete(labels=c("0" = "Undisturbed", "1" = "Disturbed")) +
-  theme(legend.position = "none", plot.title = element_text(face = "italic"))
+  theme(legend.position = "none", plot.title = element_text(face = "italic"), axis.text.x=element_blank(), axis.ticks.x=element_blank())
 
 
 # # PERCENT COVER # #
 
-cond <- conditional_effects(percentCover, effect = 'dist')
+cond <- conditional_effects(percentCover, effect = 'dist', re_formula = NULL)
 est <- as.data.frame(cond[[1]])
 
 perccover_plot <- ggplot(est, aes(dist, perc.cov, color = dist)) +
@@ -278,14 +278,14 @@ perccover_plot <- ggplot(est, aes(dist, perc.cov, color = dist)) +
   scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_x_discrete(labels=c("0" = "Undisturbed", "1" = "Disturbed")) +
-  theme(legend.position = "none")
+  theme(legend.position = "none", axis.text.x=element_blank(), axis.ticks.x=element_blank())
 
 
 
 # # PANEL FIGURES # #
 
 allTraitsPanelPlot <- grid.arrange(phyemp_height_plot, casmer_height_plot, vacova_height_plot, carspp_height_plot, phyemp_diam_plot, casmer_diam_plot, vacova_diam_plot, carspp_diam_plot, phyemp_repro_plot, casmer_repro_plot, vacova_repro_plot, perccover_plot, nrow=3)
-ggsave(allTraitsPanelPlot, file = 'trampling_analyses/outputs/ms_figs/allTraitsPanelPlot.pdf', width = 40, height = 42)
+ggsave(allTraitsPanelPlot, file = 'trampling_analyses/outputs/ms_figs/allTraitsPanelPlot.pdf', width = 40, height = 36)
 
 
 
@@ -390,7 +390,7 @@ PhyempDiamModPlot <- dat %>%
   stat_lineribbon(aes(y = .prediction), .width = c(.95), alpha = 0.33) +
   geom_point(data = dat %>% filter(species == "phyemp"), size = 3) +
   labs(title = "Phyllodoce empetriformis", tag = "e)") +
-  ylab("Plant maximum diameter (mm)") +
+  ylab("Plant diameter (mm)") +
   xlab("Elevation (m)") +
   scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
   scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance")  +
@@ -406,7 +406,7 @@ CasmerDiamModPlot <- dat %>%
   stat_lineribbon(aes(y = .prediction), .width = c(.95), alpha = 0.33) +
   geom_point(data = dat %>% filter(species == "casmer"), size = 3) +
   labs(title = "Cassiope mertensiana", tag = "f)") +
-  ylab("Plant maximum diameter (mm)") +
+  ylab("Plant diameter (mm)") +
   xlab("Elevation (m)") +
   scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
   scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance")  +
@@ -422,7 +422,7 @@ VacovaDiamModPlot <- dat %>%
   stat_lineribbon(aes(y = .prediction), .width = c(.95), alpha = 0.33) +
   geom_point(data = dat %>% filter(species == "vacova"), size = 3) +
   labs(title = "Vaccinium ovalifolium", tag = "g)") +
-  ylab("Plant maximum diameter (mm)") +
+  ylab("Plant diameter (mm)") +
   xlab("Elevation (m)") +
   scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
   scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance")  +
@@ -438,7 +438,7 @@ CarexDiamModPlot <- dat %>%
   stat_lineribbon(aes(y = .prediction), .width = c(.95), alpha = 0.33) +
   geom_point(data = dat %>% filter(species == "carspp"), size = 3) +
   ggtitle(expression(paste(italic("Carex "), "spp."))) +
-  ylab("Plant maximum diameter (mm)") +
+  ylab("Plant diameter (mm)") +
   xlab("Elevation (m)") +
   labs(tag = "h)") +
   scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
