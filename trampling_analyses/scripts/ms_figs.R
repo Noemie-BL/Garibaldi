@@ -17,6 +17,7 @@ library(tidyverse)
 library(gridExtra)
 library(scales) #for percentage conversion on Y axis
 library(ggtext) #for italics in plot titles
+library(lmerTest)
 
 
 # # INPUT FILES # #
@@ -638,15 +639,14 @@ ggsave(allSpeciesReproPlot, file = 'trampling_analyses/outputs/ms_figs/allSpecie
 ####################################################################################################
 
 # # Data
-str(quad) #check that categorical explanatory variables are factors, others numeric
+load("trampling_analyses/compiled_data/quad.RData") ##updated with reproductive metric & plant area (repro.R)
 
-# Skew function (from: https://towardsdatascience.com/evaluating-bayesian-mixed-models-in-r-python-27d344a03016_)
-skew <- function(y){ # Fisher-Pearson Skew function based on NIST definition
-  n <- length(y)
-  dif <- y - mean(y)
-  skew_stat <- (sqrt(n-1)/(n-2))*n *(sum(dif^3)/(sum(dif^2)^1.5))
-  return(skew_stat)
-}
+totalReproStruct <- quad$flws + quad$frts + quad$buds #total repro structures
+quad <- cbind(quad, totalReproStruct)
+totalReproStructByArea <- quad$totalReproStruct / quad$plantArea_cm2
+quad <- cbind(quad, totalReproStructByArea)
+
+str(quad) #check that categorical explanatory variables are factors, others numeric
 
 ## PHYEMP ##
 
@@ -657,7 +657,7 @@ dat <- quad %>%
 hist(dat$totalReproStructByArea, breaks = 100)
 
 # # Fit Model 
-mod <- lmer(totalReproStructByArea ~ plantArea_cm2 + dist + (1|trans.pair), data = dat)
+mod <- lmer(totalReproStructByArea ~ plantArea_cm2 * dist + (1|trans.pair), data = dat)
 
 summary(mod)
 
@@ -671,7 +671,7 @@ dat <- quad %>%
 hist(dat$totalReproStructByArea, breaks = 100)
 
 # # Fit Model 
-mod <- lmer(totalReproStructByArea ~ plantArea_cm2 + dist + (1|trans.pair), data = dat)
+mod <- lmer(totalReproStructByArea ~ plantArea_cm2 * dist + (1|trans.pair), data = dat)
 
 summary(mod)
 
@@ -685,7 +685,7 @@ dat <- quad %>%
 hist(dat$totalReproStructByArea, breaks = 100)
 
 # # Fit Model 
-mod <- lmer(totalReproStructByArea ~ plantArea_cm2 + dist + (1|trans.pair), data = dat)
+mod <- lmer(totalReproStructByArea ~ plantArea_cm2 * dist + (1|trans.pair), data = dat)
 
 summary(mod)
 
