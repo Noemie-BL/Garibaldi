@@ -315,19 +315,16 @@ theme_set(mytheme)
 
 #phyemp
 PhyempHeightModPlot <- dat %>%
-  group_by(dist) %>%
   add_predicted_draws(phyemp_height_nb, allow_new_levels = TRUE, re_formula = NA) %>%
-  ggplot(aes(x = altitude, y = height_mm, color = dist, fill = dist)) +
+  ggplot(aes(x = altitude, y = height_mm)) +
   stat_lineribbon(aes(y = .prediction), .width = c(.95), alpha = 0.33) +
   geom_point(data = dat %>% filter(species == "phyemp"), size = 3) +
   labs(title = "Phyllodoce empetriformis", tag = "a)") +
   ylab("Plant height (mm)") +
   xlab("Elevation (m)") +
-  scale_color_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-  scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
-  theme(legend.title = element_blank(), legend.position = c(0.7, 0.75), plot.title = element_text(face = "italic"))
+  theme(legend.position = "none", plot.title = element_text(face = "italic"))
 
-ggsave(PhyempHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/PhyempHeightModPlotEdits3.pdf', width = 10, height = 8)
+ggsave(PhyempHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/PhyempHeightModPlotEdits.pdf', width = 10, height = 8)
 
 #casmer
 CasmerHeightModPlot <- dat %>%
@@ -594,7 +591,7 @@ species_names <- c('carspp'= "Carex spp.", 'casmer' = "Cassiope mertensiana", 'p
     coord_trans(y = "log1p") + #log10 y axis 
     labs(x = expression(paste("Plant size (", cm^2, ")")),
          y = expression(paste("Density of reproductive structures (counts/", cm^2, ")")),
-         tag = "b)") +
+         tag = "a)") +
     theme(legend.position = "none", plot.title = element_text(face = "italic")))
 
 (casmerPlotAreaBySpecies <- ggplot(dat %>% filter(species == "casmer"), aes(x= plantArea_cm2, y= repro, color = dist)) +
@@ -607,7 +604,7 @@ species_names <- c('carspp'= "Carex spp.", 'casmer' = "Cassiope mertensiana", 'p
     coord_trans(y = "log1p") + #log10 y axis 
     labs(x = expression(paste("Plant size (", cm^2, ")")),
          y = expression(paste("Density of reproductive structures (counts/", cm^2, ")")),
-        tag = "a)") +
+        tag = "b)") +
     theme(legend.position = c(0.75, 0.75), plot.title = element_text(face = "italic")))
 
 (vacovaPlotAreaBySpecies <- ggplot(dat %>% filter(species == "vacova"), aes(x= plantArea_cm2, y= repro, color = dist)) +
