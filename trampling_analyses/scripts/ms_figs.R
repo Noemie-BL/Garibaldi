@@ -115,7 +115,7 @@ cond <- conditional_effects(height_nb_vacova, effect = 'dist', re_formula = NULL
 est <- as.data.frame(cond[[1]])
 
 vacova_height_plot <- ggplot(est, aes(dist, height_mm, color = dist)) +
-    labs(title = "Vaccinium ovatifolium", tag = "c)", subtitle = "*") +
+    labs(title = "Vaccinium ovalifolium", tag = "c)", subtitle = "*") +
     ylab("Plant height (mm)") +
     xlab("Disturbance") +
     geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 2.75) +
@@ -183,7 +183,7 @@ cond <- conditional_effects(diam_nb_vacova, effect = 'dist', re_formula = NULL)
 est <- as.data.frame(cond[[1]])
 
 vacova_diam_plot <- ggplot(est, aes(dist, mxdiam_mm, color = dist)) +
-  labs(title = "Vaccinium ovatifolium", tag = "g)", subtitle = "*") +
+  labs(title = "Vaccinium ovalifolium", tag = "g)", subtitle = "*") +
   ylab("Plant diameter (mm)") +
   xlab("Disturbance") +
   geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 2.75) +
@@ -251,7 +251,7 @@ cond <- conditional_effects(repro_beta_vacova, effect = 'dist', re_formula = NUL
 est <- as.data.frame(cond[[1]])
 
 vacova_repro_plot <- ggplot(est, aes(dist, rel_repro, color = dist)) +
-  labs(title = "Vaccinium ovatifolium", tag = "k)", subtitle = "*") +
+  labs(title = "Vaccinium ovalifolium", tag = "k)", subtitle = "*") +
   labs(x = expression(paste("Disturbance")),
        y = expression(paste("Relative reproductive output"))) +
   geom_linerange(aes(ymin = lower__, ymax = upper__), linewidth = 2.75) +
