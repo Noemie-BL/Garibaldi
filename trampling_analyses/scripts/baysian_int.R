@@ -92,12 +92,10 @@ height_nb <- brms::brm(height_mm ~ dist * altitude + (1|trans.pair), seed = 0505
                        data = dat, family = negbinomial(link = "log", link_shape = "log"), 
                        # fitting information
                        chains = 3, iter = 5000, warmup = 1000, cores = 4, #for computers with 4 cores
-                       file = 'trampling_analyses/outputs/test_int/phyemp_height_nb.rds', file_refit = 'on_change')
+                       file = 'trampling_analyses/outputs/test_int/phyemp_height_nb_int.rds', file_refit = 'on_change')
 mod <- height_nb #generic model name
 
 ##### IN PROGRESS: check if models ok with interaction dist * altitude (Courtney/Nathalie)
-
-
 
 
 
@@ -183,11 +181,11 @@ dat <- quad %>% #rename DF
   filter_at(vars(mxdiam_mm, dist, altitude), all_vars(!is.na(.))) %>% #remove NAs in variables used in model
   filter(species == 'phyemp')
 
-diam_nb <- brms::brm(mxdiam_mm ~ dist + altitude + (1|trans.pair), seed = 050523,
+diam_nb <- brms::brm(mxdiam_mm ~ dist*altitude + (1|trans.pair), seed = 050523,
                      data = dat, family = negbinomial(link = "log", link_shape = "log"), 
                      # fitting information
                      chains = 3, iter = 8000, warmup = 1000, cores = 4, #for computers with 4 cores
-                     file = 'trampling_analyses/outputs/ms_results/phyemp_diam_nb.rds', file_refit = 'on_change')
+                     file = 'trampling_analyses/outputs/test_int/phyemp_diam_nb_int.rds', file_refit = 'on_change')
 mod <- diam_nb #generic model name
 
 # # CHECK MODEL
@@ -221,13 +219,13 @@ dat <- quad %>% #rename DF
   filter_at(vars(rel_repro, dist, altitude), all_vars(!is.na(.))) %>% #remove NAs in variables used in model
   filter(species == 'phyemp')
 
-repro_beta <- brms::brm(rel_repro ~ dist + altitude + (1|trans.pair), seed = 050523,
+repro_beta <- brms::brm(rel_repro ~ dist* altitude + (1|trans.pair), seed = 050523,
                         data = dat, family = Beta(link = "logit", link_phi = "log"), 
                         init = '0',
                         
                         # fitting information
                         chains = 3, iter = 5000, warmup = 1000, cores = 4, #for computers with 4 cores
-                        file = 'trampling_analyses/outputs/ms_results/phyemp_repro_beta.rds', file_refit = 'on_change')
+                        file = 'trampling_analyses/outputs/test_int/phyemp_repro_beta.rds_int', file_refit = 'on_change')
 mod <- repro_beta
 
 # CHECK MODEL
@@ -306,7 +304,7 @@ theme_set(mytheme)
    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
    theme(legend.title = element_blank()))
 
-ggsave(PhyempHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/PhyempHeightModPlot.pdf')
+#ggsave(PhyempHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/PhyempHeightModPlot.pdf')
 
 #diameter
 (PhyempDiamModPlot <- dat %>%
@@ -321,7 +319,7 @@ ggsave(PhyempHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/PhyempHei
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     theme(legend.title = element_blank()))
 
-ggsave(PhyempDiamModPlot, file = 'trampling_analyses/outputs/ms_figs/PhyempDiamModPlot.pdf')
+#ggsave(PhyempDiamModPlot, file = 'trampling_analyses/outputs/ms_figs/PhyempDiamModPlot.pdf')
 
 #reproductive output
 (PhyempReproModPlot <- dat %>%
@@ -336,7 +334,7 @@ ggsave(PhyempDiamModPlot, file = 'trampling_analyses/outputs/ms_figs/PhyempDiamM
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     theme(legend.title = element_blank()))
 
-ggsave(PhyempReproModPlot, file = 'trampling_analyses/outputs/ms_figs/PhyempReproModPlot.pdf')
+#ggsave(PhyempReproModPlot, file = 'trampling_analyses/outputs/ms_figs/PhyempReproModPlot.pdf')
 
 
 
@@ -356,10 +354,10 @@ dat <- quad %>% #rename DF
   filter_at(vars(height_mm, dist, altitude), all_vars(!is.na(.))) %>% 
   filter(species == 'casmer') ###*** change here
 
-height_nb <- brms::brm(height_mm ~ dist + altitude + (1|trans.pair), data = dat, seed = 050523,
+height_nb <- brms::brm(height_mm ~ dist*altitude + (1|trans.pair), data = dat, seed = 050523,
                        family = negbinomial(link = "log", link_shape = "log"), 
                        chains = 3, iter = 5000, warmup = 1000, cores = 4, 
-                       file = 'trampling_analyses/outputs/ms_results/height_nb_casmer.rds', ###*** change here
+                       file = 'trampling_analyses/outputs/test_int/height_nb_casmer_int.rds', ###*** change here
                        file_refit = 'on_change')
 mod <- height_nb #generic model name
 
@@ -392,10 +390,10 @@ dat <- quad %>% #rename DF
   filter_at(vars(mxdiam_mm, dist, altitude), all_vars(!is.na(.))) %>% 
   filter(species == 'casmer') ###*** change here
 
-diam_nb <- brms::brm(mxdiam_mm ~ dist + altitude + (1|trans.pair), data = dat, seed = 050523,
+diam_nb <- brms::brm(mxdiam_mm ~ dist*altitude + (1|trans.pair), data = dat, seed = 050523,
                      family = negbinomial(link = "log", link_shape = "log"), 
                      chains = 3, iter = 5000, warmup = 1000, cores = 4, 
-                     file = 'trampling_analyses/outputs/ms_results/diam_nb_casmer.rds', ###*** change here
+                     file = 'trampling_analyses/outputs/test_int/diam_nb_casmer_int.rds', ###*** change here
                      file_refit = 'on_change')
 mod <- diam_nb #generic model name
 
@@ -428,10 +426,10 @@ dat <- quad %>% #rename DF
   filter_at(vars(rel_repro, dist, altitude), all_vars(!is.na(.))) %>% 
   filter(species == 'casmer') ###*** change here
 
-repro_beta <- brms::brm(rel_repro ~ dist + altitude + (1|trans.pair), data = dat, seed = 050523,
+repro_beta <- brms::brm(rel_repro ~ dist*altitude + (1|trans.pair), data = dat, seed = 050523,
                         family = Beta(link = "logit", link_phi = "log"), init = '0',
                         chains = 3, iter = 5000, warmup = 1000, cores = 4, 
-                        file = 'trampling_analyses/outputs/ms_results/repro_beta_casmer.rds', ###*** change here
+                        file = 'trampling_analyses/outputs/test_int/repro_beta_casmer_int.rds', ###*** change here
                         file_refit = 'on_change')
 mod <- repro_beta
 
@@ -473,7 +471,7 @@ mod <- repro_beta
    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
    theme(legend.title = element_blank()))
 
-ggsave(CasmerHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/CasmerHeightModPlot.pdf')
+#ggsave(CasmerHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/CasmerHeightModPlot.pdf')
 
 #diameter
 (CasmerDiamModPlot <- dat %>%
@@ -488,7 +486,7 @@ ggsave(CasmerHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/CasmerHei
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     theme(legend.title = element_blank()))
 
-ggsave(CasmerDiamModPlot, file = 'trampling_analyses/outputs/ms_figs/CasmerDiamModPlot.pdf')
+#ggsave(CasmerDiamModPlot, file = 'trampling_analyses/outputs/ms_figs/CasmerDiamModPlot.pdf')
 
 #reproductive output
 (CasmerReproModPlot <- dat %>%
@@ -503,7 +501,7 @@ ggsave(CasmerDiamModPlot, file = 'trampling_analyses/outputs/ms_figs/CasmerDiamM
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     theme(legend.title = element_blank()))
 
-ggsave(CasmerReproModPlot, file = 'trampling_analyses/outputs/ms_figs/CasmerReproModPlot.pdf')
+#ggsave(CasmerReproModPlot, file = 'trampling_analyses/outputs/ms_figs/CasmerReproModPlot.pdf')
 
 
 
@@ -523,10 +521,10 @@ dat <- quad %>% #rename DF
   filter_at(vars(height_mm, dist, altitude), all_vars(!is.na(.))) %>% 
   filter(species == 'vacova') ###*** change here
 
-height_nb <- brms::brm(height_mm ~ dist + altitude + (1|trans.pair), data = dat, seed = 050523,
+height_nb <- brms::brm(height_mm ~ dist*altitude + (1|trans.pair), data = dat, seed = 050523,
                        family = negbinomial(link = "log", link_shape = "log"), 
                        chains = 3, iter = 5000, warmup = 1000, cores = 4, 
-                       file = 'trampling_analyses/outputs/ms_results/height_nb_vacova.rds', ###*** change here
+                       file = 'trampling_analyses/outputs/test_int/height_nb_vacova_int.rds', ###*** change here
                        file_refit = 'on_change')
 mod <- height_nb #generic model name
 
@@ -559,10 +557,10 @@ dat <- quad %>% #rename DF
   filter_at(vars(mxdiam_mm, dist, altitude), all_vars(!is.na(.))) %>% 
   filter(species == 'vacova') ###*** change here
 
-diam_nb <- brms::brm(mxdiam_mm ~ dist + altitude + (1|trans.pair), data = dat, seed = 050523,
+diam_nb <- brms::brm(mxdiam_mm ~ dist*altitude + (1|trans.pair), data = dat, seed = 050523,
                      family = negbinomial(link = "log", link_shape = "log"), 
                      chains = 3, iter = 8000, warmup = 1000, cores = 4, 
-                     file = 'trampling_analyses/outputs/ms_results/diam_nb_vacova.rds', ###*** change here
+                     file = 'trampling_analyses/outputs/test_int/diam_nb_vacova.rds_int', ###*** change here
                      file_refit = 'on_change')
 mod <- diam_nb #generic model name
 
@@ -595,10 +593,10 @@ dat <- quad %>% #rename DF
   filter_at(vars(rel_repro, dist, altitude), all_vars(!is.na(.))) %>% 
   filter(species == 'vacova') ###*** change here
 
-repro_beta <- brms::brm(rel_repro ~ dist + altitude + (1|trans.pair), data = dat, seed = 050523,
+repro_beta <- brms::brm(rel_repro ~ dist*altitude + (1|trans.pair), data = dat, seed = 050523,
                         family = Beta(link = "logit", link_phi = "log"), init = '0',
                         chains = 3, iter = 5000, warmup = 1000, cores = 4, 
-                        file = 'trampling_analyses/outputs/ms_results/repro_beta_vacova.rds', ###*** change here
+                        file = 'trampling_analyses/outputs/test_int/repro_beta_vacova_int.rds', ###*** change here
                         file_refit = 'on_change')
 mod <- repro_beta
 
@@ -640,7 +638,7 @@ mod <- repro_beta
    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
    theme(legend.title = element_blank()))
 
-ggsave(VacovaHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/VacovaHeightModPlot.pdf')
+#ggsave(VacovaHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/VacovaHeightModPlot.pdf')
 
 #diameter
 (VacovaDiamModPlot <- dat %>%
@@ -655,7 +653,7 @@ ggsave(VacovaHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/VacovaHei
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     theme(legend.title = element_blank()))
 
-ggsave(VacovaDiamModPlot, file = 'trampling_analyses/outputs/ms_figs/VacovaDiamModPlot.pdf')
+#ggsave(VacovaDiamModPlot, file = 'trampling_analyses/outputs/ms_figs/VacovaDiamModPlot.pdf')
 
 #reproductive output
 (VacovaReproModPlot <- dat %>%
@@ -670,7 +668,7 @@ ggsave(VacovaDiamModPlot, file = 'trampling_analyses/outputs/ms_figs/VacovaDiamM
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     theme(legend.title = element_blank()))
 
-ggsave(VacovaReproModPlot, file = 'trampling_analyses/outputs/ms_figs/VacovaReproModPlot.pdf')
+#ggsave(VacovaReproModPlot, file = 'trampling_analyses/outputs/ms_figs/VacovaReproModPlot.pdf')
 
 
 
@@ -690,10 +688,10 @@ dat <- quad %>% #rename DF
   filter_at(vars(height_mm, dist, altitude), all_vars(!is.na(.))) %>% 
   filter(species == 'carspp') ###*** change here
 
-height_nb <- brms::brm(height_mm ~ dist + altitude + (1|trans.pair), data = dat, seed = 050523,
+height_nb <- brms::brm(height_mm ~ dist*altitude + (1|trans.pair), data = dat, seed = 050523,
                        family = negbinomial(link = "log", link_shape = "log"), 
                        chains = 3, iter = 5000, warmup = 1000, cores = 4, 
-                       file = 'trampling_analyses/outputs/ms_results/height_nb_carspp.rds', ###*** change here
+                       file = 'trampling_analyses/outputs/test_int/height_nb_carspp_int.rds', ###*** change here
                        file_refit = 'on_change')
 mod <- height_nb #generic model name
 
@@ -726,11 +724,11 @@ dat <- quad %>% #rename DF
   filter_at(vars(mxdiam_mm, dist, altitude), all_vars(!is.na(.))) %>% 
   filter(species == 'carspp') ###*** change here
 
-diam_nb <- brms::brm(mxdiam_mm ~ dist + altitude + (1|trans.pair), data = dat, seed = 050523,
+diam_nb <- brms::brm(mxdiam_mm ~ dist*altitude + (1|trans.pair), data = dat, seed = 050523,
                      family = negbinomial(link = "log", link_shape = "log"), 
                      chains = 3, iter = 8000, warmup = 1000, cores = 4, 
                      control = list(adapt_delta = .99),
-                     file = 'trampling_analyses/outputs/ms_results/diam_nb_carspp.rds', ###*** change here
+                     file = 'trampling_analyses/outputs/test_int/diam_nb_carspp_int.rds', ###*** change here
                      file_refit = 'on_change')
 mod <- diam_nb #generic model name
 
@@ -774,7 +772,7 @@ mod <- diam_nb #generic model name
    scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
    theme(legend.title = element_blank()))
 
-ggsave(CarexHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/CarexHeightModPlot.pdf')
+#ggsave(CarexHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/CarexHeightModPlot.pdf')
 
 #diameter
 (CarexDiamModPlot <- dat %>%
@@ -789,7 +787,7 @@ ggsave(CarexHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/CarexHeigh
     scale_fill_manual(values = c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed"), name = "Disturbance") +
     theme(legend.title = element_blank()))
 
-ggsave(CarexHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/CarexDiamModPlot.pdf')
+#ggsave(CarexHeightModPlot, file = 'trampling_analyses/outputs/ms_figs/CarexDiamModPlot.pdf')
 
 
 
@@ -809,10 +807,10 @@ dat <- quad %>% #rename DF
   filter_at(vars(perc.cov, dist, altitude), all_vars(!is.na(.))) %>% 
   distinct(id, .keep_all = T)
 
-cover_beta <- brms::brm(perc.cov ~ dist + altitude + (1|trans.pair), data = dat, seed = 050523,
+cover_beta <- brms::brm(perc.cov ~ dist*altitude + (1|trans.pair), data = dat, seed = 050523,
                         family = Beta(link = "logit", link_phi = "log"), init = '0',
-                        chains = 3, iter = 3000, warmup = 1000, cores = 4, 
-                        file = 'trampling_analyses/outputs/ms_results/perc-cov_beta.rds', ###*** change here
+                        chains = 3, iter = 5000, warmup = 1000, cores = 4, 
+                        file = 'trampling_analyses/outputs/test_int/perc-cov_beta_int.rds', ###*** change here
                         file_refit = 'on_change')
 mod <- cover_beta
 
