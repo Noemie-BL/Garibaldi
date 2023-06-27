@@ -606,6 +606,8 @@ phyemp_height_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) 
   scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   theme(legend.title = element_blank(), legend.position = c(0.78, 0.78), plot.title = element_text(face = "italic"))
 
+# ggsave(phyemp_height_elev_plot, file = 'trampling_analyses/outputs/ms_figs/PhyempHeightModPlotEdits.pdf', width = 10, height = 8)
+
 #casmer
 cond <- conditional_effects(height_nb_casmer)[[3]]
 est <- as.data.frame(cond)
@@ -676,6 +678,8 @@ phyemp_diam_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) +
   scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   theme(legend.title = element_blank(), legend.position = c(0.78, 0.88), plot.title = element_text(face = "italic"))
 
+#ggsave(phyemp_diam_elev_plot, file = 'trampling_analyses/outputs/ms_figs/PhyempDiamModPlot.pdf', width = 10, height = 8)
+
 #casmer
 cond <- conditional_effects(diam_nb_casmer)[[3]]
 est <- as.data.frame(cond)
@@ -712,7 +716,7 @@ vacova_diam_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) +
 cond <- conditional_effects(diam_nb_carspp)[[3]]
 est <- as.data.frame(cond)
 
-carspp_height_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) +
+carspp_diam_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) +
   labs(tag = "(h)") +
   ggtitle(expression(paste(italic("Carex "), "spp."))) +
   geom_point(data = dat %>% filter(species == "carspp"), size = 2.75) +
@@ -725,7 +729,7 @@ carspp_height_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) 
   theme(legend.position = "none")
 
 
-
+## STOP
 # # Reproductive output # #
 dat = subset(dat, select = -estimate__)
 dat <- dat %>% mutate(estimate__ = ) #need to make column of plant diamter called estimate__ so it can be plotted with line and ribbon plot of diameter estimates from model outputs
