@@ -674,7 +674,7 @@ phyemp_diam_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) +
   geom_line(size = 1.5) +
   scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
-  theme(legend.title = element_blank(), legend.position = c(0.78, 0.88), plot.title = element_text(face = "italic"))
+  theme(legend.position = "none", plot.title = element_text(face = "italic"))
 
 #casmer
 cond <- conditional_effects(diam_nb_casmer)[[3]]
@@ -712,7 +712,7 @@ vacova_diam_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) +
 cond <- conditional_effects(diam_nb_carspp)[[3]]
 est <- as.data.frame(cond)
 
-carspp_height_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) +
+carspp_diam_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) +
   labs(tag = "(h)") +
   ggtitle(expression(paste(italic("Carex "), "spp."))) +
   geom_point(data = dat %>% filter(species == "carspp"), size = 2.75) +
@@ -728,10 +728,10 @@ carspp_height_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) 
 
 # # Reproductive output # #
 dat = subset(dat, select = -estimate__)
-dat <- dat %>% mutate(estimate__ = ) #need to make column of plant diamter called estimate__ so it can be plotted with line and ribbon plot of diameter estimates from model outputs
+dat <- dat %>% mutate(estimate__ = rel_repro) #need to make column of plant diamter called estimate__ so it can be plotted with line and ribbon plot of diameter estimates from model outputs
 
 #phyemp
-cond <- conditional_effects(phyemp_diam_nb)[[3]]
+cond <- conditional_effects(phyemp_repro_beta)[[3]]
 est <- as.data.frame(cond)
 
 phyemp_repro_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) +
@@ -743,10 +743,10 @@ phyemp_repro_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) +
   geom_line(size = 1.5) +
   scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
-  theme(legend.title = element_blank(), legend.position = c(0.78, 0.88), plot.title = element_text(face = "italic"))
+  theme(legend.position = "none", plot.title = element_text(face = "italic"))
 
 #casmer
-cond <- conditional_effects(diam_nb_casmer)[[3]]
+cond <- conditional_effects(repro_beta_casmer)[[3]]
 est <- as.data.frame(cond)
 
 casmer_repro_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) +
@@ -762,7 +762,7 @@ casmer_repro_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) +
 
 
 #vacova
-cond <- conditional_effects(diam_nb_vacova)[[3]]
+cond <- conditional_effects(repro_beta_vacova)[[3]]
 est <- as.data.frame(cond)
 
 vacova_repro_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) +
@@ -782,7 +782,7 @@ vacova_repro_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) +
 dat = subset(dat, select = -estimate__)
 dat <- dat %>% mutate(estimate__ = perc.cov) #need to make column of plant diamter called estimate__ so it can be plotted with line and ribbon plot of diameter estimates from model outputs
 
-cond <- conditional_effects(diam_nb_vacova)[[3]]
+cond <- conditional_effects(percentCover)[[3]]
 est <- as.data.frame(cond)
 
 percCov_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) +
@@ -793,9 +793,10 @@ percCov_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) +
   labs(tag = "(l)") +
   geom_ribbon(aes(ymin = lower__, ymax = upper__, fill = dist), alpha = 0.4) +
   geom_line(size = 1.5) +
+  scale_y_continuous(labels = percent_format()) +
   scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
   scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
-  theme(legend.position = "none", plot.title = element_text(face = "italic"))
+  theme(legend.position = "none")
 
 
 
@@ -810,7 +811,7 @@ ggsave(diamAltitudePanelPlot, file = 'trampling_analyses/outputs/ms_figs/diamAlt
 reproPerccoverAltitudePanelPlot <- grid.arrange(phyemp_repro_elev_plot, casmer_repro_elev_plot, vacova_repro_elev_plot, percCov_elev_plot, nrow =1)
 ggsave(reproPerccoverAltitudePanelPlot, file = 'trampling_analyses/outputs/ms_figs/reproPerccoverAltitudePanelPlot.pdf', width = 40, height = 14)
 
-allTraitsAltitudePanelPlot <- grid.arrange(PhyempHeightModPlot, CasmerHeightModPlot, VacovaHeightModPlot, CarexHeightModPlot, PhyempDiamModPlot, CasmerDiamModPlot, VacovaDiamModPlot, CarexDiamModPlot, PhyempReproModPlot, CasmerReproModPlot, VacovaReproModPlot, PercentCoverModPlot, nrow=3)
+allTraitsAltitudePanelPlot <- grid.arrange(phyemp_height_elev_plot, casmer_height_elev_plot, vacova_height_elev_plot, carspp_height_elev_plot, phyemp_diam_elev_plot, casmer_diam_elev_plot, vacova_diam_elev_plot, carspp_diam_elev_plot, phyemp_repro_elev_plot, casmer_repro_elev_plot, vacova_repro_elev_plot, percCov_elev_plot, nrow=3)
 ggsave(allTraitsAltitudePanelPlot, file = 'trampling_analyses/outputs/ms_figs/allTraitsAltitudePanelPlot.pdf', width = 40, height = 42)
 
 
