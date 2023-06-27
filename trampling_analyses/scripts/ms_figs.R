@@ -18,6 +18,7 @@ library(gridExtra)
 library(scales) #for percentage conversion on Y axis
 library(ggtext) #for italics in plot titles
 library(lmerTest)
+library(dplyr)
 
 
 # # INPUT FILES # #
@@ -299,6 +300,11 @@ ggsave(allTraitsPanelPlot, file = 'trampling_analyses/outputs/ms_figs/allTraitsP
 
 ####################################################################################################
 
+load("trampling_analyses/compiled_data/quad.RData") 
+dat <- quad
+dat <- dat %>% mutate(estimate__ = height_mm) #need to make column of plant height called estimate__ so it can be plotted with line and ribbon plot of height estimates from model outputs
+
+
 # # THEME # #
 mytheme <-   theme_classic() +
   theme(axis.text.x = element_text(colour = 'black', size = 46, angle = 30, hjust = 1), #x axis text size
@@ -314,7 +320,6 @@ mytheme <-   theme_classic() +
 
 theme_set(mytheme)
 
-# # HEIGHT # #
 
 #phyemp
 PhyempHeightModPlot <- dat %>%
@@ -546,6 +551,269 @@ ggsave(reproPerccoverAltitudePanelPlot, file = 'trampling_analyses/outputs/ms_fi
 
 allTraitsAltitudePanelPlot <- grid.arrange(PhyempHeightModPlot, CasmerHeightModPlot, VacovaHeightModPlot, CarexHeightModPlot, PhyempDiamModPlot, CasmerDiamModPlot, VacovaDiamModPlot, CarexDiamModPlot, PhyempReproModPlot, CasmerReproModPlot, VacovaReproModPlot, PercentCoverModPlot, nrow=3)
 ggsave(allTraitsAltitudePanelPlot, file = 'trampling_analyses/outputs/ms_figs/allTraitsAltitudePanelPlot.pdf', width = 40, height = 42)
+
+
+
+
+
+
+
+####################################################################################################
+
+# # Fig. S1: disturbance * elevation # #
+
+###UPDATED VERSION
+
+## IN PROGRESS: need to update with new models and interaction effects
+
+####################################################################################################
+
+load("trampling_analyses/compiled_data/quad.RData") 
+dat <- quad
+
+
+# # THEME # #
+mytheme <-   theme_classic() +
+  theme(axis.text.x = element_text(colour = 'black', size = 46, angle = 30, hjust = 1), #x axis text size
+        axis.text.y = element_text(colour = 'black', size = 46), #y axis text size
+        axis.title.x= element_text(size = 50), #x axis label size
+        axis.title.y = element_text(size = 50), #x axis label size
+        plot.title = element_text(size = 51, #title size
+                                  hjust = 0.5), #align title to center
+        plot.tag = element_text(size = 50), plot.tag.position = c(0.08, 0.98), #plot tags for labelling within figure
+        plot.subtitle = element_text(size = 60, hjust = 1), #subtitle is being used to show sig asterisk
+        legend.title = element_text(size = 46), legend.text = element_text(size = 35), #legend text size
+        plot.margin = margin(1,1.5,1,0.5, "cm"))  #increased plot margins on right so axis text seen in full
+
+theme_set(mytheme)
+
+# # HEIGHT # #
+dat <- dat %>% mutate(estimate__ = height_mm) #need to make column of plant height called estimate__ so it can be plotted with line and ribbon plot of height estimates from model outputs
+
+
+#phyemp
+cond <- conditional_effects(phyemp_height_nb)[[3]]
+est <- as.data.frame(cond)
+
+phyemp_height_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) +
+  labs(title = "Phyllodoce empetriformis", tag = "(a)") +
+  geom_point(data = dat %>% filter(species == "phyemp"), size = 2.75) +
+  ylab("Plant height (mm)") +
+  xlab("Elevation (m)") +
+  geom_ribbon(aes(ymin = lower__, ymax = upper__, fill = dist), alpha = 0.4) +
+  geom_line(size = 1.5) +
+  scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
+  scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
+  theme(legend.title = element_blank(), legend.position = c(0.78, 0.78), plot.title = element_text(face = "italic"))
+
+#casmer
+cond <- conditional_effects(height_nb_casmer)[[3]]
+est <- as.data.frame(cond)
+
+casmer_height_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) +
+  labs(title = "Cassiope mertensiana", tag = "(b)") +
+  geom_point(data = dat %>% filter(species == "casmer"), size = 2.75) +
+  ylab("Plant height (mm)") +
+  xlab("Elevation (m)") +
+  geom_ribbon(aes(ymin = lower__, ymax = upper__, fill = dist), alpha = 0.4) +
+  geom_line(size = 1.5) +
+  scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
+  scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
+  theme(legend.position = "none", plot.title = element_text(face = "italic"))
+
+
+#vacova
+cond <- conditional_effects(height_nb_vacova)[[3]]
+est <- as.data.frame(cond)
+
+vacova_height_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) +
+  labs(title = "Vaccinium ovalifolium", tag = "(c)") +
+  geom_point(data = dat %>% filter(species == "vacova"), size = 2.75) +
+  ylab("Plant height (mm)") +
+  xlab("Elevation (m)") +
+  geom_ribbon(aes(ymin = lower__, ymax = upper__, fill = dist), alpha = 0.4) +
+  geom_line(size = 1.5) +
+  scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
+  scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
+  theme(legend.position = "none", plot.title = element_text(face = "italic"))
+
+
+#carspp
+cond <- conditional_effects(height_nb_carspp)[[3]]
+est <- as.data.frame(cond)
+
+carspp_height_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) +
+  labs(tag = "(d)") +
+  ggtitle(expression(paste(italic("Carex "), "spp."))) +
+  geom_point(data = dat %>% filter(species == "carspp"), size = 2.75) +
+  ylab("Plant height (mm)") +
+  xlab("Elevation (m)") +
+  geom_ribbon(aes(ymin = lower__, ymax = upper__, fill = dist), alpha = 0.4) +
+  geom_line(size = 1.5) +
+  scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
+  scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
+  theme(legend.position = "none")
+
+
+
+
+# # Diameter # #
+dat = subset(dat, select = -estimate__)
+dat <- dat %>% mutate(estimate__ = mxdiam_mm) #need to make column of plant diamter called estimate__ so it can be plotted with line and ribbon plot of diameter estimates from model outputs
+
+#phyemp
+cond <- conditional_effects(phyemp_diam_nb)[[3]]
+est <- as.data.frame(cond)
+
+phyemp_diam_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) +
+  labs(title = "Phyllodoce empetriformis", tag = "(e)") +
+  geom_point(data = dat %>% filter(species == "phyemp"), size = 2.75) +
+  ylab("Plant diameter (mm)") +
+  xlab("Elevation (m)") +
+  geom_ribbon(aes(ymin = lower__, ymax = upper__, fill = dist), alpha = 0.4) +
+  geom_line(size = 1.5) +
+  scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
+  scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
+  theme(legend.title = element_blank(), legend.position = c(0.78, 0.88), plot.title = element_text(face = "italic"))
+
+#casmer
+cond <- conditional_effects(diam_nb_casmer)[[3]]
+est <- as.data.frame(cond)
+
+casmer_diam_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) +
+  labs(title = "Cassiope mertensiana", tag = "(f)") +
+  geom_point(data = dat %>% filter(species == "casmer"), size = 2.75) +
+  ylab("Plant diameter (mm)") +
+  xlab("Elevation (m)") +
+  geom_ribbon(aes(ymin = lower__, ymax = upper__, fill = dist), alpha = 0.4) +
+  geom_line(size = 1.5) +
+  scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
+  scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
+  theme(legend.position = "none", plot.title = element_text(face = "italic"))
+
+
+#vacova
+cond <- conditional_effects(diam_nb_vacova)[[3]]
+est <- as.data.frame(cond)
+
+vacova_diam_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) +
+  labs(title = "Vaccinium ovalifolium", tag = "(g)") +
+  geom_point(data = dat %>% filter(species == "vacova"), size = 2.75) +
+  ylab("Plant diameter (mm)") +
+  xlab("Elevation (m)") +
+  geom_ribbon(aes(ymin = lower__, ymax = upper__, fill = dist), alpha = 0.4) +
+  geom_line(size = 1.5) +
+  scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
+  scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
+  theme(legend.position = "none", plot.title = element_text(face = "italic"))
+
+
+#carspp
+cond <- conditional_effects(diam_nb_carspp)[[3]]
+est <- as.data.frame(cond)
+
+carspp_height_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) +
+  labs(tag = "(h)") +
+  ggtitle(expression(paste(italic("Carex "), "spp."))) +
+  geom_point(data = dat %>% filter(species == "carspp"), size = 2.75) +
+  ylab("Plant diameter (mm)") +
+  xlab("Elevation (m)") +
+  geom_ribbon(aes(ymin = lower__, ymax = upper__, fill = dist), alpha = 0.4) +
+  geom_line(size = 1.5) +
+  scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
+  scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
+  theme(legend.position = "none")
+
+
+
+# # Reproductive output # #
+dat = subset(dat, select = -estimate__)
+dat <- dat %>% mutate(estimate__ = ) #need to make column of plant diamter called estimate__ so it can be plotted with line and ribbon plot of diameter estimates from model outputs
+
+#phyemp
+cond <- conditional_effects(phyemp_diam_nb)[[3]]
+est <- as.data.frame(cond)
+
+phyemp_repro_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) +
+  labs(title = "Phyllodoce empetriformis", tag = "(i)") +
+  geom_point(data = dat %>% filter(species == "phyemp"), size = 2.75) +
+  labs(x = expression(paste("Elevation (m)")),
+       y = expression(paste("Relative reproductive output"))) +
+  geom_ribbon(aes(ymin = lower__, ymax = upper__, fill = dist), alpha = 0.4) +
+  geom_line(size = 1.5) +
+  scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
+  scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
+  theme(legend.title = element_blank(), legend.position = c(0.78, 0.88), plot.title = element_text(face = "italic"))
+
+#casmer
+cond <- conditional_effects(diam_nb_casmer)[[3]]
+est <- as.data.frame(cond)
+
+casmer_repro_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) +
+  labs(title = "Cassiope mertensiana", tag = "(j)") +
+  geom_point(data = dat %>% filter(species == "casmer"), size = 2.75) +
+  labs(x = expression(paste("Elevation (m)")),
+       y = expression(paste("Relative reproductive output"))) +
+  geom_ribbon(aes(ymin = lower__, ymax = upper__, fill = dist), alpha = 0.4) +
+  geom_line(size = 1.5) +
+  scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
+  scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
+  theme(legend.position = "none", plot.title = element_text(face = "italic"))
+
+
+#vacova
+cond <- conditional_effects(diam_nb_vacova)[[3]]
+est <- as.data.frame(cond)
+
+vacova_repro_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) +
+  labs(title = "Vaccinium ovalifolium", tag = "(k)") +
+  geom_point(data = dat %>% filter(species == "vacova"), size = 2.75) +
+  labs(x = expression(paste("Elevation (m)")),
+       y = expression(paste("Relative reproductive output"))) +
+  geom_ribbon(aes(ymin = lower__, ymax = upper__, fill = dist), alpha = 0.4) +
+  geom_line(size = 1.5) +
+  scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
+  scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
+  theme(legend.position = "none", plot.title = element_text(face = "italic"))
+
+
+
+# #  PERCENT COVER  # #
+dat = subset(dat, select = -estimate__)
+dat <- dat %>% mutate(estimate__ = perc.cov) #need to make column of plant diamter called estimate__ so it can be plotted with line and ribbon plot of diameter estimates from model outputs
+
+cond <- conditional_effects(diam_nb_vacova)[[3]]
+est <- as.data.frame(cond)
+
+percCov_elev_plot <- ggplot(est, aes(altitude, estimate__, color = dist)) +
+  labs(title = "All species", tag = "(l)") +
+  geom_point(data = dat, size = 2.75) +
+  ylab("Percent cover") +
+  xlab("Elevation (m)") +
+  labs(tag = "(l)") +
+  geom_ribbon(aes(ymin = lower__, ymax = upper__, fill = dist), alpha = 0.4) +
+  geom_line(size = 1.5) +
+  scale_color_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
+  scale_fill_manual("Dist", breaks = c(0,1), values=c("#999999", "#E69F00"), labels = c("Undisturbed", "Disturbed")) +
+  theme(legend.position = "none", plot.title = element_text(face = "italic"))
+
+
+
+# # PANEL FIGURES # #
+
+heightAltitudePanelPlot <- grid.arrange(phyemp_height_elev_plot, casmer_height_elev_plot, vacova_height_elev_plot, carspp_height_elev_plot, nrow=1)
+ggsave(heightAltitudePanelPlot, file = 'trampling_analyses/outputs/ms_figs/heightAltitudePanelPlot.pdf', width = 40, height = 14)
+
+diamAltitudePanelPlot <- grid.arrange(phyemp_diam_elev_plot, casmer_diam_elev_plot, vacova_diam_elev_plot, carspp_diam_elev_plot, nrow=1)
+ggsave(diamAltitudePanelPlot, file = 'trampling_analyses/outputs/ms_figs/diamAltitudePanelPlot.pdf', width = 40, height = 14)
+
+reproPerccoverAltitudePanelPlot <- grid.arrange(phyemp_repro_elev_plot, casmer_repro_elev_plot, vacova_repro_elev_plot, percCov_elev_plot, nrow =1)
+ggsave(reproPerccoverAltitudePanelPlot, file = 'trampling_analyses/outputs/ms_figs/reproPerccoverAltitudePanelPlot.pdf', width = 40, height = 14)
+
+allTraitsAltitudePanelPlot <- grid.arrange(PhyempHeightModPlot, CasmerHeightModPlot, VacovaHeightModPlot, CarexHeightModPlot, PhyempDiamModPlot, CasmerDiamModPlot, VacovaDiamModPlot, CarexDiamModPlot, PhyempReproModPlot, CasmerReproModPlot, VacovaReproModPlot, PercentCoverModPlot, nrow=3)
+ggsave(allTraitsAltitudePanelPlot, file = 'trampling_analyses/outputs/ms_figs/allTraitsAltitudePanelPlot.pdf', width = 40, height = 42)
+
+
 
 
 
