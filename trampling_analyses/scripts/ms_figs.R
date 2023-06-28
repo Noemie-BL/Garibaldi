@@ -639,7 +639,7 @@ species_names <- c('carspp'= "Carex spp.", 'casmer' = "Cassiope mertensiana", 'p
 
 allSpeciesReproPlot <- grid.arrange(phyempPlotAreaBySpecies, casmerPlotAreaBySpecies, vacovaPlotAreaBySpecies, nrow=1)
 
-ggsave(allSpeciesReproPlot, file = 'trampling_analyses/outputs/ms_figs/allSpeciesReproPlot.pdf', width = 20, height = 10)
+ggsave(allSpeciesReproPlot, file = 'trampling_analyses/outputs/ms_figs/allSpeciesReproPlot.jpeg', width = 20, height = 10)
 
 
 ####################################################################################################
