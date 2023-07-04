@@ -6,7 +6,7 @@ Tests i) effects of human trampling disturbance on plant growth and reproduction
 
 Contributors: Nathalie Isabelle Chardon (nathalie.chardon@gmail.com), Carly Hilbert (chilbe02@student.ubc.ca), Philippa Stone (philippa.stone@botany.ubc.ca), Cassandra Elphinstone (cassandra.elphinstone@shaw.ca), Allen Zhao (allen10to11@gmail.com)
 
-Last edited: 14 June 2023
+Last edited: 26 June 2023
 
 ### Data collection - Who, when, where, why and how the data were collected
 
@@ -63,7 +63,7 @@ clean_cover.R: check plant percent cover data; R; dplyr
 
 repro.R: define and calculate a standardized reproductive metric, add to quads.RData, and test relationship between reproductive density and plant area by species; R; ggplot2, ggtext, scales, tidyverse, lmerTest, egg
 
-bayesian.R: analyses in Bayesian framework to model disturbance effects on plant height, diameter, repro, and plant cover; R; rjags, R2jags, ggplot2, brms, tidybayes, priorsense, bayesplot, tidyverse, loo
+bayesian_int.R: analyses in Bayesian framework to model disturbance*elevation effects on plant height, diameter, repro, and plant cover; R; rjags, R2jags, ggplot2, brms, tidybayes, priorsense, bayesplot, tidyverse, loo
 
 ms_figs.R: figures for manuscript; R; ggplot2, tidybayes, tidyverse, gridExtra, scales
 
@@ -72,7 +72,7 @@ ms_tables.R: tables for manuscript; R; tidyverse
 #### outputs
 _FOLDERNAME <description of contents>_
 
-ms_results/: Bayesian RDS model files (named by trait_model-family_species) and tables for manuscript (May 2023)
+test_int/: Bayesian RDS model files (named by trait_model-family_species) and tables for manuscript (May 2023)
 
 ms_figs/: plot results for manuscript (June 2023)
 

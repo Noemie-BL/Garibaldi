@@ -6,7 +6,7 @@
 
 # Author: Nathalie Chardon
 # Date created: 14 June 2023
-# Date updated: 20 June 2023 (NC)
+# Date updated: 26 June 2023 (NC)
 
 # # LIBRARIES # #
 library(tidyverse)
@@ -22,8 +22,8 @@ load('trampling_analyses/compiled_data/quad.RData') ##updated with reproductive 
 
 
 # # OUTPUT FILES # #
-load('trampling_analyses/outputs/ms_results/brm_table.RData') #model results for species traits (ms_tables.R)
-brm.tab <- read.csv('trampling_analyses/outputs/ms_results/brm_table.csv') #model results for species traits (ms_tables.R)
+load('trampling_analyses/outputs/test_int/brm_table.RData') #model results for species traits (ms_tables.R)
+brm.tab <- read.csv('trampling_analyses/outputs/test_int/brm_table.csv') #model results for species traits (ms_tables.R)
 
 
 
@@ -82,36 +82,66 @@ summary(mod) #larger plants have more repro structures
 
 ####################################################################################################
 
-## PHYEMP ## --------------------------------------------------------------------------------------
-sp <- 'phyemp'
+## PLANT PERCENT COVER ## --------------------------------------------------------------------------
+sp <- '[All Plants]'
 
-# PHYEMP Height
-mod <- readRDS('trampling_analyses/outputs/ms_results/phyemp_height_nb.rds')
+# PLANT PERCENT COVER
+mod <- readRDS('trampling_analyses/outputs/test_int/perc-cov_beta_int.rds')
 
 ss <- summary(mod)
 ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
 dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
 ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
+ff <- ss$formula[5][[1]][[1]]
+ess <- round(min(ss$fixed[6]), 0)
+de <- paste(round(ss$fixed[4, 1], 2), '(', round(ss$fixed[4, 3], 2), ',', round(ss$fixed[4, 4], 2), ')')
 
 brm.res <- data.frame(Species = sp, Trait = ss$formula[4], N = ss$nobs, 
-                      Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
-                      Elevation = ee)
+                      Intercept = ii, Disturbance = dd, Elevation = ee, `Dist*Elev` = de,
+                      Family = ff, Iterations = ss$iter, `Bulk ESS` = ess)
+brm.res
 
 brm.tab <- brm.res
 brm.tab
 
 
-# PHYEMP Diameter
-mod <- readRDS('trampling_analyses/outputs/ms_results/phyemp_diam_nb.rds')
+## PHYEMP ## --------------------------------------------------------------------------------------
+sp <- 'phyemp'
+
+# PHYEMP Height
+mod <- readRDS('trampling_analyses/outputs/test_int/phyemp_height_nb_int.rds')
 
 ss <- summary(mod)
 ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
 dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
 ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
+ff <- ss$formula[5][[1]][[1]]
+ess <- round(min(ss$fixed[6]), 0)
+de <- paste(round(ss$fixed[4, 1], 2), '(', round(ss$fixed[4, 3], 2), ',', round(ss$fixed[4, 4], 2), ')')
+  
+brm.res <- data.frame(Species = sp, Trait = ss$formula[4], N = ss$nobs, 
+                      Intercept = ii, Disturbance = dd, Elevation = ee, `Dist*Elev` = de,
+                      Family = ff, Iterations = ss$iter, `Bulk ESS` = ess)
+brm.res
+
+brm.tab <- bind_rows(brm.tab, brm.res)
+brm.tab
+
+
+# PHYEMP Diameter
+mod <- readRDS('trampling_analyses/outputs/test_int/phyemp_diam_nb_int.rds')
+
+ss <- summary(mod)
+ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
+dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
+ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
+ff <- ss$formula[5][[1]][[1]]
+ess <- round(min(ss$fixed[6]), 0)
+de <- paste(round(ss$fixed[4, 1], 2), '(', round(ss$fixed[4, 3], 2), ',', round(ss$fixed[4, 4], 2), ')')
 
 brm.res <- data.frame(Species = sp, Trait = ss$formula[4], N = ss$nobs, 
-                      Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
-                      Elevation = ee)
+                      Intercept = ii, Disturbance = dd, Elevation = ee, `Dist*Elev` = de,
+                      Family = ff, Iterations = ss$iter, `Bulk ESS` = ess)
 brm.res
 
 brm.tab <- bind_rows(brm.tab, brm.res)
@@ -119,16 +149,19 @@ brm.tab
 
 
 # PHYEMP Reproduction
-mod <- readRDS('trampling_analyses/outputs/ms_results/phyemp_repro_beta.rds')
+mod <- readRDS('trampling_analyses/outputs/test_int/phyemp_repro_beta_int.rds')
 
 ss <- summary(mod)
 ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
 dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
 ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
+ff <- ss$formula[5][[1]][[1]]
+ess <- round(min(ss$fixed[6]), 0)
+de <- paste(round(ss$fixed[4, 1], 2), '(', round(ss$fixed[4, 3], 2), ',', round(ss$fixed[4, 4], 2), ')')
 
 brm.res <- data.frame(Species = sp, Trait = ss$formula[4], N = ss$nobs, 
-                      Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
-                      Elevation = ee)
+                      Intercept = ii, Disturbance = dd, Elevation = ee, `Dist*Elev` = de,
+                      Family = ff, Iterations = ss$iter, `Bulk ESS` = ess)
 brm.res
 
 brm.tab <- bind_rows(brm.tab, brm.res)
@@ -139,16 +172,19 @@ brm.tab
 sp <- 'casmer'
 
 # CASMER Height
-mod <- readRDS('trampling_analyses/outputs/ms_results/height_nb_casmer.rds')
+mod <- readRDS('trampling_analyses/outputs/test_int/height_nb_casmer_int.rds')
 
 ss <- summary(mod)
 ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
 dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
 ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
+ff <- ss$formula[5][[1]][[1]]
+ess <- round(min(ss$fixed[6]), 0)
+de <- paste(round(ss$fixed[4, 1], 2), '(', round(ss$fixed[4, 3], 2), ',', round(ss$fixed[4, 4], 2), ')')
 
 brm.res <- data.frame(Species = sp, Trait = ss$formula[4], N = ss$nobs, 
-                      Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
-                      Elevation = ee)
+                      Intercept = ii, Disturbance = dd, Elevation = ee, `Dist*Elev` = de,
+                      Family = ff, Iterations = ss$iter, `Bulk ESS` = ess)
 brm.res
 
 brm.tab <- bind_rows(brm.tab, brm.res)
@@ -156,16 +192,19 @@ brm.tab
 
 
 # CASMER Diameter
-mod <- readRDS('trampling_analyses/outputs/ms_results/diam_nb_casmer.rds')
+mod <- readRDS('trampling_analyses/outputs/test_int/diam_nb_casmer_int.rds')
 
 ss <- summary(mod)
 ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
 dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
 ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
+ff <- ss$formula[5][[1]][[1]]
+ess <- round(min(ss$fixed[6]), 0)
+de <- paste(round(ss$fixed[4, 1], 2), '(', round(ss$fixed[4, 3], 2), ',', round(ss$fixed[4, 4], 2), ')')
 
 brm.res <- data.frame(Species = sp, Trait = ss$formula[4], N = ss$nobs, 
-                      Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
-                      Elevation = ee)
+                      Intercept = ii, Disturbance = dd, Elevation = ee, `Dist*Elev` = de,
+                      Family = ff, Iterations = ss$iter, `Bulk ESS` = ess)
 brm.res
 
 brm.tab <- bind_rows(brm.tab, brm.res)
@@ -173,16 +212,19 @@ brm.tab
 
 
 # CASMER Reproduction
-mod <- readRDS('trampling_analyses/outputs/ms_results/repro_beta_casmer.rds')
+mod <- readRDS('trampling_analyses/outputs/test_int/repro_beta_casmer_int.rds')
 
 ss <- summary(mod)
 ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
 dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
 ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
+ff <- ss$formula[5][[1]][[1]]
+ess <- round(min(ss$fixed[6]), 0)
+de <- paste(round(ss$fixed[4, 1], 2), '(', round(ss$fixed[4, 3], 2), ',', round(ss$fixed[4, 4], 2), ')')
 
 brm.res <- data.frame(Species = sp, Trait = ss$formula[4], N = ss$nobs, 
-                      Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
-                      Elevation = ee)
+                      Intercept = ii, Disturbance = dd, Elevation = ee, `Dist*Elev` = de,
+                      Family = ff, Iterations = ss$iter, `Bulk ESS` = ess)
 brm.res
 
 brm.tab <- bind_rows(brm.tab, brm.res)
@@ -193,16 +235,19 @@ brm.tab
 sp <- 'vacova'
 
 # VACOVA Height
-mod <- readRDS('trampling_analyses/outputs/ms_results/height_nb_vacova.rds')
+mod <- readRDS('trampling_analyses/outputs/test_int/height_nb_vacova_int.rds')
 
 ss <- summary(mod)
 ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
 dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
 ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
+ff <- ss$formula[5][[1]][[1]]
+ess <- round(min(ss$fixed[6]), 0)
+de <- paste(round(ss$fixed[4, 1], 2), '(', round(ss$fixed[4, 3], 2), ',', round(ss$fixed[4, 4], 2), ')')
 
 brm.res <- data.frame(Species = sp, Trait = ss$formula[4], N = ss$nobs, 
-                      Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
-                      Elevation = ee)
+                      Intercept = ii, Disturbance = dd, Elevation = ee, `Dist*Elev` = de,
+                      Family = ff, Iterations = ss$iter, `Bulk ESS` = ess)
 brm.res
 
 brm.tab <- bind_rows(brm.tab, brm.res)
@@ -210,16 +255,19 @@ brm.tab
 
 
 # VACOVA Diameter
-mod <- readRDS('trampling_analyses/outputs/ms_results/diam_nb_vacova.rds')
+mod <- readRDS('trampling_analyses/outputs/test_int/diam_nb_vacova_int.rds')
 
 ss <- summary(mod)
 ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
 dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
 ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
+ff <- ss$formula[5][[1]][[1]]
+ess <- round(min(ss$fixed[6]), 0)
+de <- paste(round(ss$fixed[4, 1], 2), '(', round(ss$fixed[4, 3], 2), ',', round(ss$fixed[4, 4], 2), ')')
 
 brm.res <- data.frame(Species = sp, Trait = ss$formula[4], N = ss$nobs, 
-                      Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
-                      Elevation = ee)
+                      Intercept = ii, Disturbance = dd, Elevation = ee, `Dist*Elev` = de,
+                      Family = ff, Iterations = ss$iter, `Bulk ESS` = ess)
 brm.res
 
 brm.tab <- bind_rows(brm.tab, brm.res)
@@ -227,16 +275,19 @@ brm.tab
 
 
 # VACOVA Reproduction
-mod <- readRDS('trampling_analyses/outputs/ms_results/repro_beta_vacova.rds')
+mod <- readRDS('trampling_analyses/outputs/test_int/repro_beta_vacova_int.rds')
 
 ss <- summary(mod)
 ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
 dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
 ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
+ff <- ss$formula[5][[1]][[1]]
+ess <- round(min(ss$fixed[6]), 0)
+de <- paste(round(ss$fixed[4, 1], 2), '(', round(ss$fixed[4, 3], 2), ',', round(ss$fixed[4, 4], 2), ')')
 
 brm.res <- data.frame(Species = sp, Trait = ss$formula[4], N = ss$nobs, 
-                      Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
-                      Elevation = ee)
+                      Intercept = ii, Disturbance = dd, Elevation = ee, `Dist*Elev` = de,
+                      Family = ff, Iterations = ss$iter, `Bulk ESS` = ess)
 brm.res
 
 brm.tab <- bind_rows(brm.tab, brm.res)
@@ -247,16 +298,19 @@ brm.tab
 sp <- 'carspp'
 
 # CARSPP Height
-mod <- readRDS('trampling_analyses/outputs/ms_results/height_nb_carspp.rds')
+mod <- readRDS('trampling_analyses/outputs/test_int/height_nb_carspp_int.rds')
 
 ss <- summary(mod)
 ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
 dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
 ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
+ff <- ss$formula[5][[1]][[1]]
+ess <- round(min(ss$fixed[6]), 0)
+de <- paste(round(ss$fixed[4, 1], 2), '(', round(ss$fixed[4, 3], 2), ',', round(ss$fixed[4, 4], 2), ')')
 
 brm.res <- data.frame(Species = sp, Trait = ss$formula[4], N = ss$nobs, 
-                      Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
-                      Elevation = ee)
+                      Intercept = ii, Disturbance = dd, Elevation = ee, `Dist*Elev` = de,
+                      Family = ff, Iterations = ss$iter, `Bulk ESS` = ess)
 brm.res
 
 brm.tab <- bind_rows(brm.tab, brm.res)
@@ -264,36 +318,19 @@ brm.tab
 
 
 # CARSPP Diameter
-mod <- readRDS('trampling_analyses/outputs/ms_results/diam_nb_carspp.rds')
+mod <- readRDS('trampling_analyses/outputs/test_int/diam_nb_carspp_int.rds')
 
 ss <- summary(mod)
 ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
 dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
 ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
+ff <- ss$formula[5][[1]][[1]]
+ess <- round(min(ss$fixed[6]), 0)
+de <- paste(round(ss$fixed[4, 1], 2), '(', round(ss$fixed[4, 3], 2), ',', round(ss$fixed[4, 4], 2), ')')
 
 brm.res <- data.frame(Species = sp, Trait = ss$formula[4], N = ss$nobs, 
-                      Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
-                      Elevation = ee)
-brm.res
-
-brm.tab <- bind_rows(brm.tab, brm.res)
-brm.tab
-
-
-## PLANT PERCENT COVER ## --------------------------------------------------------------------------
-sp <- '[All Plants]'
-
-# PLANT PERCENT COVER
-mod <- readRDS('trampling_analyses/outputs/ms_results/perc-cov_beta.rds')
-
-ss <- summary(mod)
-ii <- paste(round(ss$fixed[1, 1], 2), '(', round(ss$fixed[1, 3], 2), ',', round(ss$fixed[1, 4], 2), ')')
-dd <- paste(round(ss$fixed[2, 1], 2), '(', round(ss$fixed[2, 3], 2), ',', round(ss$fixed[2, 4], 2), ')')
-ee <- paste(round(ss$fixed[3, 1], 2), '(', round(ss$fixed[3, 3], 2), ',', round(ss$fixed[3, 4], 2), ')')
-
-brm.res <- data.frame(Species = sp, resp = 'Percent Cover', N = ss$nobs, 
-                      Iterations = ss$iter, Intercept = ii, Disturbance = dd, 
-                      Elevation = ee)
+                      Intercept = ii, Disturbance = dd, Elevation = ee, `Dist*Elev` = de,
+                      Family = ff, Iterations = ss$iter, `Bulk ESS` = ess)
 brm.res
 
 brm.tab <- bind_rows(brm.tab, brm.res)
@@ -311,12 +348,35 @@ brm.tab <- brm.tab %>%
   mutate(Species = if_else(Species == 'carspp', 'Carex spp.', Species)) %>% 
   mutate(Trait = if_else(Trait == 'heightmm', 'Height', Trait)) %>% #rename trait variables
   mutate(Trait = if_else(Trait == 'mxdiammm', 'Diameter', Trait)) %>%
-  mutate(Trait = if_else(Trait == 'relrepro', 'Reproduction', Trait))
+  mutate(Trait = if_else(Trait == 'relrepro', 'Reproduction', Trait)) %>% 
+  mutate(Trait = if_else(Trait == 'perccov', 'Percent Cover', Trait)) %>% 
+  mutate(Family = if_else(Family == 'negbinomial', 'Negative Binomial', Family)) %>% #rename family
+  mutate(Family = if_else(Family == 'beta', 'Beta', Family))
 brm.tab
 
 
-save(brm.tab, file = 'trampling_analyses/outputs/ms_results/brm_table.RData')
-write.csv(brm.tab, file = 'trampling_analyses/outputs/ms_results/brm_table.csv', row.names = F)
+save(brm.tab, file = 'trampling_analyses/outputs/test_int/brm_table.RData')
+write.csv(brm.tab, file = 'trampling_analyses/outputs/test_int/brm_table.csv', row.names = F)
+
+
+
+
+####################################################################################################
+
+# # Table 2: Measured parameters
+
+####################################################################################################
+
+# Filled out manually by CH
+
+# Scale of plant measurements
+load('trampling_analyses/compiled_data/quad.RData') ##updated with reproductive metric & plant area (repro.R)
+
+min(quad$height_mm, na.rm = T) #height
+max(quad$height_mm, na.rm = T)
+
+min(quad$mxdiam_mm, na.rm = T) #diameter
+max(quad$mxdiam_mm, na.rm = T)
 
 
 
@@ -327,6 +387,6 @@ write.csv(brm.tab, file = 'trampling_analyses/outputs/ms_results/brm_table.csv',
 
 ####################################################################################################
 
-# Manually created when running models in bayesian.R; iterations taken from Table [RESULTS] above
+# Manually created when running models in bayesian.R; ohter info taken from Table [RESULTS] above
 
 
