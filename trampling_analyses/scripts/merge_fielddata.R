@@ -7,7 +7,7 @@
 
 # Author: Nathalie Chardon
 # Date created: 11 Nov 2022
-# Date updated: 15 May 2023 (NC)
+# Date updated: 28 July 2023 (NC)
 
 # # LIBRARIES # #
 library(tidyverse)
@@ -439,8 +439,7 @@ foo %>% filter(mxdiam_mm > 300) #several values in this range so ok
 trans <- left_join(trans.raw, gps, by = 'transect') 
 
 # Save transect dataframe with all variables
-setwd(compiled_data)
-save(trans, file = 'trans_ALL.RData')
+save(trans, file = 'trampling_analyses/compiled_data/trans_ALL.RData')
 
 # Keep only relevant columns
 
@@ -460,7 +459,6 @@ str(quad) #check data structure
 
 
 # Add disturbance column to quad
-
 quad$x_logical <- quad$transect.no %% 2 == 0 #create even/odd logical
 
 quad <- quad %>% 
@@ -567,9 +565,11 @@ summary(quad$height_adj)
 
 
 
-# Forces height to 0.1mm if less than or equal to 0mm
+# Forces height to 1mm if less than or equal to 0mm
 
-quad$height_adj <- ifelse(quad$height_adj <=0, 0.1, quad$height_adj)
+quad$height_adj <- ifelse(quad$height_adj <=0, 1, quad$height_adj)
+
+
 
 
 ####################################################################################################
@@ -597,6 +597,7 @@ for (i in 1:nrow(quad)) { #loop through each data row
 
 
 
+
 ####################################################################################################
 
 # # ADD PLANT PERCENT COVER DATA # # 
@@ -604,8 +605,7 @@ for (i in 1:nrow(quad)) { #loop through each data row
 ####################################################################################################
 
 # Data
-load('trampling_analyses/compiled_data/quad.RData') #gps & transect data matched to quad data (merge_fielddata.R)
-plant.dat <- read.csv('trampling_analyses/Quadrat_Analysis/final_coverage_data.csv')
+plant.dat <- read.csv('trampling_analyses/Quadrat_Analysis/output_data/final_coverage_data.csv')
 
 # Check data
 head(plant.dat)

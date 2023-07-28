@@ -378,6 +378,13 @@ max(quad$height_mm, na.rm = T)
 min(quad$mxdiam_mm, na.rm = T) #diameter
 max(quad$mxdiam_mm, na.rm = T)
 
+dat$reprocounts <- NA #initialize column
+for (i in 1:nrow(dat)) { #loop through each row of DF
+  
+  dat$reprocounts[i] <- sum(c(dat$buds[i], dat$flws[i], dat$frts[i]), na.rm = T)
+}
+summary(dat$reprocounts)
+
 
 
 
