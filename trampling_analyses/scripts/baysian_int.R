@@ -7,7 +7,7 @@
 
 # Author: Courtney Collins, Nathalie Chardon
 # Date created: 21 June 2023
-# Date updated: 26 June 2023 (NC)
+# Date updated: 28 July 2023 (NC)
 
 # # LIBRARIES # #
 library(rjags)

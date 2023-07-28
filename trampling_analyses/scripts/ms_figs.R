@@ -546,7 +546,7 @@ reproPerccoverAltitudePanelPlot <- grid.arrange(phyemp_repro_elev_plot, casmer_r
 ggsave(reproPerccoverAltitudePanelPlot, file = 'trampling_analyses/outputs/ms_figs/reproPerccoverAltitudePanelPlot.pdf', width = 40, height = 14)
 
 allTraitsAltitudePanelPlot <- grid.arrange(phyemp_height_elev_plot, casmer_height_elev_plot, vacova_height_elev_plot, carspp_height_elev_plot, phyemp_diam_elev_plot, casmer_diam_elev_plot, vacova_diam_elev_plot, carspp_diam_elev_plot, phyemp_repro_elev_plot, casmer_repro_elev_plot, vacova_repro_elev_plot, percCov_elev_plot, nrow=3)
-ggsave(allTraitsAltitudePanelPlot, file = 'trampling_analyses/outputs/ms_figs/allTraitsAltitudePanelPlot.pdf', width = 40, height = 42)
+ggsave(allTraitsAltitudePanelPlot, file = 'trampling_analyses/outputs/ms_figs/allTraitsAltitudePanelPlot.jpeg', width = 40, height = 42)
 
 
 
