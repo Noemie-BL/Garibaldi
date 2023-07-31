@@ -1,4 +1,4 @@
-Species,Trait,N,Intercept,Disturbance,Elevation,Dist.Elev,,Family,Iterations,Bulk.ESS
+Species,Trait,N,Intercept,Disturbance,Elevation,Dist*Elev,,Family,Iterations,Bulk.ESS
 [All Plants],Percent Cover,267,"6.58 ( 0.34 , 12.61 )","-8.38 ( -12.56 , -4.4 )","0 ( -0.01 , 0 )","0 ( 0 , 0.01 )",,Beta,5000,3727
 P. empetriformis,Height,500,"7.04 ( 2.13 , 12.15 )","-0.48 ( -3.11 , 2.12 )","0 ( 0 , 0 )","0 ( 0 , 0 )",,Negative Binomial,5000,3631
 P. empetriformis,Diameter,500,"10.48 ( 6.66 , 14.16 )","-7.15 ( -10.53 , -3.85 )","0 ( 0 , 0 )","0 ( 0 , 0.01 )",,Negative Binomial,5000,2263
