@@ -2,9 +2,3 @@
 .Rhistory
 .RData
 .Ruserdata
-
-# outdated scripts
-trampling_analyses/scripts/outdated/
-
-# outdated outputs
-trampling_analyses/outputs/outdated/
