@@ -2,23 +2,23 @@
 
 ### Description
 
-Tests i) effects of human trampling disturbance on plant growth and reproduction proxies of common plants across an elevation gradient, and ii) which species are more susceptible to trampling.
+Tests i) effects of human trampling disturbance on plant growth and reproduction proxies of common plants across an elevation gradient, and ii) which species are most sensitive to trampling.
 
 Contributors: Nathalie Isabelle Chardon (nathalie.chardon@gmail.com), Carly Hilbert (chilbe02@student.ubc.ca), Philippa Stone (philippa.stone@botany.ubc.ca), Cassandra Elphinstone (cassandra.elphinstone@shaw.ca), Allen Zhao (allen10to11@gmail.com)
 
-Last edited: 26 June 2023
+Last edited: 18 August 2023
 
 ### Data collection - Who, when, where, why and how the data were collected
 
 Dates: July-August 2022
 
-Location: Garibaldi Provincial Park on Taylor Meadow (TM), Black Tusk (BT), and Panorama Ridge (PR) trails.
+Location: T’aḵ’t’aḵ’múy̓in tl’a In̓inyáx̱a7n region in Garibaldi Provincial Park, British Columbia, Canada on Taylor Meadow (TM), Black Tusk (BT), and Panorama Ridge (PR) trails.
 
 Samplers: Nathalie Chardon, Carly Hilbert, Mackenzie Urquhart-Cronish, Brianna Ragsdale, Teagan MacLachlan, Vickie Lee, Christian Lauber, Carolyn Chong
 
 Data entered by: Carly Hilbert
 
-Methods: In the summer of 2022, we established long-term transects near the major trails in the park (Taylor Meadows, Black Tusk, Panorama Ridge) to quantify the effects of trampling by recreational users. To address how trampling affects charismatic plant communities (blueberry, heather and sedge meadows) along elevational gradients, we chose sites at multiple elevations per trail. We established transects directly adjacent to the trail and at least a 5 m perpendicular distance away from the trail (control) to compare the effects of trampling on the same vegetation types. 
+Methods: In the summer of 2022, we established long-term transects near the major trails in the park (Taylor Meadows, Black Tusk, Panorama Ridge) to quantify the effects of trampling by recreational users. To address how trampling affects charismatic plant communities (blueberry, heath, heather, and sedge meadows) along elevational gradients, we chose sites at multiple elevations per trail. We established transects directly adjacent to the trail and at least a 5 m perpendicular distance away from the trail (control) to compare the effects of trampling on the same vegetation types. 
 
 Plant communities. We recorded landscape characteristics (slope, aspect, latitude, longitude, presence of trees) for each transect and used 0.5m x 1m quadrats to record height, maximum diameter, and bud/flower/fruit counts of our focal plant species (Vaccinium ovalifolium, Cassiope mertensiana, Phyllodoce empetriformis, Phyllodoce grandiflora, Carex sp.). Because we only found Phyllodoce grandiflora at one site, we did not use this species in our analyses. Please see N. Chardon’s recent work on human trampling for greater detail on this sampling approach: 
 https://besjournals.onlinelibrary.wiley.com/doi/full/10.1111/1365-2664.13384
@@ -50,8 +50,6 @@ quad.RData: gps & transect data matched to quad data; created in merge_fielddata
 
 trans_ALL.RData: all transect field data, gps, and altitude; created on 15 Nov 2022; final version; variables described in merge_fielddata.R 
 
-P_albicaulis_Garibaldi_Aug2022.csv: Pinus albicaulis locations for BC Rangers; emailed data to Kym Welstead (Kym.Welstead@gov.bc.ca) on 7 Dec 2022
-
 plant-percent-cover.csv: Calculated plant percent cover values for each quadrat (Allen Zhao, allen10to11@gmail.com); created on 27 March 2023; final version; analyses in Quadrat_Analysis folder
 
 #### scripts
@@ -76,9 +74,7 @@ test_int/: Bayesian RDS model files (named by trait_model-family_species) and ta
 
 ms_figs/: plot results for manuscript (June 2023)
 
-BC_PARF_figs/: Carly Hilbert's figures for BC PARF (Dec 2022)
-
 
 #### Quadrat_Analysis
 
-Analysis code for estimating plant coverage from photos of quadrats located around Black Tusk and Taylor Meadows in Garibaldi Provincial Park. Additional details can be found in the included README.
+Analysis code for estimating plant coverage from photos of quadrats. Additional details can be found in the included README.
