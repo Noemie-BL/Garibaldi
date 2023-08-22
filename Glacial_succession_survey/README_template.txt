@@ -1,10 +1,11 @@
-## ANAYLSIS NAME
+## Glacial Succession Survey 2023
 
 ## Contributors: 
-Firstname_Lastname <email> Last_edited_date
+Ciara Norton <email> Last_edited_date
+Cassandra Elphinstone <cassandra.elphinstone@shaw.ca> Aug 22 2023
 
 #-----------------------------
-## Data collection notes summer 2022 - Who, when, where, why and how the data were collected
+## Data collection notes summer 2023 - Who, when, where, why and how the data were collected
 Explain any data collection information. 
 
 #-----------------------------
