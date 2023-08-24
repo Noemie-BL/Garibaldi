@@ -1,6 +1,6 @@
 ## Trampling Data & Analyses
 
-Chardon, N.I.; Stone, P.; Hilbert, C.; Maclachlan, T.; Ragsdale, B.; Zhao, A.; Goodwin, K.; Collins, C.G.; Hewitt, N.; Elphinstone, C. Species-Specific Responses to Human Trampling Indicate Alpine Plant Size Is More Sensitive than Reproduction to Disturbance. Plants 2023, 12, x. https://doi.org/10.3390/xxxxx
+Chardon, N.I.; Stone, P.; Hilbert, C.; Maclachlan, T.; Ragsdale, B.; Zhao, A.; Goodwin, K.; Collins, C.G.; Hewitt, N.; Elphinstone, C. (2023). Species-Specific Responses to Human Trampling Indicate Alpine Plant Size Is More Sensitive than Reproduction to Disturbance. Plants, 12(17):3040. https://doi.org/10.3390/plants12173040
 
 ### Description
 
@@ -8,7 +8,7 @@ Tests i) effects of human trampling disturbance on plant growth and reproduction
 
 Contributors: Nathalie Isabelle Chardon (nathalie.chardon@gmail.com), Carly Hilbert (chilbe02@student.ubc.ca), Philippa Stone (philippa.stone@botany.ubc.ca), Cassandra Elphinstone (cassandra.elphinstone@shaw.ca), Allen Zhao (allen10to11@gmail.com)
 
-Last edited: 18 August 2023
+Last edited: 24 August 2023
 
 ### Data collection - Who, when, where, why and how the data were collected
 
