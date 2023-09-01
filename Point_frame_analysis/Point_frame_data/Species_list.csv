@@ -1,27 +1,96 @@
-SPP_code,Species name,Description
-x,Not measured,These were points that we did not measure ~30 point out of 100 points were not measured in most plots to save time but still sample all plots (most points not sampled was 37/100)
-other,Other,"These were points that hit something other than the soil, rock or a species (e.g. tags, sensors, etc)"
-litter,Litter,Dead material that was no longer attached to the plants
-soil,Soil,Bare soil without moss or lichen on it
-rock,Rock,Points that hit rocks where a rock was defined as anything larger than 1cm diameter
-moss,Bryophyte ,All bryophytes were grouped together as no one knew them to species
-lichen,Lichen,All lichen were grouped together as no one knew them to species
-caraur,Carex aurea,
-triglu,Triantha glutinosa,
-salbar,Salix barclayi,
-carspp,Carex spp. ,A sedge we could not ID to species
-equvar,Equisetum variegatum,
-kalmic,Kalmia microphylla,
-caraqu,Carex aquatilis,
-equarv,Equisetum arvense,
-junmer,Juncus mertensiana,
-junarc,Juncus arcticus,
-casmer,Cassiope mertensiana,
-phygla,Phyllodoce glanduliflora,
-pinvul,Pinguicula vulgaris,
-jundru,Juncus drummondii ,
-lupspp,Lupinus spp. ,
-antalp,Antennaria alpina,
-salgla,Salix glauca,
-carnig,Carex nigricans,
-galhum,Gaultheria humifusa,
+Site,SPP_code,Species name,Validated_23_08,Description
+meadow,x,Not measured,1,These were points that we did not measure ~30 point out of 100 points were not measured in most plots to save time but still sample all plots (most points not sampled was 37/100)
+meadow,other,Other,1,"These were points that hit something other than the soil, rock or a species (e.g. tags, sensors, etc)"
+meadow,litter,Litter,1,Dead material that was no longer attached to the plants
+meadow,soil,Soil,1,Bare soil without moss or lichen on it
+meadow,rock,Rock,1,Points that hit rocks where a rock was defined as anything larger than 1cm diameter
+meadow,moss,Bryophyte ,1,All bryophytes were grouped together as no one knew them to species
+meadow,lichen,Lichen,1,All lichen were grouped together as no one knew them to species
+meadow,carspp,Carex spp. ,1,A sedge we could not ID to species
+meadow,caraur,Carex aurea,1,
+meadow,triglu,Triantha glutinosa,1,
+other,caraqu,Carex aquatilis,0,
+meadow,equarv,Equisetum arvense,1,
+meadow,agrvar,Agrostis variabilis,1,
+meadow,junmer,Juncus mertensiana,1,
+meadow,salsit,Salix sitchensis,1,
+meadow,junarc,Juncus arcticus,1,Juncus arcticus ssp. alaskanus
+meadow,carlent,Carex lenticularis,1,Carex lenticularis var lipocarpa. This is the dominant carex species at the site
+meadow,casmin,Castilleja miniata,1,
+meadow,pladil,Platanthera dilatata,1,
+meadow,carspe,Carex spectabilis,1,
+meadow,lupspp,Lupinus spp. ,1,
+meadow,senfre,Senecio fremontii,1,
+meadow,seddiv,Sedum divergens,1,
+meadow,poagla,Poa glauca,1,
+willow,x,Not measured,1,These were points that we did not measure ~30 point out of 100 points were not measured in most plots to save time but still sample all plots (most points not sampled was 37/100)
+willow,other,Other,1,"These were points that hit something other than the soil, rock or a species (e.g. tags, sensors, etc)"
+willow,litter,Litter,1,Dead material that was no longer attached to the plants
+willow,soil,Soil,1,Bare soil without moss or lichen on it
+willow,rock,Rock,1,Points that hit rocks where a rock was defined as anything larger than 1cm diameter
+willow,moss,Bryophyte ,1,All bryophytes were grouped together as no one knew them to species
+willow,lichen,Lichen,1,All lichen were grouped together as no one knew them to species
+willow,carspp,Carex spp. ,1,A sedge we could not ID to species
+willow,triglu,Triantha glutinosa,1,
+willow,equvar,Equisetum variegatum,1,
+willow,caraur,Carex aurea,1,
+willow,carlent,Carex lenticularis,1,Carex lenticularis var lipocarpa
+willow,carspe,Carex spectabilis,1,
+willow,salcom,Salix commutata,1,
+willow,junmer,Juncus mertensiana,1,
+willow,salsit,Salix sitchensis,1,
+willow,salarc,Salix arctica,1,
+willow,salniv,Salix nivalis,1,
+willow,casmer,Cassiope mertensiana,1,
+willow,silaca,Silene acaulis,1,
+willow,phygla,Phyllodoce glanduliflora,1,
+willow,minbif,Minuartia biflora,1,
+willow,antros,Antennaria rosea,1,
+willow,antumb,Antennaria umbrinella,1,
+willow,poaalp,Poa alpina,1,
+willow,trispi,Trisetum spicatum,1,
+willow,casmin,Castilleja miniata,1,
+willow,salbar,Salix barclayi,1,
+willow,chalat,Chamerion latifolium,1,
+willow,tsumer,Tsuga mertensiana,1,
+cassiope,x,Not measured,1,These were points that we did not measure ~30 point out of 100 points were not measured in most plots to save time but still sample all plots (most points not sampled was 37/100)
+cassiope,other,Other,1,"These were points that hit something other than the soil, rock or a species (e.g. tags, sensors, etc)"
+cassiope,litter,Litter,1,Dead material that was no longer attached to the plants
+cassiope,soil,Soil,1,Bare soil without moss or lichen on it
+cassiope,rock,Rock,1,Points that hit rocks where a rock was defined as anything larger than 1cm diameter
+cassiope,moss,Bryophyte ,1,All bryophytes were grouped together as no one knew them to species
+cassiope,lichen,Lichen,1,All lichen were grouped together as no one knew them to species
+cassiope,carspp,Carex spp. ,1,A sedge we could not ID to species
+cassiope,kalmic,Kalmia microphylla,1,
+cassiope,pinvul,Pinguicula vulgaris,1,
+cassiope,equvar,Equisetum variegatum,1,
+cassiope,salcom,Salix commutata,1,
+cassiope,triglu,Triantha glutinosa,1,
+cassiope,chalat,Chamerion latifolium,1,
+cassiope,chaang,Chamerion angustifolium,1,
+cassiope,phygla,Phyllodoce glanduliflora,1,
+cassiope,phyemp,Phyllodoce empetriformis,1,
+cassiope,carmed,Carex media,1,
+cassiope,carspe,Carex spectabilis,1,
+cassiope,lupspp,Lupinus spp. ,1,
+cassiope,salsit,Salix sitchensis,1,
+cassiope,tsumer,Tsuga mertensiana,1,
+cassiope,abilas,Abies lasiocarpa,1,
+cassiope,salarc,Salix arctica,1,
+cassiope,salniv,Salix nivalis,1,
+cassiope,salbar,Salix barclayi,1,
+cassiope,caraur,Carex aurea,1,
+cassiope,casmer,Cassiope mertensiana,1,
+cassiope,salcom,Salix commutata,1,
+cassiope,galhum,Gaultheria humifusa,1,
+cassiope,jundru,Juncus drummondii ,1,
+cassiope,junmer,Juncus mertensiana,1,
+cassiope,agrhum,Agrostis humilis,1,
+cassiope,spirom,Spiranthes romanzoffiana,1,
+cassiope,solmul,Solidago multiradiata,1,found in plot
+cassiope,antros,Antennaria rosea,1,
+cassiope,antumb,Antennaria umbrinella,1,
+cassiope,leppyr,Leptarrhena pyrolifolia,1,
+other,antalp,Antennaria alpina,0,
+other,salgla,Salix glauca,0,
+other,carnig,Carex nigricans,0,
